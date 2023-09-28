@@ -65,8 +65,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       .createUserWithEmailAndPassword(
                           email: _emailTextController.text,
                           password: _passwordTextController.text)
-                      .then((value) {
+                      .then((value) async {       
                     print("Created New Account");
+                    
+                    await FirebaseAuth.instance.currentUser?.updateDisplayName(_userNameTextController.text);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
