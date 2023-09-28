@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'game_screen.dart';
 import 'signin_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,106 +12,112 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   FirebaseAuth auth = FirebaseAuth.instance;
-  
-  @override
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( //앱바 구성
-        title:const Text( '영단어 사전(test)'),
-        centerTitle: true, //타이틀 중앙 위치
-        elevation: 0.0, //입체감 없애기
-        backgroundColor:Colors.purple,
-        actions: [
-          IconButton(
-          onPressed: (){print('사람');}, 
-          icon: const Icon(Icons.person),)
-        ],
-      ),
-      drawer: Drawer(
-        child:ListView(
+        appBar: AppBar(
+          //앱바 구성
+          title: const Text('영단어 사전(test)'),
+          centerTitle: true, //타이틀 중앙 위치
+          elevation: 0.0, //입체감 없애기
+          backgroundColor: Colors.purple,
+          actions: [
+            IconButton(
+              onPressed: () {
+                print('사람');
+              },
+              icon: const Icon(Icons.person),
+            )
+          ],
+        ),
+        drawer: Drawer(
+            child: ListView(
           children: [
-            UserAccountsDrawerHeader( //유저 헤더
+            UserAccountsDrawerHeader(
+              //유저 헤더
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
               ),
-              accountName: Text(auth.currentUser!.displayName.toString()), 
+              accountName: Text(auth.currentUser!.displayName.toString()),
               accountEmail: Text(auth.currentUser!.email.toString()),
-              onDetailsPressed: (){}, // 디테일
+              onDetailsPressed: () {}, // 디테일
               decoration: BoxDecoration(
-                color: Colors.purple[200],
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  bottomRight: Radius.circular(15)
-                )),
-              ),
-               ListTile(
-                leading: const Icon(Icons.view_list),
-                title: const Text('단어장'),
-                iconColor: Colors.purple,
-                onTap: () {print('단어장');},
-              
-              ),
-               ListTile(
-                leading: const Icon(Icons.calendar_today),
-                title: const Text('달력'),
-                iconColor: Colors.purple,
-                onTap: () {
-                      print('달력');
-                },
-              
-              ),
-               ListTile(
-                leading: const Icon(Icons.sports_esports),
-                title: const Text('게임'),
-                iconColor:Colors.purple,
-                onTap: () {print('게임');},
-                
-              ),
-               ListTile(
-                leading: const Icon(Icons.shopping_cart),
-                title: const Text('상점'),
-                iconColor: Colors.purple,
-                onTap: () {print('상점');},
-                
-              ),
-               ListTile(
+                  color: Colors.purple[200],
+                  borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15))),
+            ),
+            ListTile(
+              leading: const Icon(Icons.view_list),
+              title: const Text('단어장'),
+              iconColor: Colors.purple,
+              onTap: () {
+                print('단어장');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_today),
+              title: const Text('달력'),
+              iconColor: Colors.purple,
+              onTap: () {
+                print('달력');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.sports_esports),
+              title: const Text('게임'),
+              iconColor: Colors.purple,
+              onTap: () {
+                print('게임');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const GameScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text('상점'),
+              iconColor: Colors.purple,
+              onTap: () {
+                print('상점');
+              },
+            ),
+            ListTile(
                 leading: const Icon(Icons.logout),
                 title: const Text('로그아웃'),
                 iconColor: Colors.purple,
                 onTap: () {
-              FirebaseAuth.instance.signOut().then((value) {
-                print("Signed Out");
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SignInScreen()));
-              });
-                }
-              ),
+                  FirebaseAuth.instance.signOut().then((value) {
+                    print("Signed Out");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignInScreen()));
+                  });
+                }),
           ],
-        )
-      ),
-    body:Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-           Flexible(
-            flex:2,
-            child: Container(
-              color: Colors.red,)),
-          Flexible(
-            flex:2,
-            child: Container(
-              color: Colors.blue,)),
-          Flexible(
-            flex:1,
-            child: Container(
-              color: Colors.green,)),
-        ]),
-    )
-    );
+        )),
+        body: Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Flexible(
+                flex: 2,
+                child: Container(
+                  color: Colors.red,
+                )),
+            Flexible(
+                flex: 2,
+                child: Container(
+                  color: Colors.blue,
+                )),
+            Flexible(
+                flex: 1,
+                child: Container(
+                  color: Colors.green,
+                )),
+          ]),
+        ));
   }
 }
