@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import 'signin_screen.dart';
 
@@ -13,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  final _textController=TextEditingController();
   
   @override
 
@@ -59,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconColor: Colors.purple,
                 onTap: () {
                       print('달력');
+                      
                 },
               
               ),
@@ -98,19 +102,54 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
            Flexible(
-            flex:2,
-            child: Container(
-              color: Colors.red,)),
+            flex:5,
+            child: TableCalendar(
+               locale: 'ko_KR',
+               firstDay: DateTime.utc(2021, 10, 16),
+               lastDay: DateTime.utc(2030, 3, 14),
+               focusedDay: DateTime.now(),
+
+               headerStyle: HeaderStyle(
+                titleCentered: true,
+                 titleTextFormatter: (date, locale) =>
+              DateFormat.yMMMMd(locale).format(date),
+              formatButtonVisible: false,
+              titleTextStyle: const TextStyle(
+            fontSize: 20.0,
+          ),
+              leftChevronIcon: const Icon(
+            Icons.arrow_left,
+            size: 40.0,
+          ),
+          rightChevronIcon: const Icon(
+            Icons.arrow_right,
+            size: 40.0,
+          ),
+               ),
+      ),),
           Flexible(
             flex:2,
             child: Container(
               color: Colors.blue,)),
-          Flexible(
-            flex:1,
-            child: Container(
-              color: Colors.green,)),
-        ]),
-    )
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: 
+             Row(
+                children: [
+                  Flexible(
+                     flex:1,
+                    child: TextField(
+                      controller: _textController,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text("Add"),
+                  )
+                ],
+              ),
+            ),
+      ]))
     );
   }
 }
