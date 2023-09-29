@@ -5,6 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 
 import 'game_screen.dart';
 import 'signin_screen.dart';
+import '../class/task.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,12 +15,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   FirebaseAuth auth = FirebaseAuth.instance;
   final _textController=TextEditingController();
+  List<Task>tasks=[];
+  DateTime selectedDay=DateTime.now();
+
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset : false,
         appBar: AppBar(
           //앱바 구성
           title: const Text('영단어 사전(test)'),
@@ -37,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         drawer: Drawer(
             child: ListView(
+              
           children: [
             UserAccountsDrawerHeader(
               //유저 헤더
@@ -97,44 +104,94 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ),
     body:Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+       // mainAxisAlignment: MainAxisAlignment.center,
         children: [
-           Flexible(
-            flex:5,
-            child: TableCalendar(
+           
+            //flex:5,
+             TableCalendar(
                locale: 'ko_KR',
                firstDay: DateTime.utc(2021, 10, 16),
                lastDay: DateTime.utc(2030, 3, 14),
                focusedDay: DateTime.now(),
+               onDaySelected: (DateTime selectedDay,DateTime focusedDay){
+                  setState(() {
+                    this.selectedDay=selectedDay;
+                    //this.focusedDay = focusedDay;
+                  });
+               },
 
-               headerStyle: HeaderStyle(
+               headerStyle: const HeaderStyle(
                 titleCentered: true,
-                 titleTextFormatter: (date, locale) =>
-              DateFormat.yMMMMd(locale).format(date),
+                // titleTextFormatter: (date, locale) =>
+          //    DateFormat.yMMMMd(locale).format(date),
               formatButtonVisible: false,
-              titleTextStyle: const TextStyle(
+              titleTextStyle: TextStyle(
             fontSize: 20.0,
           ),
-              leftChevronIcon: const Icon(
+              leftChevronIcon: Icon(
             Icons.arrow_left,
             size: 40.0,
           ),
-          rightChevronIcon: const Icon(
+          rightChevronIcon: Icon(
             Icons.arrow_right,
             size: 40.0,
           ),
                ),
-      ),),
-          Flexible(
-            flex:2,
-            child: Container(
-              color: Colors.blue,)),
-          Padding(
+           
+           calendarStyle: CalendarStyle(
+             isTodayHighlighted: true,
+              selectedDecoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.deepPurple, width: 1.0),
+                  ),
+              selectedTextStyle: const TextStyle(
+                color: Colors.amber,
+  fontSize: 16.0,
+              ),
+              todayDecoration: BoxDecoration(
+          color: Colors.transparent,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.purple,width: 1.5)
+        ),
+        todayTextStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+           
+            ),
+      ),
+      Padding(  //선택한 날짜 표시
+        padding: const EdgeInsets.all(0.0),
+        child:Column(children: [
+                Container(
+                  color: Colors.purple[50],
+                    padding: const EdgeInsets.fromLTRB(20, 10, 16, 0),
+                    
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          DateFormat('yyyy.MM.dd', 'ko')
+                              .format(selectedDay)
+                              .toString(),
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              height: 2.0),
+                        ),
+                        
+                      ],
+                      )),
+        ]
+        ),
+        ),  
+       Padding( //텍스트박스
             padding: const EdgeInsets.all(8.0),
+            
             child: 
              Row(
                 children: [
+                  
                   Flexible(
                      flex:1,
                     child: TextField(
@@ -142,13 +199,70 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
-                    child: const Text("Add"),
+                    onPressed: () {
+                      if(_textController.text==''){
+                        return;
+                      }else{
+                       setState(() {
+                         var task=Task(_textController.text);
+                         tasks.add(task);
+                         _textController.clear();
+                       });
+                        }
+                      },
+                    child: const Text("추가"),
                   )
                 ],
               ),
             ),
-      ]))
+      for(var i=0;i<tasks.length;i++)
+           Row(
+              children: [
+                Flexible(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.zero),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child:Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_box_outline_blank_rounded), 
+                          Text(tasks[i].work)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                /*
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                        isModifying = true;
+                                _textController.text = tasks[i].work;
+                                modifyingIndex = i;
+                    });
+                  },
+                  child: const Text("수정"),
+                ),
+                */
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      tasks.remove(tasks[i]);
+                    });
+                  },
+                  child: const Text("삭제"),
+                ),
+              ],
+            ),
+            
+         
+      ])),
+    
     );
   }
 }
