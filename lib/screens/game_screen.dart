@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'flashcards_mode.dart';
+import 'multiplechoice_mode.dart';
+import 'learning_mode.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -76,6 +79,51 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  void showModeSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('모드 선택'),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center, // 가운데 정렬
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // 의미 공부 모드 선택
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const FlashcardsMode(studyEnglish: true),
+                    ),
+                  );
+                },
+                child: const Text('의미 공부'),
+              ),
+              const SizedBox(width: 16), // 버튼 사이의 간격 조절
+              ElevatedButton(
+                onPressed: () {
+                  // 영단어 공부 모드 선택
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const FlashcardsMode(studyEnglish: false),
+                    ),
+                  );
+                },
+                child: const Text('영단어 공부'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +150,8 @@ class _GameScreenState extends State<GameScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // 플래시카드 모드로 이동하는 코드 추가
+                  // 모드 선택 팝업 표시
+                  showModeSelectionDialog();
                 },
                 style: buttonStyle,
                 child: const Text('플래시카드 모드'),
@@ -112,7 +161,10 @@ class _GameScreenState extends State<GameScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // 4지선다 모드로 이동하는 코드 추가
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MultipleChoiceMode()));
                 },
                 style: buttonStyle,
                 child: const Text('4지선다 모드'),
@@ -122,7 +174,10 @@ class _GameScreenState extends State<GameScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // 학습 모드로 이동하는 코드 추가
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LearningMode()));
                 },
                 style: buttonStyle,
                 child: const Text('학습 모드'),
