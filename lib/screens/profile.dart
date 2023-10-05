@@ -22,7 +22,6 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         title: const Text('프로필'),
         backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
