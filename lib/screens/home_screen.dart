@@ -18,8 +18,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   final _textController = TextEditingController();
-  List<Task> tasks = [];
+  //List<Task> tasks = [];
+  var eventDayMap = <DateTime, List<Task>>{};
+
   DateTime selectedDay = DateTime.now();
+   DateTime focusedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -113,9 +116,12 @@ class _HomeScreenState extends State<HomeScreen> {
               onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
                 setState(() {
                   this.selectedDay = selectedDay;
-                  //this.focusedDay = focusedDay;
+                  this.focusedDay = focusedDay;
                 });
               },
+               selectedDayPredicate: (DateTime day) {
+                     return isSameDay(selectedDay, day);
+        },
               headerStyle: const HeaderStyle(
                 titleCentered: true,
                 // titleTextFormatter: (date, locale) =>
@@ -140,15 +146,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   border: Border.all(color: Colors.deepPurple, width: 1.0),
                 ),
                 selectedTextStyle: const TextStyle(
-                  color: Colors.amber,
                   fontSize: 16.0,
                 ),
                 todayDecoration: BoxDecoration(
-                    color: Colors.transparent,
+                    //color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.purple, width: 1.5)),
                 todayTextStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
+                  
                 ),
               ),
             ),
@@ -193,8 +199,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         return;
                       } else {
                         setState(() {
-                          var task = Task(_textController.text);
-                          tasks.add(task);
+                          var task = Task(selectedDay,_textController.text);
+                          //tasks.add(task);
+                          (eventDayMap[selectedDay] ??=[]).add(task);
                           _textController.clear();
                         });
                       }
@@ -204,7 +211,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            for (var i = 0; i < tasks.length; i++)
+            
+            /*
+            for (var i = 0; i < eventDayMap.length; i++)
               Row(
                 children: [
                   Flexible(
@@ -220,34 +229,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Row(
                           children: [
                             const Icon(Icons.check_box_outline_blank_rounded),
-                            Text(tasks[i].work)
+                            Text(eventDayMap[selectedDay].value);
                           ],
                         ),
                       ),
                     ),
                   ),
-                  /*
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                        isModifying = true;
-                                _textController.text = tasks[i].work;
-                                modifyingIndex = i;
-                    });
-                  },
-                  child: const Text("수정"),
-                ),
-                */
                   TextButton(
                     onPressed: () {
                       setState(() {
-                        tasks.remove(tasks[i]);
+                       // tasks.remove(tasks[i]);
+                        eventDayMap.remove(eventDayMap[i]);
                       });
                     },
                     child: const Text("삭제"),
                   ),
                 ],
               ),
+              */
           ])),
     );
   }

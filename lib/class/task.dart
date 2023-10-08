@@ -2,7 +2,8 @@
 class Task{
   String work;
   bool isComplete;
+  DateTime date;
  // DateTime date;
 
-  Task(this.work): isComplete=false;
+  Task(this.work,this.date): isComplete=false;
 }
