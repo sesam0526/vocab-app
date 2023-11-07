@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,7 +6,6 @@ import 'package:table_calendar/table_calendar.dart';
 
 import 'game_screen.dart';
 import 'signin_screen.dart';
-import '../class/task.dart';
 import 'profile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,12 +17,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
+   
   final _textController = TextEditingController();
-  //List<Task> tasks = [];
-  var eventDayMap = <DateTime, List<Task>>{};
 
   DateTime selectedDay = DateTime.now();
    DateTime focusedDay = DateTime.now();
+
+
+void _taskAdder(String work,DateTime date){
+     final taskAdd=FirebaseFirestore.instance.collection("users").doc("id(ex)user@naver.com)").collection("To-do list").doc(work);
+     taskAdd.set({"work":work,"isComplete":false,"date":DateFormat('yyyy.MM.dd', 'ko')
+                              .format(date)
+                              .toString()});
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -199,11 +206,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         return;
                       } else {
                         setState(() {
-                          var task = Task(selectedDay,_textController.text);
-                          //tasks.add(task);
-                          (eventDayMap[selectedDay] ??=[]).add(task);
+                        
+                            _taskAdder(_textController.text,selectedDay);
+                         
+                          
                           _textController.clear();
-                        });
+                        }); 
                       }
                     },
                     child: const Text("추가"),
@@ -247,7 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               */
+              
           ])),
     );
+    
   }
 }

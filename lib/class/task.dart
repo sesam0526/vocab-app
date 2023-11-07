@@ -5,5 +5,5 @@ class Task{
   DateTime date;
  // DateTime date;
 
-  Task(this.work,this.date): isComplete=false;
+  Task(this.date,this.work): isComplete=false;
 }
