@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../class/task.dart';
 import 'game_screen.dart';
 import 'signin_screen.dart';
 import 'profile.dart';
@@ -22,14 +23,49 @@ class _HomeScreenState extends State<HomeScreen> {
 
   DateTime selectedDay = DateTime.now();
    DateTime focusedDay = DateTime.now();
-
-
+  final collectionReference =
+        FirebaseFirestore.instance.collection("users").doc("hjj3@gmail.com").collection("To-do list").where("date",isEqualTo: DateFormat('yyyy.MM.dd', 'ko')
+                              .format(DateTime.now())
+                              .toString() );
+                              
+                                get snapshot => null;
 void _taskAdder(String work,DateTime date){
-     final taskAdd=FirebaseFirestore.instance.collection("users").doc("id(ex)user@naver.com)").collection("To-do list").doc(work);
+     final taskAdd=FirebaseFirestore.instance.collection("users").doc("hjj3@gmail.com").collection("To-do list").doc(work);
      taskAdd.set({"work":work,"isComplete":false,"date":DateFormat('yyyy.MM.dd', 'ko')
                               .format(date)
                               .toString()});
     }
+  
+  void _selectDay(DateTime date){
+    final collectionReference =
+        FirebaseFirestore.instance.collection("users").doc("hjj3@gmail.com").collection("To-do list").where("date",isEqualTo: DateFormat('yyyy.MM.dd', 'ko')
+                              .format(date)
+                              .toString() );
+    
+  }
+  
+  Widget _buildList(DocumentSnapshot doc){
+    final todo= Task(doc['work']);
+    return ListTile(
+      onTap: (){
+
+      },
+      trailing: IconButton(
+        icon: const Icon(Icons.delete),
+        onPressed: (){
+
+        },
+      ),
+        title:Text(
+          todo.work,
+          style: todo.isComplete?
+             const TextStyle(
+              decoration: TextDecoration.lineThrough,
+              fontStyle: FontStyle.italic,
+             ): null,
+          ),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +160,7 @@ void _taskAdder(String work,DateTime date){
                 setState(() {
                   this.selectedDay = selectedDay;
                   this.focusedDay = focusedDay;
+                  _selectDay(selectedDay);
                 });
               },
                selectedDayPredicate: (DateTime day) {
@@ -206,10 +243,7 @@ void _taskAdder(String work,DateTime date){
                         return;
                       } else {
                         setState(() {
-                        
                             _taskAdder(_textController.text,selectedDay);
-                         
-                          
                           _textController.clear();
                         }); 
                       }
@@ -219,9 +253,24 @@ void _taskAdder(String work,DateTime date){
                 ],
               ),
             ),
-            
+            StreamBuilder<QuerySnapshot>(
+              stream: collectionReference.snapshots(),
+              builder: (context,snapshot){
+                if(!snapshot.hasData){
+                 // const Text("해야할 일 없음");
+                 return const CircularProgressIndicator();
+                }
+                
+                final docs=snapshot.data!.docs;
+                return Expanded(
+                  child:ListView(
+                    children: docs.map((doc)=>
+                    _buildList(doc)).toList()
+                    ),
+                   );
+              })
             /*
-            for (var i = 0; i < eventDayMap.length; i++)
+            //for  
               Row(
                 children: [
                   Flexible(
@@ -237,7 +286,7 @@ void _taskAdder(String work,DateTime date){
                         child: Row(
                           children: [
                             const Icon(Icons.check_box_outline_blank_rounded),
-                            Text(eventDayMap[selectedDay].value);
+                            Text("fdsfd");
                           ],
                         ),
                       ),
@@ -247,7 +296,7 @@ void _taskAdder(String work,DateTime date){
                     onPressed: () {
                       setState(() {
                        // tasks.remove(tasks[i]);
-                        eventDayMap.remove(eventDayMap[i]);
+                        
                       });
                     },
                     child: const Text("삭제"),
@@ -256,8 +305,9 @@ void _taskAdder(String work,DateTime date){
               ),
               */
               
-          ])),
+          ])
+          ),
     );
     
-  }
+  } //build
 }
