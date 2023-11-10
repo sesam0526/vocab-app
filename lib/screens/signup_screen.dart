@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/reusable_widgets/reusable_widget.dart';
 import 'package:flutter_project/utils/color_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'home_screen.dart';
 
@@ -67,7 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           password: _passwordTextController.text)
                       .then((value) async {       
                     print("Created New Account");
-                    
+                    FirebaseFirestore.instance.collection("users").doc( _emailTextController.text).set({"id": _emailTextController.text,"nickname":_userNameTextController.text});
                     await FirebaseAuth.instance.currentUser?.updateDisplayName(_userNameTextController.text);
                     Navigator.push(
                         context,

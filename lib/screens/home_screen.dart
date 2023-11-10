@@ -1,10 +1,16 @@
+
+
+
+
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../class/task.dart';
 import 'game_screen.dart';
 import 'signin_screen.dart';
 import 'profile.dart';
@@ -23,52 +29,84 @@ class _HomeScreenState extends State<HomeScreen> {
 
   DateTime selectedDay = DateTime.now();
    DateTime focusedDay = DateTime.now();
-  final collectionReference =
-        FirebaseFirestore.instance.collection("users").doc("hjj3@gmail.com").collection("To-do list").where("date",isEqualTo: DateFormat('yyyy.MM.dd', 'ko')
-                              .format(DateTime.now())
-                              .toString() );
-                              
-                                get snapshot => null;
-void _taskAdder(String work,DateTime date){
-     final taskAdd=FirebaseFirestore.instance.collection("users").doc("hjj3@gmail.com").collection("To-do list").doc(work);
+                          
+  void _taskAdder(String uid,String work,DateTime date){
+     final taskAdd=FirebaseFirestore.instance.collection("users").doc(uid).collection("To-do list").doc();
      taskAdd.set({"work":work,"isComplete":false,"date":DateFormat('yyyy.MM.dd', 'ko')
                               .format(date)
                               .toString()});
     }
-  
-  void _selectDay(DateTime date){
-    final collectionReference =
-        FirebaseFirestore.instance.collection("users").doc("hjj3@gmail.com").collection("To-do list").where("date",isEqualTo: DateFormat('yyyy.MM.dd', 'ko')
+
+  Future<QuerySnapshot> readList(String uid,DateTime date) async {
+  return FirebaseFirestore.instance.collection("users").doc(uid).collection("To-do list").where("date",isEqualTo: DateFormat('yyyy.MM.dd', 'ko')
                               .format(date)
-                              .toString() );
-    
-  }
-  
-  Widget _buildList(DocumentSnapshot doc){
-    final todo= Task(doc['work']);
-    return ListTile(
-      onTap: (){
-
-      },
-      trailing: IconButton(
-        icon: const Icon(Icons.delete),
-        onPressed: (){
-
-        },
-      ),
-        title:Text(
-          todo.work,
-          style: todo.isComplete?
-             const TextStyle(
-              decoration: TextDecoration.lineThrough,
-              fontStyle: FontStyle.italic,
-             ): null,
+                              .toString()).get();                          
+}
+  Future<void> _taskDelete(String uid,String id) async{
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('삭제 확인창', style: TextStyle(fontSize: 20),),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              //List Body를 기준으로 Text 설정
+              children: <Widget>[
+                Text('정말 삭제하시겠습니까?'),
+              ],
+            ),
           ),
-      );
-  }
+          actions: [
+            TextButton(
+              child: const Text('삭제'),
+              onPressed: () {
+                setState(() {
+                  FirebaseFirestore.instance.collection("users").doc(uid).collection("To-do list").doc(id).delete(); 
+                Navigator.of(context).pop();
+                });          
+              },
+            ),
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    ); 
+ }
+
+   Future<void> _taskUpdate(String uid,String id,bool state)async{
+      if(state==true){
+          FirebaseFirestore.instance.collection("users").doc(uid).collection("To-do list").doc(id).update({'isComplete': false});
+      }else{
+          FirebaseFirestore.instance.collection("users").doc(uid).collection("To-do list").doc(id).update({'isComplete': true});
+      }
+   
+ }
+
+ Future<void> _attendance(var list,DateTime date) async{
+     String day=DateFormat('yyyy.MM.dd', 'ko')
+                              .format(date)
+                              .toString();
+      /*
+      if(list.doc(day).get().length<=0){
+        print("출석 성공");
+        list.doc(day).set({"date":day});
+      }else{
+        print("출석 이미");
+      }   
+      */
+   
+ }
 
   @override
   Widget build(BuildContext context) {
+    String uid=auth.currentUser!.email.toString();
+    var attemList=FirebaseFirestore.instance.collection("users").doc(uid).collection("Attendance");
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -97,13 +135,13 @@ void _taskAdder(String work,DateTime date){
               backgroundColor: Colors.white,
             ),
             accountName: Text(auth.currentUser!.displayName.toString()),
-            accountEmail: Text(auth.currentUser!.email.toString()),
+            accountEmail: Text(uid),
             onDetailsPressed: () {}, // 디테일
             decoration: BoxDecoration(
                 color: Colors.purple[200],
                 borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15))),
+                    bottomRight: Radius.circular(15))),       
           ),
           ListTile(
             leading: const Icon(Icons.view_list),
@@ -159,8 +197,7 @@ void _taskAdder(String work,DateTime date){
               onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
                 setState(() {
                   this.selectedDay = selectedDay;
-                  this.focusedDay = focusedDay;
-                  _selectDay(selectedDay);
+                  //this.focusedDay = focusedDay   
                 });
               },
                selectedDayPredicate: (DateTime day) {
@@ -168,8 +205,6 @@ void _taskAdder(String work,DateTime date){
         },
               headerStyle: const HeaderStyle(
                 titleCentered: true,
-                // titleTextFormatter: (date, locale) =>
-                //    DateFormat.yMMMMd(locale).format(date),
                 formatButtonVisible: false,
                 titleTextStyle: TextStyle(
                   fontSize: 20.0,
@@ -201,6 +236,7 @@ void _taskAdder(String work,DateTime date){
                   
                 ),
               ),
+             // eventLoader: ,
             ),
             Padding(
               //선택한 날짜 표시
@@ -243,68 +279,74 @@ void _taskAdder(String work,DateTime date){
                         return;
                       } else {
                         setState(() {
-                            _taskAdder(_textController.text,selectedDay);
+                            _taskAdder(uid,_textController.text,selectedDay);
                           _textController.clear();
                         }); 
-                      }
+                      }    
                     },
                     child: const Text("추가"),
                   )
                 ],
               ),
             ),
-            StreamBuilder<QuerySnapshot>(
-              stream: collectionReference.snapshots(),
-              builder: (context,snapshot){
-                if(!snapshot.hasData){
-                 // const Text("해야할 일 없음");
-                 return const CircularProgressIndicator();
-                }
-                
-                final docs=snapshot.data!.docs;
-                return Expanded(
-                  child:ListView(
-                    children: docs.map((doc)=>
-                    _buildList(doc)).toList()
-                    ),
-                   );
-              })
-            /*
-            //for  
-              Row(
-                children: [
-                  Flexible(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.zero),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.check_box_outline_blank_rounded),
-                            Text("fdsfd");
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                       // tasks.remove(tasks[i]);
-                        
-                      });
-                    },
-                    child: const Text("삭제"),
-                  ),
-                ],
+           Expanded(
+                child: FutureBuilder<QuerySnapshot>(
+                    future: readList(uid,selectedDay),
+                    builder: (context, snapshot) {
+                      final documents = snapshot.data?.docs ?? [];
+                      if (documents.isEmpty) {
+                        return const Center(child: Text("할 일이 없습니다."));
+                      }
+                      return ListView.builder(
+                        itemCount: documents.length,
+                        itemBuilder: (context, index) {
+                          final doc = documents[index];
+                          String work = doc.get('work');
+                          bool isComplete=doc.get('isComplete');
+                          String id=doc.id;
+                          return ListTile(
+                            onTap: (){
+                              setState(() {
+                                 _taskUpdate(uid,id,isComplete);
+                              });
+                            },
+                            trailing: IconButton(
+                              icon: const Icon(CupertinoIcons.delete),
+                              onPressed: () {
+                               _taskDelete(uid,id);      
+                              },
+                            ),
+                            title: Text(
+                              work,
+                              style: isComplete?
+                               const TextStyle(
+                                 decoration: TextDecoration.lineThrough,
+                                 fontStyle: FontStyle.italic,
+                              ): null,
+                            )
+                            
+                          );
+                        },
+                      );
+                    }),
+           ),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: (){
+                _attendance(attemList, focusedDay);    
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.purple[300])
+                ),
+              child: const Text('출석',
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white
+                ),),
               ),
-              */
-              
+            ),
           ])
           ),
     );
