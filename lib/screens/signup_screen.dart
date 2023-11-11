@@ -68,7 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           password: _passwordTextController.text)
                       .then((value) async {       
                     print("Created New Account");
-                    FirebaseFirestore.instance.collection("users").doc( _emailTextController.text).set({"id": _emailTextController.text,"nickname":_userNameTextController.text});
+                    FirebaseFirestore.instance.collection("users").doc( _emailTextController.text).set({"id": _emailTextController.text,"nickname":_userNameTextController.text,"money":0,"score":0});
                     await FirebaseAuth.instance.currentUser?.updateDisplayName(_userNameTextController.text);
                     Navigator.push(
                         context,

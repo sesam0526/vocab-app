@@ -38,7 +38,12 @@ class _FriendScreenState extends State<FriendScreen> {
                     _sendFriendRequest(_emailController.text);
                     _emailController.clear();
                   },
-                  child: const Text('친구 요청 보내기'),
+                  child: const Row(children: [
+                    Text('친구 요청 보내기  '),
+                    Icon(Icons.person_add_alt),
+                  ],)
+                  
+                  
                 ),
               ],
             ),
@@ -80,20 +85,21 @@ class _FriendScreenState extends State<FriendScreen> {
         .snapshots()
         .map((QuerySnapshot query) {
       List<String> friendList = [];
-      query.docs.forEach((doc) {
+      for (var doc in query.docs) {
         friendList.add(doc['friend_id']);
-      });
+      }
       return friendList;
     });
   }
 
+  
   void _sendFriendRequest(String friendEmail) async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       // 이메일을 사용하여 사용자 UID 가져오기
       QuerySnapshot query = await FirebaseFirestore.instance
           .collection('users')
-          .where('email', isEqualTo: friendEmail)
+          .where('id', isEqualTo: friendEmail)
           .get();
 
       if (query.docs.isNotEmpty) {
@@ -101,15 +107,15 @@ class _FriendScreenState extends State<FriendScreen> {
 
         // Firestore "friends" 콜렉션에 친구 요청 추가
         await FirebaseFirestore.instance.collection('friends').add({
-          'user_id': currentUser.uid,
+          'user_id': currentUser.email,
           'friend_id': friendUid,
           'status': 'pending',
         });
       } else {
         // 사용자를 찾을 수 없음을 알림
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('입력한 이메일을 가진 사용자를 찾을 수 없습니다.'),
+          const SnackBar(
+            content: Text('입력한 이메일을 가진 사용자를 찾을 수 없습니다.'),
           ),
         );
       }
