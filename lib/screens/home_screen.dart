@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project/screens/VocabularySreen.dart';
+import 'package:flutter_project/screens/WordTest_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -222,6 +224,8 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
             iconColor: Colors.purple,
             onTap: () {
               print('단어장');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const VocabularyScreen()));
             },
           ),
           ListTile(

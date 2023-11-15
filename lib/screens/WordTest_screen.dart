@@ -40,7 +40,7 @@ class _WordTest extends State<WordTest> {
                     Expanded(
                       child: TextField(
                         controller: wordController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: "단어",
                         ),
                       ),
@@ -49,7 +49,7 @@ class _WordTest extends State<WordTest> {
                     Expanded(
                       child: TextField(
                         controller: meaningController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: "의미",
                         ),
                       ),
@@ -58,7 +58,7 @@ class _WordTest extends State<WordTest> {
                     
                     /// 추가 버튼
                     ElevatedButton(
-                      child: Icon(Icons.add),
+                      child: const Icon(Icons.add),
                       onPressed: () {
                         // create bucket
                         if (wordController.text.isNotEmpty) {

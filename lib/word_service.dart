@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class WordService extends ChangeNotifier {
-  final wordCollection = FirebaseFirestore.instance.collection('word');
+  final wordCollection = FirebaseFirestore.instance.collection('users');
+  //final wordCollection = FirebaseFirestore.instance.collection('word');
 
   Future<QuerySnapshot> read(String uid) async {
     // 
@@ -12,11 +13,12 @@ class WordService extends ChangeNotifier {
   void create(String word, String meaning, String uid) async {
     // word 만들기
 
-    await wordCollection.add({
+    await wordCollection.doc(uid).collection('word').add({
       'uid' : uid,
       'word' : word,
       'meaning' : meaning,
     });
+    //await word
     notifyListeners();
   }
 
