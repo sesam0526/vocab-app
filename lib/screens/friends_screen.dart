@@ -13,6 +13,8 @@ class _FriendScreenState extends State<FriendScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
 
+  var i;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,31 +24,37 @@ class _FriendScreenState extends State<FriendScreen> {
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: '친구의 이메일',
-                    ),
-                  ),
-                ),
-                ElevatedButton(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton(
                   onPressed: () {
-                    _sendFriendRequest(_emailController.text);
-                    _emailController.clear();
+                    _addFriendScreen();
                   },
-                  child: const Row(children: [
-                    Text('친구 요청 보내기  '),
-                    Icon(Icons.person_add_alt),
-                  ],)
-                  
-                  
-                ),
-              ],
-            ),
+                  style: const ButtonStyle(
+                      // padding: MaterialStateProperty.all(const EdgeInsets.all(20.0)),
+
+                      ),
+                  child: const Row(
+                    children: [
+                      Text('친구 추가  '),
+                      Icon(Icons.person_add_alt),
+                    ],
+                  )),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                  onPressed: () {
+                    _rFriendList();
+                  },
+                  child: Row(
+                    children: [
+                      const Text('요청 리스트  '),
+                      (i == 0)
+                          ? const Icon(Icons.list)
+                          : const Icon(Icons.list),
+                      const Icon(Icons.priority_high, color: Colors.red)
+                    ],
+                  )),
+            ]),
           ),
           StreamBuilder<List<String>>(
             stream: _getFriendList(),
@@ -92,7 +100,6 @@ class _FriendScreenState extends State<FriendScreen> {
     });
   }
 
-  
   void _sendFriendRequest(String friendEmail) async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
@@ -119,6 +126,112 @@ class _FriendScreenState extends State<FriendScreen> {
           ),
         );
       }
+    }
+  }
+
+  void _requsetFriendCk() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      QuerySnapshot query = await FirebaseFirestore.instance
+          .collection('friends')
+          .where('friend_id', isEqualTo: currentUser.uid)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+      } else {
+        const Text('받은 요청이 존재하지 않습니다.');
+      }
+    }
+  }
+
+  Future<void> _addFriendScreen() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            '친구 추가창',
+            style: TextStyle(fontSize: 20),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              //List Body를 기준으로 Text 설정
+              children: <Widget>[
+                Text('요청보낼 친구의 이메일을 입력하세요.'),
+              ],
+            ),
+          ),
+          actions: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: '친구의 이메일',
+              ),
+            ),
+            Row(
+              children: [
+                TextButton(
+                  child: const Text('취소'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _sendFriendRequest(_emailController.text);
+                      _emailController.clear();
+                    },
+                    child: const Row(
+                      children: [Text('요청 보내기  '), Icon(Icons.person_add_alt)],
+                    )),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _rFriendList() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      QuerySnapshot query = await FirebaseFirestore.instance
+          .collection('friends')
+          .where('friend_id', isEqualTo: currentUser.email.toString())
+          .get();
+
+      // ignore: use_build_context_synchronously
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: true, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
+        builder: (BuildContext context) {
+          if (query.docs.isNotEmpty) {
+            return const AlertDialog(
+              title: Text(
+                '친구 요청 리스트',
+                style: TextStyle(fontSize: 20),
+              ),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  //List Body를 기준으로 Text 설정
+                  children: <Widget>[
+                    
+                    Row()],
+                ),
+              ),
+              actions: [ListTile()],
+            );
+          } else {
+            return const AlertDialog(
+              title: Text(
+                '받은 요청이 존재하지 않습니다.',
+                style: TextStyle(fontSize: 20),
+              ),
+            );
+          }
+        },
+      );
     }
   }
 }
