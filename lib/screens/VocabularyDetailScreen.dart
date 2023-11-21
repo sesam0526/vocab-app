@@ -15,6 +15,9 @@ class VocabularyDetailScreen extends StatefulWidget {
 class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
   final VocabularyService _vocabService = VocabularyService();
 
+  final TextEditingController _searchController = TextEditingController();
+  String _searchTerm = '';
+
     Future<void> _showWordOptionsDialog(DocumentSnapshot word) async {
     return showDialog<void>(
       context: context,
@@ -106,7 +109,36 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.vocabularyName),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              // 검색 버튼을 눌렀을 때 동작
+              setState(() {
+                _searchTerm = _searchController.text;
+              });
+            },
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: const InputDecoration(
+              labelText: '단어 검색',
+              prefixIcon: Icon(Icons.search),
+            ),
+            onSubmitted: (value) {
+              setState(() {
+                _searchTerm = value;
+              });
+            },
+          ),
+        ),
       ),
+      
+
+
       body: StreamBuilder<QuerySnapshot>(
         // Firestore에서 해당 단어장의 단어 목록을 가져오는 스트림
         stream: _vocabService.getWords(widget.vocabularyId),
@@ -116,6 +148,13 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
           }
 
           var words = snapshot.data!.docs;
+
+          if (_searchTerm.isNotEmpty) {
+            words = words.where((doc) {
+              return doc['word'].toString().toLowerCase().contains(_searchTerm.toLowerCase());
+            }).toList();
+          }
+
           return ListView.builder(
             itemCount: words.length,
             itemBuilder: (context, index) {
@@ -123,10 +162,7 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
               return ListTile(
                 title: Text(word['word']),
                 subtitle: Text(word['meaning']),
-                onTap: () {
-                  // 단어 수정 대화상자 표시
-                  _addEditWordDialog(wordId: word.id, word: word['word'], meaning: word['meaning']);
-                },
+
                 onLongPress: () {
                   _showWordOptionsDialog(word);                },
               );
