@@ -3,13 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/screens/VocabularySreen.dart';
-import 'package:flutter_project/screens/WordTest_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'game_screen.dart';
 import 'profile.dart';
 import 'friends_screen.dart';
+import 'signin_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -172,16 +172,22 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
       }
     });
   }
-
+ 
   @override
   Widget build(BuildContext context) {
-    String uid = auth.currentUser!.email.toString();
+    String uid='abc';
+    String uname='sample';
+    if(auth.currentUser!=null){
+    uid = auth.currentUser!.email.toString();
+    uname=auth.currentUser!.displayName.toString();
     CollectionReference<Map<String, dynamic>> attemL = FirebaseFirestore
         .instance
         .collection("users")
         .doc(uid)
         .collection("Attendance");
     _makeMap(attemL);
+    }
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -209,7 +215,7 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
             currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white,
             ),
-            accountName: Text(auth.currentUser!.displayName.toString()),
+            accountName: Text(uname),
             accountEmail: Text(uid),
             onDetailsPressed: () {}, // 디테일
             decoration: BoxDecoration(
@@ -256,7 +262,7 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
                   MaterialPageRoute(builder: (context) => const FriendScreen()));
             },
           ),
-/*
+
           ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('로그아웃'),
@@ -270,7 +276,7 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
                           builder: (context) => const SignInScreen()));
                 });
               }),
-              */
+              
         ],
       )),
       body: Center(
@@ -456,5 +462,7 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
             ),
           ])),
     );
+    
+     
   } //build
 }
