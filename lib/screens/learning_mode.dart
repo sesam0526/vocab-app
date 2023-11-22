@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class LearningMode extends StatefulWidget {
-  const LearningMode({Key? key}) : super(key: key);
+  final bool studyEnglish; // 영어 공부 모드 여부
+
+  const LearningMode({Key? key, required this.studyEnglish}) : super(key: key);
 
   @override
   _LearningModeState createState() => _LearningModeState();
@@ -47,8 +49,12 @@ class _LearningModeState extends State<LearningMode> {
   void _loadNextWord() {
     setState(() {
       if (_currentWordIndex < exampleWords.length) {
-        _currentWord = exampleWords[_currentWordIndex]['word']!;
-        _currentMeaning = exampleWords[_currentWordIndex]['meaning']!;
+        _currentWord = widget.studyEnglish
+            ? exampleWords[_currentWordIndex]['word']!
+            : exampleWords[_currentWordIndex]['meaning']!;
+        _currentMeaning = widget.studyEnglish
+            ? exampleWords[_currentWordIndex]['meaning']!
+            : exampleWords[_currentWordIndex]['word']!;
         _isCorrect = null; // 다음 문제로 넘어갈 때 표시되지 않도록 null로 초기화
         _inputController.clear();
         _currentWordIndex++;
@@ -67,6 +73,40 @@ class _LearningModeState extends State<LearningMode> {
       String userInput = _inputController.text.trim();
       _isCorrect = userInput == _currentMeaning;
     });
+  }
+
+  void showModeSelectionDialog(
+      void Function(bool studyEnglish) navigateToMode) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('모드 선택'),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // 의미 공부 모드 선택
+                  Navigator.of(context).pop();
+                  navigateToMode(true);
+                },
+                child: const Text('의미 공부'),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // 영단어 공부 모드 선택
+                  Navigator.of(context).pop();
+                  navigateToMode(false);
+                },
+                child: const Text('영단어 공부'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -92,9 +132,10 @@ class _LearningModeState extends State<LearningMode> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
                   controller: _inputController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: '의미를 입력하세요',
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText:
+                        widget.studyEnglish ? '의미를 입력하세요' : '영어 단어를 입력하세요',
                   ),
                   onSubmitted: (_) {
                     _checkAnswer(); // 엔터 키로 정답 확인

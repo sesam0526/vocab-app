@@ -79,41 +79,30 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  void showModeSelectionDialog() {
+  void showModeSelectionDialog(
+      void Function(bool studyEnglish) navigateToMode) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('모드 선택'),
           content: Row(
-            mainAxisAlignment: MainAxisAlignment.center, // 가운데 정렬
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
                 onPressed: () {
                   // 의미 공부 모드 선택
                   Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const FlashcardsMode(studyEnglish: true),
-                    ),
-                  );
+                  navigateToMode(true);
                 },
                 child: const Text('의미 공부'),
               ),
-              const SizedBox(width: 16), // 버튼 사이의 간격 조절
+              const SizedBox(width: 16),
               ElevatedButton(
                 onPressed: () {
                   // 영단어 공부 모드 선택
                   Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const FlashcardsMode(studyEnglish: false),
-                    ),
-                  );
+                  navigateToMode(false);
                 },
                 child: const Text('영단어 공부'),
               ),
@@ -151,7 +140,15 @@ class _GameScreenState extends State<GameScreen> {
               ElevatedButton(
                 onPressed: () {
                   // 모드 선택 팝업 표시
-                  showModeSelectionDialog();
+                  showModeSelectionDialog((studyEnglish) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FlashcardsMode(studyEnglish: studyEnglish),
+                      ),
+                    );
+                  });
                 },
                 style: buttonStyle,
                 child: const Text('플래시카드 모드'),
@@ -174,10 +171,16 @@ class _GameScreenState extends State<GameScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  // 모드 선택 팝업 표시
+                  showModeSelectionDialog((studyEnglish) {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const LearningMode()));
+                        builder: (context) =>
+                            LearningMode(studyEnglish: studyEnglish),
+                      ),
+                    );
+                  });
                 },
                 style: buttonStyle,
                 child: const Text('학습 모드'),
