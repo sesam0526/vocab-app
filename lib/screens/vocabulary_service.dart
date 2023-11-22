@@ -4,54 +4,62 @@ import 'package:firebase_auth/firebase_auth.dart';
 class VocabularyService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  String getCurrentUserEmail() {
+    return _auth.currentUser!.email!;
+  }
   Stream<QuerySnapshot> getVocabularies() {
+    String email = getCurrentUserEmail();
     return _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .snapshots();
   }
 
   Future<List<DocumentSnapshot>> getVocabularyBooks() async {
+    String email = getCurrentUserEmail();
     final snapshot = await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .get();
     return snapshot.docs;
   }
 
   Future<void> addVocabulary(String name, String? description) async {
+    String email = getCurrentUserEmail();
     await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .add({'name': name, 'description': description ?? ''});
   }
 
   Future<void> updateVocabulary(
       String docId, String name, String? description) async {
+    String email = getCurrentUserEmail();
     await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .doc(docId)
         .update({'name': name, 'description': description ?? ''});
   }
 
   Future<void> deleteVocabulary(String docId) async {
+    String email = getCurrentUserEmail();
     await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .doc(docId)
         .delete();
   }
 
   Query<Map<String, dynamic>> getWords(String vocabularyId) {
-    return _firestore.collection('Users')
-      .doc(_auth.currentUser!.uid)
+    String email = getCurrentUserEmail();
+    return _firestore.collection('users')
+      .doc(email)
       .collection('Vocabularies')
       .doc(vocabularyId)
       .collection('Words')
@@ -59,9 +67,10 @@ class VocabularyService {
   }
 
   Future<void> addWord(String vocabularyId, String word, String meaning) async {
+    String email = getCurrentUserEmail();
     await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .doc(vocabularyId)
         .collection('Words')
@@ -73,9 +82,10 @@ class VocabularyService {
 
   Future<void> updateWord(
       String vocabularyId, String wordId, String word, String meaning) async {
+        String email = getCurrentUserEmail();
     await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .doc(vocabularyId)
         .collection('Words')
@@ -84,9 +94,10 @@ class VocabularyService {
   }
 
   Future<void> deleteWord(String vocabularyId, String wordId) async {
+    String email = getCurrentUserEmail();
     await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
+        .collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .doc(vocabularyId)
         .collection('Words')
@@ -94,8 +105,9 @@ class VocabularyService {
         .delete();
   }
   Future<bool> checkWordExistence(String vocabularyId, String word, String? excludingWordId) async {
-    QuerySnapshot query = await _firestore.collection('Users')
-        .doc(_auth.currentUser!.uid)
+    String email = getCurrentUserEmail();
+    QuerySnapshot query = await _firestore.collection('users')
+        .doc(email)
         .collection('Vocabularies')
         .doc(vocabularyId)
         .collection('Words')
