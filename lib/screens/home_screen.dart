@@ -41,8 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
           .doc(uid)
           .collection("Attendance");
       _makeMap(attemL);
-
-      
     }
 
     return Scaffold(

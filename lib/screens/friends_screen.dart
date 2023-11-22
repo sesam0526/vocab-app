@@ -13,11 +13,17 @@ class _FriendScreenState extends State<FriendScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
 
-  var check;
- 
+  var check=0;
+  //List<String> list=[];
+  
   @override
   Widget build(BuildContext context) {
     Future<QuerySnapshot<Object?>?> query=checkFr(); 
+    // ignore: unnecessary_null_comparison
+    if(query!=null){
+      check=1;
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('친구 목록'),
@@ -44,7 +50,7 @@ class _FriendScreenState extends State<FriendScreen> {
               const SizedBox(width: 20),
               ElevatedButton(
                   onPressed: () {
-                    //_rFriendList();
+                    _rFriendList();
                   },
                   child: Row(
                     children: [
@@ -100,6 +106,25 @@ class _FriendScreenState extends State<FriendScreen> {
       return friendList;
     });
   }
+  
+   Stream<List<String>> _getList(){
+    User? user = _auth.currentUser;
+    if (user == null) {
+      return Stream.value([]);
+    }
+    return FirebaseFirestore.instance
+        .collection('friends')
+        .where('user_id', isEqualTo: user.email.toString())
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((QuerySnapshot query) {
+      List<String> list = [];
+      for (var doc in query.docs) {
+        list.add(doc['friend_id']);
+      }
+      return list;
+    });
+  }
 
   void _sendFriendRequest(String friendEmail) async {
     User? currentUser = _auth.currentUser;
@@ -126,21 +151,6 @@ class _FriendScreenState extends State<FriendScreen> {
             content: Text('입력한 이메일을 가진 사용자를 찾을 수 없습니다.'),
           ),
         );
-      }
-    }
-  }
-
-  void _requsetFriendCk() async {
-    User? currentUser = _auth.currentUser;
-    if (currentUser != null) {
-      QuerySnapshot query = await FirebaseFirestore.instance
-          .collection('friends')
-          .where('friend_id', isEqualTo: currentUser.uid)
-          .get();
-
-      if (query.docs.isNotEmpty) {
-      } else {
-        const Text('받은 요청이 존재하지 않습니다.');
       }
     }
   }
@@ -199,9 +209,15 @@ class _FriendScreenState extends State<FriendScreen> {
       QuerySnapshot query = await FirebaseFirestore.instance
           .collection('friends')
           .where('friend_id', isEqualTo: currentUser.email.toString())
+          .where('status', isEqualTo: 'pending')
           .get();
       if(query.docs.isNotEmpty){
          check=1;
+         /*
+          for (var doc in query.docs) {
+           list.add(doc['user_id']);
+      }
+      */
          return query;
       }else{
          check=0;
@@ -210,39 +226,53 @@ class _FriendScreenState extends State<FriendScreen> {
     }
     return null;
   }
-
-  Future<void> _rFriendList(User user) async {
+/*
+   void _requsetFriendCk() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
       QuerySnapshot query = await FirebaseFirestore.instance
           .collection('friends')
-          .where('friend_id', isEqualTo: user)
+          .where('friend_id', isEqualTo: currentUser.uid)
           .get();
 
+      if (query.docs.isNotEmpty) {
+      } else {
+        const Text('받은 요청이 존재하지 않습니다.');
+      }
+    }
+  }
+*/
+  Future<void> _rFriendList() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null){
+      QuerySnapshot query = await FirebaseFirestore.instance
+          .collection('friends')
+          .where('friend_id', isEqualTo: currentUser.email.toString())
+          .get();
+       
       // ignore: use_build_context_synchronously
       return showDialog<void>(
         context: context,
         barrierDismissible: true, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
         builder: (BuildContext context) {
           if (query.docs.isNotEmpty) {
+            
+            return const AlertDialog(
+              title: Text(
+                '친구 요청 리스트',
+                style: TextStyle(fontSize: 20),
+              ),
+              //content:
+              
+            );
+          } else {
             return const AlertDialog(
               title: Text(
                 '친구 요청 리스트',
                 style: TextStyle(fontSize: 20),
               ),
               content: SingleChildScrollView(
-                child: ListBody(
-                  //List Body를 기준으로 Text 설정
-                  children: <Widget>[
-                    
-                    Row()],
-                ),
-              ),
-              actions: [ListTile()],
-            );
-          } else {
-            return const AlertDialog(
-              title: Text(
-                '받은 요청이 존재하지 않습니다.',
-                style: TextStyle(fontSize: 20),
+                child: Text('받은 요청이 존재하지 않습니다.'),
               ),
             );
           }
@@ -250,4 +280,5 @@ class _FriendScreenState extends State<FriendScreen> {
       );
     
   }
+}
 }
