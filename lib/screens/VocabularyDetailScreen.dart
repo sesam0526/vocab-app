@@ -84,15 +84,27 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
               },
             ),
             TextButton(
-      child: const Text('저장'),
-      onPressed: () async {
-        if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
+              child: const Text('저장'),
+              onPressed: () async {
+                String inputWord = wordController.text.trim();
+                String inputMeaning = meaningController.text.trim();
+
+                if (inputWord.isNotEmpty && inputMeaning.isNotEmpty) {
+          // 중복 체크
+          bool isDuplicate = await _vocabService.checkWordExistence(widget.vocabularyId, inputWord, wordId);
+          if (isDuplicate) {
+            // 중복되는 단어가 존재한다는 메시지를 표시
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('이미 존재하는 단어입니다. 다른 단어를 입력해주세요.'))
+            );
+            return;
+          }
+
+          // 단어 저장 로직
           if (wordId == null) {
-            // 새 단어 추가 로직
-            await _vocabService.addWord(widget.vocabularyId, wordController.text, meaningController.text);
+            await _vocabService.addWord(widget.vocabularyId, inputWord, inputMeaning);
           } else {
-            // 단어 수정 로직
-            await _vocabService.updateWord(widget.vocabularyId, wordId, wordController.text, meaningController.text);
+            await _vocabService.updateWord(widget.vocabularyId, wordId, inputWord, inputMeaning);
           }
           Navigator.of(context).pop();
         }
@@ -141,7 +153,7 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
 
       body: StreamBuilder<QuerySnapshot>(
         // Firestore에서 해당 단어장의 단어 목록을 가져오는 스트림
-        stream: _vocabService.getWords(widget.vocabularyId),
+        stream: _vocabService.getWords(widget.vocabularyId).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
