@@ -28,166 +28,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic> dayMap = {};
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
-  void _taskAdder(String uid, String work, DateTime date) {
-    final taskAdd = FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection("To-do list")
-        .doc();
-    taskAdd.set({
-      "work": work,
-      "isComplete": false,
-      "date": DateFormat('yyyy.MM.dd', 'ko').format(date).toString()
-    });
-  }
-
-  Future<QuerySnapshot> readList(String uid, DateTime date) async {
-    return FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection("To-do list")
-        .where("date",
-            isEqualTo: DateFormat('yyyy.MM.dd', 'ko').format(date).toString())
-        .get();
-  }
-void  moneyUp(String uid) async{
-     DocumentReference<Map<String, dynamic>> documentReference =
-        FirebaseFirestore.instance.collection("users").doc(uid);
-
-final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-        await documentReference.get();
-     int m= documentSnapshot.get('money');
-    FirebaseFirestore.instance.collection("users").doc(uid).update({"money":m+10});
-
-  }
-  Future<void> _taskDelete(String uid, String id) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            '삭제 확인창',
-            style: TextStyle(fontSize: 20),
-          ),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              //List Body를 기준으로 Text 설정
-              children: <Widget>[
-                Text('정말 삭제하시겠습니까?'),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('삭제'),
-              onPressed: () {
-                setState(() {
-                  FirebaseFirestore.instance
-                      .collection("users")
-                      .doc(uid)
-                      .collection("To-do list")
-                      .doc(id)
-                      .delete();
-                  Navigator.of(context).pop();
-                });
-              },
-            ),
-            TextButton(
-              child: const Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _taskUpdate(String uid, String id, bool state) async {
-    if (state == true) {
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc(uid)
-          .collection("To-do list")
-          .doc(id)
-          .update({'isComplete': false});
-    } else {
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc(uid)
-          .collection("To-do list")
-          .doc(id)
-          .update({'isComplete': true});
-    }
-  }
-
-  Future<void> attenCheck(String uid) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        String date =
-            DateFormat('yyyy-MM-dd', 'ko').format(focusedDay).toString();
-        if (dayMap.containsKey(date)) {
-          return const AlertDialog(
-            title: Text(
-              '이미 출석하였습니다.',
-              style: TextStyle(fontSize: 20),
-            ),
-           
-          );
-        } else {
-          FirebaseFirestore.instance
-              .collection("users")
-              .doc(uid)
-              .collection("Attendance")
-              .doc(date)
-              .set({"date": date});
-          moneyUp(uid);
-          return const AlertDialog(
-            title: Text(
-              '출석 성공',
-              style: TextStyle(fontSize: 20),
-            ),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text('10포인트 획득'),
-                ],
-              ),
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  Future<void> _makeMap(var list) async {
-    QuerySnapshot<Map<String, dynamic>> querySnapshot = await list?.get();
-    setState(() {
-      for (var doc in querySnapshot.docs) {
-        dayMap[doc.id] = doc.id;
-      }
-    });
-  }
- 
   @override
   Widget build(BuildContext context) {
-    String uid='abc';
-    String uname='sample';
-    if(auth.currentUser!=null){
-    uid = auth.currentUser!.email.toString();
-    uname=auth.currentUser!.displayName.toString();
-    CollectionReference<Map<String, dynamic>> attemL = FirebaseFirestore
-        .instance
-        .collection("users")
-        .doc(uid)
-        .collection("Attendance");
-    _makeMap(attemL);
+    String uid = 'abc';
+    String uname = 'sample';
+    if (auth.currentUser != null) {
+      uid = auth.currentUser!.email.toString();
+      uname = auth.currentUser!.displayName.toString();
+      CollectionReference<Map<String, dynamic>> attemL = FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(uid)
+          .collection("Attendance");
+      _makeMap(attemL);
+
+      
     }
-    
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -230,8 +87,10 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
             iconColor: Colors.purple,
             onTap: () {
               print('단어장');
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const VocabularyScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const VocabularyScreen()));
             },
           ),
           ListTile(
@@ -258,11 +117,12 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
             iconColor: Colors.purple,
             onTap: () {
               print('친구');
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FriendScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FriendScreen()));
             },
           ),
-
           ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('로그아웃'),
@@ -276,7 +136,6 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
                           builder: (context) => const SignInScreen()));
                 });
               }),
-              
         ],
       )),
       body: Center(
@@ -462,7 +321,153 @@ final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
             ),
           ])),
     );
-    
-     
   } //build
+
+  void _taskAdder(String uid, String work, DateTime date) {
+    final taskAdd = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("To-do list")
+        .doc();
+    taskAdd.set({
+      "work": work,
+      "isComplete": false,
+      "date": DateFormat('yyyy.MM.dd', 'ko').format(date).toString()
+    });
+  }
+
+  Future<QuerySnapshot> readList(String uid, DateTime date) async {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("To-do list")
+        .where("date",
+            isEqualTo: DateFormat('yyyy.MM.dd', 'ko').format(date).toString())
+        .get();
+  }
+
+  void moneyUp(String uid) async {
+    DocumentReference<Map<String, dynamic>> documentReference =
+        FirebaseFirestore.instance.collection("users").doc(uid);
+
+    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await documentReference.get();
+    int m = documentSnapshot.get('money');
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .update({"money": m + 10});
+  }
+
+  Future<void> _taskDelete(String uid, String id) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            '삭제 확인창',
+            style: TextStyle(fontSize: 20),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              //List Body를 기준으로 Text 설정
+              children: <Widget>[
+                Text('정말 삭제하시겠습니까?'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('삭제'),
+              onPressed: () {
+                setState(() {
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(uid)
+                      .collection("To-do list")
+                      .doc(id)
+                      .delete();
+                  Navigator.of(context).pop();
+                });
+              },
+            ),
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _taskUpdate(String uid, String id, bool state) async {
+    if (state == true) {
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("To-do list")
+          .doc(id)
+          .update({'isComplete': false});
+    } else {
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("To-do list")
+          .doc(id)
+          .update({'isComplete': true});
+    }
+  }
+
+  Future<void> attenCheck(String uid) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        String date =
+            DateFormat('yyyy-MM-dd', 'ko').format(focusedDay).toString();
+        if (dayMap.containsKey(date)) {
+          return const AlertDialog(
+            title: Text(
+              '이미 출석하였습니다.',
+              style: TextStyle(fontSize: 20),
+            ),
+          );
+        } else {
+          FirebaseFirestore.instance
+              .collection("users")
+              .doc(uid)
+              .collection("Attendance")
+              .doc(date)
+              .set({"date": date});
+          moneyUp(uid);
+          return const AlertDialog(
+            title: Text(
+              '출석 성공',
+              style: TextStyle(fontSize: 20),
+            ),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('10포인트 획득'),
+                ],
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> _makeMap(var list) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await list?.get();
+    setState(() {
+      for (var doc in querySnapshot.docs) {
+        dayMap[doc.id] = doc.id;
+      }
+    });
+  }
 }

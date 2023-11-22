@@ -13,10 +13,11 @@ class _FriendScreenState extends State<FriendScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
 
-  var i;
-
+  var check;
+ 
   @override
   Widget build(BuildContext context) {
+    Future<QuerySnapshot<Object?>?> query=checkFr(); 
     return Scaffold(
       appBar: AppBar(
         title: const Text('친구 목록'),
@@ -43,12 +44,12 @@ class _FriendScreenState extends State<FriendScreen> {
               const SizedBox(width: 20),
               ElevatedButton(
                   onPressed: () {
-                    _rFriendList();
+                    //_rFriendList();
                   },
                   child: Row(
                     children: [
                       const Text('요청 리스트  '),
-                      (i == 0)
+                      (check == 0)
                           ? const Icon(Icons.list)
                           : const Icon(Icons.list),
                       const Icon(Icons.priority_high, color: Colors.red)
@@ -192,13 +193,28 @@ class _FriendScreenState extends State<FriendScreen> {
       },
     );
   }
-
-  Future<void> _rFriendList() async {
+  Future<QuerySnapshot<Object?>?> checkFr() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       QuerySnapshot query = await FirebaseFirestore.instance
           .collection('friends')
           .where('friend_id', isEqualTo: currentUser.email.toString())
+          .get();
+      if(query.docs.isNotEmpty){
+         check=1;
+         return query;
+      }else{
+         check=0;
+         return null;
+      }
+    }
+    return null;
+  }
+
+  Future<void> _rFriendList(User user) async {
+      QuerySnapshot query = await FirebaseFirestore.instance
+          .collection('friends')
+          .where('friend_id', isEqualTo: user)
           .get();
 
       // ignore: use_build_context_synchronously
@@ -232,6 +248,6 @@ class _FriendScreenState extends State<FriendScreen> {
           }
         },
       );
-    }
+    
   }
 }
