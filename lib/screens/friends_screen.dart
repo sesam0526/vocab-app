@@ -81,18 +81,17 @@ class _FriendScreenState extends State<FriendScreen> {
                 ),
               );
             },
-          ),
+          )
         ],
       ),
     );
   }
 
-  Stream<List<String>> _getFriendList() {
+   Stream<List<String>> _getFriendList() {
     User? user = _auth.currentUser;
     if (user == null) {
       return Stream.value([]);
     }
-
     return FirebaseFirestore.instance
         .collection('friends')
         .where('user_id', isEqualTo: user.uid)
@@ -103,9 +102,13 @@ class _FriendScreenState extends State<FriendScreen> {
       for (var doc in query.docs) {
         friendList.add(doc['friend_id']);
       }
+      print(friendList);
       return friendList;
     });
   }
+  
+
+  
   
    Stream<List<String>> _getList(){
     User? user = _auth.currentUser;
@@ -192,6 +195,7 @@ class _FriendScreenState extends State<FriendScreen> {
                     onPressed: () {
                       _sendFriendRequest(_emailController.text);
                       _emailController.clear();
+                      Navigator.of(context).pop();
                     },
                     child: const Row(
                       children: [Text('요청 보내기  '), Icon(Icons.person_add_alt)],
@@ -256,7 +260,6 @@ class _FriendScreenState extends State<FriendScreen> {
         barrierDismissible: true, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
         builder: (BuildContext context) {
           if (query.docs.isNotEmpty) {
-            
             return const AlertDialog(
               title: Text(
                 '친구 요청 리스트',
