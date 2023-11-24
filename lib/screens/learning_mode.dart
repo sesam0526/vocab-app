@@ -4,7 +4,7 @@ import 'vocabulary_service.dart';
 
 class LearningMode extends StatefulWidget {
   final bool studyEnglish; // 영어 공부 모드 여부
-  final String vocabularyId; // 추가: 선택한 단어장 ID
+  final String vocabularyId; // 선택한 단어장 ID
 
   const LearningMode({
     Key? key,
@@ -30,7 +30,7 @@ class _LearningModeState extends State<LearningMode> {
   @override
   void initState() {
     super.initState();
-    fetchWords(); // 변경: fetchFlashcards() -> fetchWords()
+    fetchWords();
   }
 
   @override
@@ -70,7 +70,6 @@ class _LearningModeState extends State<LearningMode> {
   }
 
   Future<void> fetchWords() async {
-    // 변경: vocabulary_service.dart에 대한 의존성 추가
     final VocabularyService vocabService = VocabularyService();
     final words =
         await vocabService.getWordsFromVocabulary(widget.vocabularyId);
@@ -80,7 +79,7 @@ class _LearningModeState extends State<LearningMode> {
           words.map((word) => convertToMapStringString(word)).toList();
     });
 
-    _loadNextWord(); // 변경: 단어를 불러온 후 첫 번째 단어로 초기화
+    _loadNextWord(); // 단어를 불러온 후 첫 번째 단어로 초기화
   }
 
   Map<String, String> convertToMapStringString(Map<String, dynamic> word) {

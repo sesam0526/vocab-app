@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'vocabulary_service.dart';
 
 class FlashcardsMode extends StatefulWidget {
-  final bool studyEnglish;
-  final String vocabularyId;
+  final bool studyEnglish; // 영어 공부 모드 여부
+  final String vocabularyId; // 선택한 단어장 ID
 
   const FlashcardsMode(
       {Key? key, required this.studyEnglish, required this.vocabularyId})
@@ -77,7 +77,7 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flashcard mode'),
+        title: const Text('플래시카드 모드'),
         backgroundColor: Colors.purple,
       ),
       body: SingleChildScrollView(
@@ -106,7 +106,7 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
                 ),
               ElevatedButton(
                 onPressed: toggleMeaning,
-                child: Text(showMeaning ? 'Close' : 'Show Meaning'),
+                child: Text(showMeaning ? '닫기' : '의미 보기'),
               ),
               const SizedBox(
                 height: 20,
@@ -117,7 +117,7 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
                   if (hasPrevFlashcard)
                     ElevatedButton(
                       onPressed: showPrevFlashcard,
-                      child: const Icon(Icons.arrow_back),
+                      child: const Icon(Icons.arrow_back), // 이전 아이콘
                     ),
                   const SizedBox(
                     width: 20,
@@ -125,7 +125,7 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
                   if (hasNextFlashcard)
                     ElevatedButton(
                       onPressed: showNextFlashcard,
-                      child: const Icon(Icons.arrow_forward),
+                      child: const Icon(Icons.arrow_forward), // 다음 아이콘
                     ),
                 ],
               ),

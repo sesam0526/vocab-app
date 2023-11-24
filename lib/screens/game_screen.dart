@@ -14,12 +14,12 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final buttonStyle = ElevatedButton.styleFrom(
-    foregroundColor: Colors.white, backgroundColor: Colors.purple, // text color
-    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+    foregroundColor: Colors.white, backgroundColor: Colors.purple, // 글자색
+    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32), // 버튼 패딩
     textStyle: const TextStyle(
-      fontSize: 18,
+      fontSize: 18, // 글자 크기
     ),
-    minimumSize: const Size(300, 0),
+    minimumSize: const Size(300, 0), // 버튼의 최소 크기 (가로 폭)
   );
 
   final List<Map<String, String>> gameModes = [
@@ -56,7 +56,7 @@ class _GameScreenState extends State<GameScreen> {
                   Navigator.of(context).pop();
                   _showModeDescription(currentPage);
                 },
-                child: const Icon(Icons.arrow_back),
+                child: const Icon(Icons.arrow_back), // 이전 아이콘
               ),
             if (index < gameModes.length - 1)
               TextButton(
@@ -67,7 +67,7 @@ class _GameScreenState extends State<GameScreen> {
                   Navigator.of(context).pop();
                   _showModeDescription(currentPage);
                 },
-                child: const Icon(Icons.arrow_forward),
+                child: const Icon(Icons.arrow_forward), // 다음 아이콘
               ),
             TextButton(
               onPressed: () {
@@ -89,22 +89,74 @@ class _GameScreenState extends State<GameScreen> {
     final List<DocumentSnapshot> vocabularyBooks =
         await vocabService.getVocabularyBooks();
 
+    // 선택 가능한 단어장이 없는 경우
+    if (vocabularyBooks.isEmpty) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('알림'),
+            content: const Text('선택 가능한 단어장이 없습니다. 단어장을 먼저 만들어주세요.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('확인'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // ignore: use_build_context_synchronously
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Select Vocabulary Book'),
+          title: const Text('단어장 선택'),
           content: SingleChildScrollView(
             child: ListBody(
               children: vocabularyBooks.map((vocabulary) {
                 return ListTile(
                   title: Text(vocabulary['name'] ?? ''),
                   onTap: () async {
-                    Navigator.of(context).pop();
-                    showModeSelectionDialog((studyEnglish) async {
-                      String vocabularyId = vocabulary.id;
-                      navigateToMode(vocabularyId, studyEnglish);
-                    });
+                    final List<Map<String, dynamic>> words = await vocabService
+                        .getWordsFromVocabulary(vocabulary.id);
+
+                    if (words.isEmpty) {
+                      // 선택한 단어장에 단어가 존재하지 않을 경우
+                      // ignore: use_build_context_synchronously
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('알림'),
+                            content: const Text(
+                                '선택한 단어장에 단어가 존재하지 않습니다. 단어를 추가해주세요.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('확인'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                      showModeSelectionDialog((studyEnglish) async {
+                        // 모드 선택 팝업 표시
+                        String vocabularyId = vocabulary.id ?? '';
+                        navigateToMode(vocabularyId, studyEnglish);
+                      });
+                    }
                   },
                 );
               }).toList(),
@@ -153,11 +205,12 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Game'),
+        title: const Text('게임'),
         backgroundColor: Colors.purple,
         actions: [
           IconButton(
             onPressed: () async {
+              // 게임 설명서 팝업 표시
               _showModeDescription(currentPage);
             },
             icon: const Icon(Icons.book),
@@ -174,6 +227,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  // 단어장 선택 팝업 표시
                   showVocabularySelectionDialog(
                       (vocabularyId, studyEnglish) async {
                     Navigator.push(
