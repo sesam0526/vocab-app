@@ -95,7 +95,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                signInSignUpButton(context, true, () {
+                signInSignUpButton(context, true, () async {
                   final email = _emailTextTextController.text.trim();
                   final password = _passwordTextController.text.trim();
 
@@ -109,19 +109,35 @@ class _SignInScreenState extends State<SignInScreen> {
                     return;
                   }
 
-                  FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                    email: email,
-                    password: password,
-                  )
-                      .then((value) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
+                  try {
+                    UserCredential userCredential =
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: email,
+                      password: password,
                     );
-                  }).catchError((error) {
+
+                    // 사용자 정보 가져오기
+                    User? user = userCredential.user;
+
+                    if (user != null) {
+                      // 유저 이름을 포함한 메시지 표시
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("${user.displayName}님 로그인에 성공했습니다."),
+                        ),
+                      );
+
+                      // 홈 화면으로 이동
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
+                      );
+                    }
+                  } catch (error) {
                     // FirebaseAuthException이 발생할 때
                     if (error is FirebaseAuthException) {
                       // 사용자가 존재하지 않는 경우 또는 비밀번호가 올바르지 않은 경우
@@ -144,7 +160,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         );
                       }
                     }
-                  });
+                  }
                 }),
                 signUpOption(),
               ],
