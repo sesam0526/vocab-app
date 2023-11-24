@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'vocabulary_service.dart';
 
 class FlashcardsMode extends StatefulWidget {
-  final bool studyEnglish; // 영어 공부 모드 여부
+  final bool studyEnglish;
+  final String vocabularyId;
 
-  const FlashcardsMode({Key? key, required this.studyEnglish})
+  const FlashcardsMode(
+      {Key? key, required this.studyEnglish, required this.vocabularyId})
       : super(key: key);
 
   @override
@@ -11,21 +14,7 @@ class FlashcardsMode extends StatefulWidget {
 }
 
 class _FlashcardsModeState extends State<FlashcardsMode> {
-  List<Map<String, String>> flashcards = [
-    {
-      'word': 'Apple',
-      'meaning': '사과',
-    },
-    {
-      'word': 'Banana',
-      'meaning': '바나나',
-    },
-    {
-      'word': 'Carrot',
-      'meaning': '당근',
-    },
-    // 추가 단어와 의미를 필요한 만큼 여기에 추가하세요.
-  ];
+  List<Map<String, String>> flashcards = [];
 
   int currentIndex = 0;
   bool showMeaning = false;
@@ -58,12 +47,37 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchFlashcards();
+  }
+
+  Future<void> fetchFlashcards() async {
+    final VocabularyService vocabService = VocabularyService();
+    final words =
+        await vocabService.getWordsFromVocabulary(widget.vocabularyId);
+
+    setState(() {
+      flashcards = words.map((word) => convertToMapStringString(word)).toList();
+    });
+  }
+
+  Map<String, String> convertToMapStringString(Map<String, dynamic> word) {
+    return {
+      'word': word['word'] ?? '',
+      'meaning': word['meaning'] ?? '',
+    };
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final flashcard = flashcards[currentIndex];
+    final flashcard = flashcards.isNotEmpty
+        ? flashcards[currentIndex]
+        : {'word': '', 'meaning': ''};
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('플래시카드 모드'),
+        title: const Text('Flashcard mode'),
         backgroundColor: Colors.purple,
       ),
       body: SingleChildScrollView(
@@ -92,7 +106,7 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
                 ),
               ElevatedButton(
                 onPressed: toggleMeaning,
-                child: Text(showMeaning ? '닫기' : '의미 보기'),
+                child: Text(showMeaning ? 'Close' : 'Show Meaning'),
               ),
               const SizedBox(
                 height: 20,
@@ -103,7 +117,7 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
                   if (hasPrevFlashcard)
                     ElevatedButton(
                       onPressed: showPrevFlashcard,
-                      child: const Icon(Icons.arrow_back), // 이전 아이콘
+                      child: const Icon(Icons.arrow_back),
                     ),
                   const SizedBox(
                     width: 20,
@@ -111,7 +125,7 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
                   if (hasNextFlashcard)
                     ElevatedButton(
                       onPressed: showNextFlashcard,
-                      child: const Icon(Icons.arrow_forward), // 다음 아이콘
+                      child: const Icon(Icons.arrow_forward),
                     ),
                 ],
               ),

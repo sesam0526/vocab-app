@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'vocabulary_service.dart';
+
 class LearningMode extends StatefulWidget {
   final bool studyEnglish; // 영어 공부 모드 여부
+  final String vocabularyId; // 추가: 선택한 단어장 ID
 
-  const LearningMode({Key? key, required this.studyEnglish}) : super(key: key);
+  const LearningMode({
+    Key? key,
+    required this.studyEnglish,
+    required this.vocabularyId,
+  }) : super(key: key);
 
   @override
   _LearningModeState createState() => _LearningModeState();
@@ -11,20 +18,7 @@ class LearningMode extends StatefulWidget {
 
 class _LearningModeState extends State<LearningMode> {
   // 예시 단어 목록
-  final List<Map<String, String>> exampleWords = [
-    {
-      'word': 'Apple',
-      'meaning': '사과',
-    },
-    {
-      'word': 'Banana',
-      'meaning': '바나나',
-    },
-    {
-      'word': 'Carrot',
-      'meaning': '당근',
-    },
-  ];
+  List<Map<String, String>> exampleWords = [];
 
   final TextEditingController _inputController = TextEditingController();
   String _currentWord = ''; // 현재 단어
@@ -36,7 +30,7 @@ class _LearningModeState extends State<LearningMode> {
   @override
   void initState() {
     super.initState();
-    _loadNextWord();
+    fetchWords(); // 변경: fetchFlashcards() -> fetchWords()
   }
 
   @override
@@ -73,6 +67,27 @@ class _LearningModeState extends State<LearningMode> {
       String userInput = _inputController.text.trim();
       _isCorrect = userInput == _currentMeaning;
     });
+  }
+
+  Future<void> fetchWords() async {
+    // 변경: vocabulary_service.dart에 대한 의존성 추가
+    final VocabularyService vocabService = VocabularyService();
+    final words =
+        await vocabService.getWordsFromVocabulary(widget.vocabularyId);
+
+    setState(() {
+      exampleWords =
+          words.map((word) => convertToMapStringString(word)).toList();
+    });
+
+    _loadNextWord(); // 변경: 단어를 불러온 후 첫 번째 단어로 초기화
+  }
+
+  Map<String, String> convertToMapStringString(Map<String, dynamic> word) {
+    return {
+      'word': word['word'] ?? '',
+      'meaning': word['meaning'] ?? '',
+    };
   }
 
   void showModeSelectionDialog(

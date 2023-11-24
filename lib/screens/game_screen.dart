@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'flashcards_mode.dart';
 import 'multiplechoice_mode.dart';
 import 'learning_mode.dart';
+import 'vocabulary_service.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -12,12 +14,12 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final buttonStyle = ElevatedButton.styleFrom(
-    foregroundColor: Colors.white, backgroundColor: Colors.purple, // 글자색
-    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32), // 버튼 패딩
+    foregroundColor: Colors.white, backgroundColor: Colors.purple, // text color
+    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
     textStyle: const TextStyle(
-      fontSize: 18, // 글자 크기
+      fontSize: 18,
     ),
-    minimumSize: const Size(300, 0), // 버튼의 최소 크기 (가로 폭)
+    minimumSize: const Size(300, 0),
   );
 
   final List<Map<String, String>> gameModes = [
@@ -54,7 +56,7 @@ class _GameScreenState extends State<GameScreen> {
                   Navigator.of(context).pop();
                   _showModeDescription(currentPage);
                 },
-                child: const Icon(Icons.arrow_back), // 이전 아이콘
+                child: const Icon(Icons.arrow_back),
               ),
             if (index < gameModes.length - 1)
               TextButton(
@@ -65,7 +67,7 @@ class _GameScreenState extends State<GameScreen> {
                   Navigator.of(context).pop();
                   _showModeDescription(currentPage);
                 },
-                child: const Icon(Icons.arrow_forward), // 다음 아이콘
+                child: const Icon(Icons.arrow_forward),
               ),
             TextButton(
               onPressed: () {
@@ -79,6 +81,40 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  Future<void> showVocabularySelectionDialog(
+      void Function(String vocabularyId, bool studyEnglish)
+          navigateToMode) async {
+    final VocabularyService vocabService = VocabularyService();
+
+    final List<DocumentSnapshot> vocabularyBooks =
+        await vocabService.getVocabularyBooks();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Vocabulary Book'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: vocabularyBooks.map((vocabulary) {
+                return ListTile(
+                  title: Text(vocabulary['name'] ?? ''),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    showModeSelectionDialog((studyEnglish) async {
+                      String vocabularyId = vocabulary.id;
+                      navigateToMode(vocabularyId, studyEnglish);
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void showModeSelectionDialog(
       void Function(bool studyEnglish) navigateToMode) {
     showDialog(
@@ -87,7 +123,7 @@ class _GameScreenState extends State<GameScreen> {
         return AlertDialog(
           title: const Text('모드 선택'),
           content: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center, // 가운데 정렬
             children: [
               ElevatedButton(
                 onPressed: () {
@@ -97,7 +133,7 @@ class _GameScreenState extends State<GameScreen> {
                 },
                 child: const Text('의미 공부'),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 16), // 버튼 사이의 간격 조절
               ElevatedButton(
                 onPressed: () {
                   // 영단어 공부 모드 선택
@@ -117,12 +153,11 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('게임'),
+        title: const Text('Game'),
         backgroundColor: Colors.purple,
         actions: [
           IconButton(
-            onPressed: () {
-              // 게임 설명서 팝업 표시
+            onPressed: () async {
               _showModeDescription(currentPage);
             },
             icon: const Icon(Icons.book),
@@ -138,14 +173,15 @@ class _GameScreenState extends State<GameScreen> {
                 height: 20,
               ),
               ElevatedButton(
-                onPressed: () {
-                  // 모드 선택 팝업 표시
-                  showModeSelectionDialog((studyEnglish) {
+                onPressed: () async {
+                  showVocabularySelectionDialog(
+                      (vocabularyId, studyEnglish) async {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            FlashcardsMode(studyEnglish: studyEnglish),
+                        builder: (context) => FlashcardsMode(
+                            studyEnglish: studyEnglish,
+                            vocabularyId: vocabularyId),
                       ),
                     );
                   });
@@ -159,9 +195,11 @@ class _GameScreenState extends State<GameScreen> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MultipleChoiceMode()));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MultipleChoiceMode(),
+                    ),
+                  );
                 },
                 style: buttonStyle,
                 child: const Text('4지선다 모드'),
@@ -170,14 +208,15 @@ class _GameScreenState extends State<GameScreen> {
                 height: 20,
               ),
               ElevatedButton(
-                onPressed: () {
-                  // 모드 선택 팝업 표시
-                  showModeSelectionDialog((studyEnglish) {
+                onPressed: () async {
+                  showVocabularySelectionDialog(
+                      (vocabularyId, studyEnglish) async {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            LearningMode(studyEnglish: studyEnglish),
+                        builder: (context) => LearningMode(
+                            studyEnglish: studyEnglish,
+                            vocabularyId: vocabularyId),
                       ),
                     );
                   });
