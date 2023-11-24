@@ -108,7 +108,8 @@ class _LearningModeState extends State<LearningMode> {
                 Text('총 단어 수: $totalWords', style: textStyle),
                 Text('맞은 단어 수: $correctWords', style: textStyle),
                 Text('틀린 단어 수: $incorrectWords', style: textStyle),
-                Text('정답률: $accuracyRate%', style: textStyle),
+                Text('정답률: ${accuracyRate.toStringAsFixed(2)}%',
+                    style: textStyle), // 반올림해서 소수점 둘째자리까지 표현
                 Text('남은 목숨 수: $_lives', style: textStyle),
                 Text('획득한 돈: $_moneyEarned', style: textStyle),
               ],
@@ -118,12 +119,9 @@ class _LearningModeState extends State<LearningMode> {
             TextButton(
               onPressed: () {
                 _updateUserMoneyInFirebase();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const GameScreen()),
-                );
+                Navigator.of(context).pop();
               },
-              child: const Text('확인'),
+              child: const Text('닫기'),
             ),
           ],
         );

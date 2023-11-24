@@ -9,14 +9,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await initializeDateFormatting();
-  
+
   runApp(
     ChangeNotifierProvider<WordService>(
-      create: (context) =>WordService(),
+      create: (context) => WordService(),
       child: const MyApp(),
     ),
   );
-
 }
 
 class MyApp extends StatelessWidget {
