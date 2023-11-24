@@ -37,6 +37,73 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  // 로그인 함수
+  void _signIn() async {
+    final email = _emailTextTextController.text.trim();
+    final password = _passwordTextController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      // 사용자에게 필수 입력값이 비어있음을 알리는 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("이메일과 비밀번호를 모두 입력해주세요."),
+        ),
+      );
+      return;
+    }
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // 사용자 정보 가져오기
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // 유저 이름을 포함한 메시지 표시
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("${user.displayName}님 로그인에 성공했습니다."),
+          ),
+        );
+
+        // 홈 화면으로 이동
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      }
+    } catch (error) {
+      // FirebaseAuthException이 발생할 때
+      if (error is FirebaseAuthException) {
+        // 사용자가 존재하지 않는 경우 또는 비밀번호가 올바르지 않은 경우
+        if (error.message?.contains('INVALID_LOGIN_CREDENTIALS') == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("이메일 또는 비밀번호가 올바르지 않습니다."),
+            ),
+          );
+        }
+        // 그 외의 에러 처리
+        else {
+          print("Error ${error.toString()}");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Error: ${error.toString()}"),
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,73 +162,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                signInSignUpButton(context, true, () async {
-                  final email = _emailTextTextController.text.trim();
-                  final password = _passwordTextController.text.trim();
-
-                  if (email.isEmpty || password.isEmpty) {
-                    // 사용자에게 필수 입력값이 비어있음을 알리는 메시지 표시
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("이메일과 비밀번호를 모두 입력해주세요."),
-                      ),
-                    );
-                    return;
-                  }
-
-                  try {
-                    UserCredential userCredential =
-                        await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
-
-                    // 사용자 정보 가져오기
-                    User? user = userCredential.user;
-
-                    if (user != null) {
-                      // 유저 이름을 포함한 메시지 표시
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("${user.displayName}님 로그인에 성공했습니다."),
-                        ),
-                      );
-
-                      // 홈 화면으로 이동
-                      // ignore: use_build_context_synchronously
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
-                    }
-                  } catch (error) {
-                    // FirebaseAuthException이 발생할 때
-                    if (error is FirebaseAuthException) {
-                      // 사용자가 존재하지 않는 경우 또는 비밀번호가 올바르지 않은 경우
-                      if (error.message
-                              ?.contains('INVALID_LOGIN_CREDENTIALS') ==
-                          true) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("이메일 또는 비밀번호가 올바르지 않습니다."),
-                          ),
-                        );
-                      }
-                      // 그 외의 에러 처리
-                      else {
-                        print("Error ${error.toString()}");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Error: ${error.toString()}"),
-                          ),
-                        );
-                      }
-                    }
-                  }
-                }),
+                signInSignUpButton(context, true, _signIn),
                 signUpOption(),
               ],
             ),
