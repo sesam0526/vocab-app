@@ -62,7 +62,7 @@ Container signInSignUpButton(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)))),
       child: Text(
-        isLogin ? 'LOG IN' : 'SIGN UP',
+        isLogin ? '로그인' : '가입하기',
         style: const TextStyle(
             color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 16),
       ),

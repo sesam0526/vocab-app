@@ -69,7 +69,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 30,
                 ),
                 reusableTextField(
-                  "Enger Email Id",
+                  "이메일 정보를 입력해주세요",
                   Icons.person_outline,
                   false,
                   _emailTextTextController,
@@ -83,7 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 20,
                 ),
                 reusableTextField(
-                  "Enter Password",
+                  "비밀번호를 입력해주세요",
                   Icons.lock_outline,
                   true,
                   _passwordTextController,
@@ -96,10 +96,23 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 20,
                 ),
                 signInSignUpButton(context, true, () {
+                  final email = _emailTextTextController.text.trim();
+                  final password = _passwordTextController.text.trim();
+
+                  if (email.isEmpty || password.isEmpty) {
+                    // 사용자에게 필수 입력값이 비어있음을 알리는 메시지 표시
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("이메일과 비밀번호를 모두 입력해주세요."),
+                      ),
+                    );
+                    return;
+                  }
+
                   FirebaseAuth.instance
                       .signInWithEmailAndPassword(
-                    email: _emailTextTextController.text,
-                    password: _passwordTextController.text,
+                    email: email,
+                    password: password,
                   )
                       .then((value) {
                     Navigator.push(
@@ -108,8 +121,29 @@ class _SignInScreenState extends State<SignInScreen> {
                         builder: (context) => const HomeScreen(),
                       ),
                     );
-                  }).onError((error, stackTrace) {
-                    print("Error ${error.toString()}");
+                  }).catchError((error) {
+                    // FirebaseAuthException이 발생할 때
+                    if (error is FirebaseAuthException) {
+                      // 사용자가 존재하지 않는 경우 또는 비밀번호가 올바르지 않은 경우
+                      if (error.message
+                              ?.contains('INVALID_LOGIN_CREDENTIALS') ==
+                          true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("이메일 또는 비밀번호가 올바르지 않습니다."),
+                          ),
+                        );
+                      }
+                      // 그 외의 에러 처리
+                      else {
+                        print("Error ${error.toString()}");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Error: ${error.toString()}"),
+                          ),
+                        );
+                      }
+                    }
                   });
                 }),
                 signUpOption(),
@@ -125,8 +159,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Don't have account? ",
-            style: TextStyle(color: Colors.white70)),
+        const Text("계정이 없으신가요? ", style: TextStyle(color: Colors.white70)),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -135,7 +168,7 @@ class _SignInScreenState extends State<SignInScreen> {
             );
           },
           child: const Text(
-            "Sign Up",
+            "회원가입",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         )

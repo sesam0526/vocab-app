@@ -51,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          "Sign Up",
+          "회원가입",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
@@ -78,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 20,
                 ),
                 reusableTextField(
-                  "Enter UserName",
+                  "유저이름을 입력하세요",
                   Icons.person_outline,
                   false,
                   _userNameTextController,
@@ -92,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 20,
                 ),
                 reusableTextField(
-                  "Enter Email Id",
+                  "이메일 정보를 입력하세요",
                   Icons.person_outline,
                   false,
                   _emailTextController,
@@ -106,7 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 20,
                 ),
                 reusableTextField(
-                  "Enter Password",
+                  "비밀번호를 입력하세요",
                   Icons.lock_outlined,
                   true,
                   _passwordTextController,
@@ -118,34 +118,91 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                signInSignUpButton(context, false, () {
-                  FirebaseAuth.instance
-                      .createUserWithEmailAndPassword(
-                    email: _emailTextController.text,
-                    password: _passwordTextController.text,
-                  )
-                      .then((value) async {
-                    print("Created New Account");
-                    FirebaseFirestore.instance
+                signInSignUpButton(context, false, () async {
+                  final userName = _userNameTextController.text.trim();
+                  final email = _emailTextController.text.trim();
+                  final password = _passwordTextController.text;
+
+                  if (userName.isEmpty || email.isEmpty || password.isEmpty) {
+                    // 사용자에게 필수 입력값이 비어있음을 알리는 메시지 표시
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("모든 정보를 입력해주세요"),
+                      ),
+                    );
+                    return;
+                  }
+
+                  try {
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email,
+                      password: password,
+                    );
+
+                    await FirebaseFirestore.instance
                         .collection("users")
-                        .doc(_emailTextController.text)
+                        .doc(email)
                         .set({
-                      "id": _emailTextController.text,
-                      "nickname": _userNameTextController.text,
+                      "id": email,
+                      "nickname": userName,
                       "money": 0,
                       "score": 0,
                     });
-                    await FirebaseAuth.instance.currentUser
-                        ?.updateDisplayName(_userNameTextController.text);
+
+                    await FirebaseAuth.instance.currentUser?.updateDisplayName(
+                      userName,
+                    );
+
+                    // ignore: use_build_context_synchronously
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const HomeScreen(),
                       ),
                     );
-                  }).onError((error, stackTrace) {
-                    print("Error ${error.toString()}");
-                  });
+                  } catch (error) {
+                    // Firebase Authentication 또는 Firestore에서 발생한 예외 처리
+                    if (error is FirebaseAuthException) {
+                      switch (error.code) {
+                        case 'email-already-in-use':
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("이미 사용 중인 이메일입니다."),
+                            ),
+                          );
+                          break;
+                        case 'weak-password':
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("비밀번호는 6글자 이상이어야 합니다."),
+                            ),
+                          );
+                          break;
+                        case 'invalid-email':
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("잘못된 이메일 형식입니다."),
+                            ),
+                          );
+                          break;
+                        default:
+                          print("Error ${error.toString()}");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Error: ${error.toString()}"),
+                            ),
+                          );
+                      }
+                    } else {
+                      // FirebaseAuthException이 아닌 경우에 대한 처리
+                      print("Error ${error.toString()}");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Error: ${error.toString()}"),
+                        ),
+                      );
+                    }
+                  }
                 }),
               ],
             ),
