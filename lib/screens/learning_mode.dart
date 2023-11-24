@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'vocabulary_service.dart';
@@ -73,6 +75,10 @@ class _LearningModeState extends State<LearningMode> {
     final VocabularyService vocabService = VocabularyService();
     final words =
         await vocabService.getWordsFromVocabulary(widget.vocabularyId);
+
+    // 단어 목록을 랜덤하게 섞기
+    final random = Random();
+    words.shuffle(random);
 
     setState(() {
       exampleWords =

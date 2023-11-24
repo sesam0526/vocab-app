@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'vocabulary_service.dart';
 
@@ -56,6 +58,10 @@ class _FlashcardsModeState extends State<FlashcardsMode> {
     final VocabularyService vocabService = VocabularyService();
     final words =
         await vocabService.getWordsFromVocabulary(widget.vocabularyId);
+
+    // 단어 목록을 랜덤하게 섞기
+    final random = Random();
+    words.shuffle(random);
 
     setState(() {
       flashcards = words.map((word) => convertToMapStringString(word)).toList();
