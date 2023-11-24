@@ -12,18 +12,14 @@ class FriendScreen extends StatefulWidget {
 class _FriendScreenState extends State<FriendScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
+  List<String> list = [];
 
-  var check=0;
-  //List<String> list=[];
-  
   @override
   Widget build(BuildContext context) {
-    Future<QuerySnapshot<Object?>?> query=checkFr(); 
+    list = [];
+    Future<QuerySnapshot<Object?>?> query = checkFr();
+
     // ignore: unnecessary_null_comparison
-    if(query!=null){
-      check=1;
-    }
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('친구 목록'),
@@ -35,7 +31,9 @@ class _FriendScreenState extends State<FriendScreen> {
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               ElevatedButton(
                   onPressed: () {
-                    _addFriendScreen();
+                    setState(() {
+                      _addFriendScreen();
+                    });
                   },
                   style: const ButtonStyle(
                       // padding: MaterialStateProperty.all(const EdgeInsets.all(20.0)),
@@ -50,83 +48,54 @@ class _FriendScreenState extends State<FriendScreen> {
               const SizedBox(width: 20),
               ElevatedButton(
                   onPressed: () {
-                    _rFriendList();
+                    setState(() {
+                      _rFriendList();
+                    });
                   },
                   child: Row(
                     children: [
                       const Text('요청 리스트  '),
-                      (check == 0)
+                      (list.isEmpty)
                           ? const Icon(Icons.list)
-                          : const Icon(Icons.list),
-                      const Icon(Icons.priority_high, color: Colors.red)
+                          : const Icon(Icons.priority_high, color: Colors.red)
                     ],
                   )),
             ]),
           ),
-          StreamBuilder<List<String>>(
-            stream: _getFriendList(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const CircularProgressIndicator();
-              }
-              List<String> friends = snapshot.data ?? [];
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: friends.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(friends[index]),
-                    );
-                  },
-                ),
-              );
-            },
-          )
+          Expanded(
+              child: FutureBuilder(
+                  future: _getFriendList(),
+                  builder: (context, snapshot) {
+                    final documents = snapshot.data?.docs ?? [];
+                    if (documents.isEmpty) {
+                      return const Center(child: Text("친구가 없습니다."));
+                    }
+                    return ListView.builder(
+                        itemCount: documents.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                              onTap: () {
+                                setState(() {});
+                              },
+                              title: Text(
+                                documents[index].get('friend_name'),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                              );
+                        });
+                  })),
         ],
       ),
     );
   }
 
-   Stream<List<String>> _getFriendList() {
+  Future<QuerySnapshot> _getFriendList() async {
     User? user = _auth.currentUser;
-    if (user == null) {
-      return Stream.value([]);
-    }
     return FirebaseFirestore.instance
         .collection('friends')
-        .where('user_id', isEqualTo: user.uid)
+        .where('user_id', isEqualTo: user!.email.toString())
         .where('status', isEqualTo: 'accepted')
-        .snapshots()
-        .map((QuerySnapshot query) {
-      List<String> friendList = [];
-      for (var doc in query.docs) {
-        friendList.add(doc['friend_id']);
-      }
-      print(friendList);
-      return friendList;
-    });
-  }
-  
-
-  
-  
-   Stream<List<String>> _getList(){
-    User? user = _auth.currentUser;
-    if (user == null) {
-      return Stream.value([]);
-    }
-    return FirebaseFirestore.instance
-        .collection('friends')
-        .where('user_id', isEqualTo: user.email.toString())
-        .where('status', isEqualTo: 'pending')
-        .snapshots()
-        .map((QuerySnapshot query) {
-      List<String> list = [];
-      for (var doc in query.docs) {
-        list.add(doc['friend_id']);
-      }
-      return list;
-    });
+        .get();
   }
 
   void _sendFriendRequest(String friendEmail) async {
@@ -140,13 +109,37 @@ class _FriendScreenState extends State<FriendScreen> {
 
       if (query.docs.isNotEmpty) {
         String friendUid = query.docs.first.id;
-
         // Firestore "friends" 콜렉션에 친구 요청 추가
+        /*
         await FirebaseFirestore.instance.collection('friends').add({
           'user_id': currentUser.email,
           'friend_id': friendUid,
           'status': 'pending',
         });
+        */
+        await FirebaseFirestore.instance
+            .collection('friends')
+            .doc(currentUser.email! + friendUid)
+            .set({
+          'user_id': currentUser.email,
+          'friend_id': friendUid,
+          'status': 'pending',
+          'user_name': currentUser.displayName
+        });
+        await FirebaseFirestore.instance
+            .collection('friends')
+            .doc(friendUid + currentUser.email!)
+            .set({
+          'user_id': friendUid,
+          'friend_id': currentUser.email,
+          'status': 'pending',
+          'friend_name': currentUser.displayName
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('친구요청을 보냈습니다.'),
+          ),
+        );
       } else {
         // 사용자를 찾을 수 없음을 알림
         ScaffoldMessenger.of(context).showSnackBar(
@@ -166,7 +159,7 @@ class _FriendScreenState extends State<FriendScreen> {
         return AlertDialog(
           title: const Text(
             '친구 추가창',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: const SingleChildScrollView(
             child: ListBody(
@@ -207,6 +200,7 @@ class _FriendScreenState extends State<FriendScreen> {
       },
     );
   }
+
   Future<QuerySnapshot<Object?>?> checkFr() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
@@ -215,64 +209,75 @@ class _FriendScreenState extends State<FriendScreen> {
           .where('friend_id', isEqualTo: currentUser.email.toString())
           .where('status', isEqualTo: 'pending')
           .get();
-      if(query.docs.isNotEmpty){
-         check=1;
-         /*
-          for (var doc in query.docs) {
-           list.add(doc['user_id']);
-      }
-      */
-         return query;
-      }else{
-         check=0;
-         return null;
+      if (query.docs.isNotEmpty) {
+        for (var doc in query.docs) {
+          list.add(doc['user_id']);
+        }
+        return query;
+      } else {
+        return null;
       }
     }
     return null;
   }
-/*
-   void _requsetFriendCk() async {
-    User? currentUser = _auth.currentUser;
-    if (currentUser != null) {
-      QuerySnapshot query = await FirebaseFirestore.instance
-          .collection('friends')
-          .where('friend_id', isEqualTo: currentUser.uid)
-          .get();
 
-      if (query.docs.isNotEmpty) {
-      } else {
-        const Text('받은 요청이 존재하지 않습니다.');
-      }
-    }
-  }
-*/
   Future<void> _rFriendList() async {
     User? currentUser = _auth.currentUser;
-    if (currentUser != null){
-      QuerySnapshot query = await FirebaseFirestore.instance
-          .collection('friends')
-          .where('friend_id', isEqualTo: currentUser.email.toString())
-          .get();
-       
+    if (currentUser != null) {
       // ignore: use_build_context_synchronously
       return showDialog<void>(
         context: context,
         barrierDismissible: true, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
         builder: (BuildContext context) {
-          if (query.docs.isNotEmpty) {
-            return const AlertDialog(
-              title: Text(
+          if (list.isNotEmpty) {
+            return AlertDialog(
+              title: const Text(
                 '친구 요청 리스트',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              //content:
-              
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    for (int i = 0; i < list.length; i++)
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(list[i], style: const TextStyle(fontSize: 18)),
+                            Container(
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          //삭제
+                                          _CancleFriend(list[i]);
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      icon: const Icon(Icons.cancel)),
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          //친구추가
+                                          _AddFriend(list[i]);
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      icon: const Icon(Icons.check_circle))
+                                ],
+                              ),
+                            ),
+                          ])
+                  ],
+                ),
+              ),
+              elevation: 10,
             );
           } else {
             return const AlertDialog(
               title: Text(
                 '친구 요청 리스트',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               content: SingleChildScrollView(
                 child: Text('받은 요청이 존재하지 않습니다.'),
@@ -281,7 +286,29 @@ class _FriendScreenState extends State<FriendScreen> {
           }
         },
       );
-    
+    }
   }
-}
+
+  Future<void> _CancleFriend(String st) async {
+    FirebaseFirestore.instance
+        .collection('friends')
+        .doc(st + _auth.currentUser!.email.toString())
+        .delete();
+    FirebaseFirestore.instance
+        .collection('friends')
+        .doc(_auth.currentUser!.email.toString() + st)
+        .delete();
+  }
+
+  Future<void> _AddFriend(String st) async {
+    User? user = _auth.currentUser;
+    FirebaseFirestore.instance
+        .collection('friends')
+        .doc(st + user!.email.toString())
+        .update({'status': 'accepted', 'friend_name': user.displayName});
+    FirebaseFirestore.instance
+        .collection('friends')
+        .doc(user.email.toString() + st)
+        .update({'status': 'accepted', 'user_name': user.displayName});
+  }
 }
