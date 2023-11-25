@@ -1,7 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'vocabulary_service.dart';
+import 'package:flutter_project/utils/game_utils.dart';
 
 class FlashcardsGame extends StatefulWidget {
   final bool studyEnglish; // 영단어 공부 모드 여부
@@ -16,35 +14,26 @@ class FlashcardsGame extends StatefulWidget {
 }
 
 class _FlashcardsGameState extends State<FlashcardsGame> {
-  List<Map<String, String>> flashcards = []; // 플래시카드 리스트
+  List<Map<String, String>> wordsList = []; // 플래시카드 리스트
 
   @override
   void initState() {
     // StatefulWidget이 생성될 때 호출
     super.initState(); // 초기에 데이터를 불러와서 화면에 표시
-    fetchFlashcards();
+    initializeGame();
   }
 
-// 단어 가져오는 함수
-  Future<void> fetchFlashcards() async {
-    final VocabularyService vocabService = VocabularyService();
-    final words = await vocabService
-        .getWordsFromVocabulary(widget.vocabularyId); // 선택한 단어장에서 단어 목록 가져옴
-
-    // 단어 목록을 랜덤하게 섞기
-    final random = Random();
-    words.shuffle(random);
-
-    setState(() {
-      flashcards = words.toList(); // flashcards 리스트에 저장
-    });
+// 단어 가져오기
+  Future<void> initializeGame() async {
+    wordsList = await GameUtils.fetchWords(widget.vocabularyId);
+    setState(() {});
   }
 
   int currentIndex = 0;
   bool showAnswer = false;
 
   bool get hasPrevFlashcard => currentIndex > 0;
-  bool get hasNextFlashcard => currentIndex < flashcards.length - 1;
+  bool get hasNextFlashcard => currentIndex < wordsList.length - 1;
 
 // 다음 단어 보여주는 함수
   void showNextFlashcard() {
@@ -75,8 +64,8 @@ class _FlashcardsGameState extends State<FlashcardsGame> {
 
   @override
   Widget build(BuildContext context) {
-    final flashcard = flashcards.isNotEmpty // flashcards 리스트가 비어있지 않으면
-        ? flashcards[currentIndex]
+    final flashcard = wordsList.isNotEmpty // wordsList 리스트가 비어있지 않으면
+        ? wordsList[currentIndex]
         : {
             'word': '',
             'meaning': ''
