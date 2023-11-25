@@ -123,8 +123,13 @@ class _FriendScreenState extends State<FriendScreen> {
           .get();
       DocumentSnapshot<Map<String, dynamic>> query2 = await FirebaseFirestore.instance
           .collection('friends').doc(currentUser.email.toString()+friendEmail).get();
-          
-      if (query.docs.isNotEmpty && !query2.exists) {
+      if(friendEmail==currentUser.email){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('자기 자신에게 친구신청은 보낼 수 없습니다.'),
+          ),
+        );
+      }else if (query.docs.isNotEmpty && !query2.exists) {
         String friendUid = query.docs.first.id;
         await FirebaseFirestore.instance
             .collection('friends')
