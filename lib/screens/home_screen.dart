@@ -355,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return AlertDialog(
           title: const Text(
             '삭제 확인창',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
           ),
           content: const SingleChildScrollView(
             child: ListBody(
