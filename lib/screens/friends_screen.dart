@@ -18,7 +18,7 @@ class _FriendScreenState extends State<FriendScreen> {
   Widget build(BuildContext context) {
     list = [];
     Future<QuerySnapshot<Object?>?> query = checkFr();
-
+    var myFuture=_getFriendList();
     // ignore: unnecessary_null_comparison
     return Scaffold(
       appBar: AppBar(
@@ -63,8 +63,8 @@ class _FriendScreenState extends State<FriendScreen> {
             ]),
           ),
           Expanded(
-              child: FutureBuilder(
-                  future: _getFriendList(),
+              child: FutureBuilder<QuerySnapshot>(
+                  future: myFuture,
                   builder: (context, snapshot) {
                     final documents = snapshot.data?.docs ?? [];
                     if (documents.isEmpty) {
@@ -90,12 +90,13 @@ class _FriendScreenState extends State<FriendScreen> {
   }
 
   Future<QuerySnapshot> _getFriendList() async {
-    User? user = _auth.currentUser;
-    return FirebaseFirestore.instance
+      User? user = _auth.currentUser;
+       return FirebaseFirestore.instance
         .collection('friends')
         .where('user_id', isEqualTo: user!.email.toString())
         .where('status', isEqualTo: 'accepted')
         .get();
+   
   }
 
   void _sendFriendRequest(String friendEmail) async {
@@ -124,7 +125,8 @@ class _FriendScreenState extends State<FriendScreen> {
           'user_id': currentUser.email,
           'friend_id': friendUid,
           'status': 'pending',
-          'user_name': currentUser.displayName
+          'user_name': currentUser.displayName,
+          'friend_name':'null'
         });
         await FirebaseFirestore.instance
             .collection('friends')
@@ -133,7 +135,8 @@ class _FriendScreenState extends State<FriendScreen> {
           'user_id': friendUid,
           'friend_id': currentUser.email,
           'status': 'pending',
-          'friend_name': currentUser.displayName
+          'friend_name': currentUser.displayName,
+          'user_name':'null'
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -259,9 +262,10 @@ class _FriendScreenState extends State<FriendScreen> {
                                       onPressed: () {
                                         setState(() {
                                           //친구추가
-                                          _AddFriend(list[i]);
+                                         _AddFriend(list[i]);
                                           Navigator.of(context).pop();
                                         });
+                                         
                                       },
                                       icon: const Icon(Icons.check_circle))
                                 ],

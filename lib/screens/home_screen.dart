@@ -299,25 +299,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }),
             ),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
+          ])),
+           floatingActionButton: FloatingActionButton(
+        onPressed: () {
                   setState(() {
                     attenCheck(uid);
                   });
                 },
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.purple[300])),
-                child: const Text(
+        child: const Text(
                   '출석',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  style: TextStyle(fontSize: 20),
                 ),
-              ),
-            ),
-          ])),
+      ),
     );
   } //build
 
