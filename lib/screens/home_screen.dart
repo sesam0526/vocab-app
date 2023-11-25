@@ -30,8 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String uid = 'abc';
-    String uname = 'sample';
+    String uid = 'nul';
+    String uname = 'null';
+
     if (auth.currentUser != null) {
       uid = auth.currentUser!.email.toString();
       uname = auth.currentUser!.displayName.toString();

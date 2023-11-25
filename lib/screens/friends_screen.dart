@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +15,8 @@ class _FriendScreenState extends State<FriendScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   List<String> list = [];
-  int? req_ck;
+  int req_ck=0;
+
   @override
   Widget build(BuildContext context) {
     list = [];
@@ -56,12 +58,7 @@ class _FriendScreenState extends State<FriendScreen> {
                   child: const Row(
                     children: [
                       Text('요청 리스트  '),
-                      Icon(Icons.list)
-/*
-                      (req_ck==0||req_ck==null)
-                          ? const Icon(Icons.list)
-                          :  const Icon(Icons.priority_high, color: Colors.red)
-*/
+                    Icon(Icons.list),
                     ],
                   )),
             ]),
@@ -252,7 +249,7 @@ class _FriendScreenState extends State<FriendScreen> {
         for (var doc in query.docs) {
           list.add(doc['user_id']);
         }
-          req_ck=list.length;
+        req_ck=list.length;
        return query;
       } else {
         return null;
@@ -260,6 +257,7 @@ class _FriendScreenState extends State<FriendScreen> {
     }
     return null;
   }
+  
 
   Future<void> _rFriendList() async {
     User? currentUser = _auth.currentUser;
@@ -290,6 +288,7 @@ class _FriendScreenState extends State<FriendScreen> {
                                       onPressed: () {
                                         //삭제
                                        _CancleFriend(list[i]);
+                                       req_ck=list.length;
                                           Navigator.of(context).pop();
                                       },
                                       icon: const Icon(Icons.cancel)),
