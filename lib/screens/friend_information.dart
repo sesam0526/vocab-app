@@ -64,7 +64,7 @@ class _FriendInfo extends State<FriendInfo> {
                   ),),
               ElevatedButton(
                 onPressed: (){
-
+                  _getVocabulary();
                 }, 
                  child: const Text('단어장',style: TextStyle(fontSize: 20),))
                
@@ -91,37 +91,31 @@ class _FriendInfo extends State<FriendInfo> {
   void _getVocabulary() async{
      return showDialog<void>(
       context: context,
-      barrierDismissible: false, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
+      barrierDismissible: true, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            '삭제 확인창',
+
+        return const AlertDialog(
+          title: Text(
+            '단어장',
             style: TextStyle(fontSize: 20),
           ),
-          content: const SingleChildScrollView(
+          content: SingleChildScrollView(
             child: ListBody(
               //List Body를 기준으로 Text 설정
-              children: <Widget>[
-                Text('정말 삭제하시겠습니까?'),
-              ],
+              
             ),
           ),
-          actions: [
-            TextButton(
-              child: const Text('삭제'),
-              onPressed: () {
-                
-              },
-            ),
-            TextButton(
-              child: const Text('취소'),
-              onPressed: () {
-              
-              },
-            ),
-          ],
+         
         );
       },
     );
+  }
+  Stream<QuerySnapshot> getVocabularies() {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(email)
+        .collection('Vocabularies')
+        .snapshots();
+       
   }
 }
