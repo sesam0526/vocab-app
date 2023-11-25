@@ -129,7 +129,7 @@ class _FriendScreenState extends State<FriendScreen> {
             content: Text('자기 자신에게 친구신청은 보낼 수 없습니다.'),
           ),
         );
-      }else if (query.docs.isNotEmpty && !query2.exists) {
+      }else if (query.docs.isNotEmpty && !query2.exists&&friendEmail!=currentUser.email) {
         String friendUid = query.docs.first.id;
         await FirebaseFirestore.instance
             .collection('friends')
