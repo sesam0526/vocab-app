@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'friend_information.dart';
 
 class FriendScreen extends StatefulWidget {
   const FriendScreen({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class _FriendScreenState extends State<FriendScreen> {
   Widget build(BuildContext context) {
     list = [];
     Future<QuerySnapshot<Object?>?> query = checkFr();
-    var myFuture=_getFriendList();
+    var myFuture = _getFriendList();
     // ignore: unnecessary_null_comparison
     return Scaffold(
       appBar: AppBar(
@@ -74,14 +75,27 @@ class _FriendScreenState extends State<FriendScreen> {
                         itemCount: documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
-                              onTap: () {
-                                setState(() {});
-                              },
-                              title: Text(
-                                documents[index].get('friend_name'),
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              );
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                            onTap: () {
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const FriendInfo(),
+                                  ),
+                                );
+                              });
+                            },
+                            leading: Text(
+                              documents[index].get('friend_name'),
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            trailing: Text(
+                              documents[index].get('friend_id'),
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                          );
                         });
                   })),
         ],
@@ -90,13 +104,12 @@ class _FriendScreenState extends State<FriendScreen> {
   }
 
   Future<QuerySnapshot> _getFriendList() async {
-      User? user = _auth.currentUser;
-       return FirebaseFirestore.instance
+    User? user = _auth.currentUser;
+    return FirebaseFirestore.instance
         .collection('friends')
         .where('user_id', isEqualTo: user!.email.toString())
         .where('status', isEqualTo: 'accepted')
         .get();
-   
   }
 
   void _sendFriendRequest(String friendEmail) async {
@@ -126,7 +139,7 @@ class _FriendScreenState extends State<FriendScreen> {
           'friend_id': friendUid,
           'status': 'pending',
           'user_name': currentUser.displayName,
-          'friend_name':'null'
+          'friend_name': 'null'
         });
         await FirebaseFirestore.instance
             .collection('friends')
@@ -136,7 +149,7 @@ class _FriendScreenState extends State<FriendScreen> {
           'friend_id': currentUser.email,
           'status': 'pending',
           'friend_name': currentUser.displayName,
-          'user_name':'null'
+          'user_name': 'null'
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -262,10 +275,9 @@ class _FriendScreenState extends State<FriendScreen> {
                                       onPressed: () {
                                         setState(() {
                                           //친구추가
-                                         _AddFriend(list[i]);
+                                          _AddFriend(list[i]);
                                           Navigator.of(context).pop();
                                         });
-                                         
                                       },
                                       icon: const Icon(Icons.check_circle))
                                 ],

@@ -50,11 +50,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('영단어 사전(test)'),
         centerTitle: true, //타이틀 중앙 위치
         elevation: 0.0, //입체감 없애기
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
         actions: [
           IconButton(
             onPressed: () {
-              print('사람');
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Profile()));
             },
@@ -84,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('단어장'),
             iconColor: Colors.purple,
             onTap: () {
-              print('단어장');
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -96,7 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('게임'),
             iconColor: Colors.purple,
             onTap: () {
-              print('게임');
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const GameScreen()));
             },
@@ -114,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('친구 목록'),
             iconColor: Colors.purple,
             onTap: () {
-              print('친구');
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -127,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
               iconColor: Colors.purple,
               onTap: () {
                 FirebaseAuth.instance.signOut().then((value) {
-                  print("Signed Out");
                   Navigator.push(
                       context,
                       MaterialPageRoute(
