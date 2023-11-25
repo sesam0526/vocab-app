@@ -103,7 +103,6 @@ class _FriendVocabDetail extends State<FriendVocabDetail> {
                 .collection('Words');
         QuerySnapshot<Map<String, dynamic>> query =
             await collectionReference.get();
-        print(query.docs.length);
         for (var doc in query.docs) {
           FirebaseFirestore.instance
               .collection('users')
