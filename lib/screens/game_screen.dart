@@ -22,7 +22,7 @@ class _GameScreenState extends State<GameScreen> {
     minimumSize: const Size(300, 0), // 버튼의 최소 크기 (가로 폭)
   );
 
-// 게임 메뉴얼 리스트
+// 게임 설명서 리스트
   final List<Map<String, String>> gameManuals = [
     {
       'name': '게임 흐름',
@@ -125,6 +125,7 @@ class _GameScreenState extends State<GameScreen> {
   ];
 
   int currentPage = 0;
+  // 게임 설명서 함수
   void _showGameManualDialog(int index) {
     showDialog(
       context: context,
@@ -132,11 +133,13 @@ class _GameScreenState extends State<GameScreen> {
         return AlertDialog(
           title: Text(gameManuals[index]['name']!),
           content: SingleChildScrollView(
+            // 스크롤 화면
             child: Text(gameManuals[index]['description']!),
           ),
           actions: [
             if (index > 0)
               TextButton(
+                // 이전 화살표를 누르면 이전 설명서로 돌아감
                 onPressed: () {
                   setState(() {
                     currentPage--;
@@ -148,6 +151,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
             if (index < gameManuals.length - 1)
               TextButton(
+                // 다음 화살표를 누르면 다음 설명서로 넘어감
                 onPressed: () {
                   setState(() {
                     currentPage++;
@@ -158,6 +162,7 @@ class _GameScreenState extends State<GameScreen> {
                 child: const Icon(Icons.arrow_forward), // 다음 아이콘
               ),
             TextButton(
+              // 닫기 버튼을 누르면 다이얼로그 닫힘
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -169,6 +174,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+// 단어장 선택 함수
   Future<void> showVocabularyBookSelectionDialog(
       void Function(String vocabularyId, bool studyEnglish)
           navigateToMode) async {
@@ -177,7 +183,7 @@ class _GameScreenState extends State<GameScreen> {
     final List<DocumentSnapshot> vocabularyBooks =
         await vocabService.getVocabularyBooks();
 
-    // 선택 가능한 단어장이 없는 경우
+    // 선택 가능한 단어장이 없는 경우 알림 다이얼로그 표시
     if (vocabularyBooks.isEmpty) {
       // ignore: use_build_context_synchronously
       showDialog(
@@ -189,6 +195,7 @@ class _GameScreenState extends State<GameScreen> {
               '선택 가능한 단어장이 없습니다. 단어장을 먼저 만들어주세요.',
             ),
             actions: [
+              // 닫기 버튼을 누르면 알림 다이얼로그 닫힘
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -202,6 +209,7 @@ class _GameScreenState extends State<GameScreen> {
       return;
     }
 
+// 단어장 선택하는 다이얼로그 표시
     // ignore: use_build_context_synchronously
     showDialog(
       context: context,
@@ -218,7 +226,7 @@ class _GameScreenState extends State<GameScreen> {
                         .getWordsFromVocabulary(vocabulary.id);
 
                     if (words.isEmpty) {
-                      // 선택한 단어장에 단어가 존재하지 않을 경우
+                      // 선택한 단어장에 단어가 존재하지 않을 경우 알림 다이얼로그 표시
                       // ignore: use_build_context_synchronously
                       showDialog(
                         context: context,
@@ -228,6 +236,7 @@ class _GameScreenState extends State<GameScreen> {
                             content: const Text(
                                 '선택한 단어장에 단어가 존재하지 않습니다. 단어를 추가해주세요.'),
                             actions: [
+                              // 닫기 버튼을 누르면 알림 다이얼로그 닫힘
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -239,10 +248,11 @@ class _GameScreenState extends State<GameScreen> {
                         },
                       );
                     } else {
+                      // 단어가 존재하면
                       // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                       showModeSelectionDialog((studyEnglish) async {
-                        // 모드 선택 팝업 표시
+                        // 모드 선택 다이얼로그 표시
                         String vocabularyId = vocabulary.id;
                         navigateToMode(vocabularyId, studyEnglish);
                       });
@@ -257,6 +267,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+// 4지선다 게임을 위한 단어장 선택 함수
   Future<void> showVocabularyBookSelectionDialogInMultipleChoiceGame(
       void Function(String vocabularyId, bool studyEnglish)
           navigateToMode) async {
@@ -265,7 +276,7 @@ class _GameScreenState extends State<GameScreen> {
     final List<DocumentSnapshot> vocabularyBooks =
         await vocabService.getVocabularyBooks();
 
-    // 선택 가능한 단어장이 없는 경우
+    // 선택 가능한 단어장이 없는 경우 알림 다이얼로그 표시
     if (vocabularyBooks.isEmpty) {
       // ignore: use_build_context_synchronously
       showDialog(
@@ -273,8 +284,11 @@ class _GameScreenState extends State<GameScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('알림'),
-            content: const Text('선택 가능한 단어장이 없습니다. 단어장을 먼저 만들어주세요.'),
+            content: const Text(
+              '선택 가능한 단어장이 없습니다. 단어장을 먼저 만들어주세요.',
+            ),
             actions: [
+              // 닫기 버튼을 누르면 알림 다이얼로그 닫힘
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -288,6 +302,7 @@ class _GameScreenState extends State<GameScreen> {
       return;
     }
 
+// 단어장 선택하는 다이얼로그 함수
     // ignore: use_build_context_synchronously
     showDialog(
       context: context,
@@ -304,7 +319,7 @@ class _GameScreenState extends State<GameScreen> {
                         .getWordsFromVocabulary(vocabulary.id);
 
                     if (words.length < 4) {
-                      // 선택한 단어장에 단어가 4개 미만일 경우
+                      // 선택한 단어장에 단어가 4개 미만일 경우 알림 다이얼로그 표시
                       // ignore: use_build_context_synchronously
                       showDialog(
                         context: context,
@@ -314,6 +329,7 @@ class _GameScreenState extends State<GameScreen> {
                             content: const Text(
                                 '선택한 게임에서는 4개 이상의 단어가 필요합니다. 단어를 추가해주세요.'),
                             actions: [
+                              // 닫기 버튼을 누르면 알림 다이얼로그 닫힘
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -325,10 +341,11 @@ class _GameScreenState extends State<GameScreen> {
                         },
                       );
                     } else {
+                      // 단어가 4개 이상이면
                       // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                       showModeSelectionDialog((studyEnglish) async {
-                        // 모드 선택 팝업 표시
+                        // 모드 선택 다이얼로그 표시
                         String vocabularyId = vocabulary.id;
                         navigateToMode(vocabularyId, studyEnglish);
                       });
@@ -343,6 +360,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+// 모드 선택 함수
   void showModeSelectionDialog(
       void Function(bool studyEnglish) navigateToMode) {
     showDialog(
@@ -386,7 +404,7 @@ class _GameScreenState extends State<GameScreen> {
         actions: [
           IconButton(
             onPressed: () async {
-              // 게임 설명서 팝업 표시
+              // 게임 설명서 다이얼로그 표시
               _showGameManualDialog(currentPage);
             },
             icon: const Icon(Icons.book),
@@ -394,6 +412,7 @@ class _GameScreenState extends State<GameScreen> {
         ],
       ),
       body: SingleChildScrollView(
+        // 스크롤 화면
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -402,13 +421,15 @@ class _GameScreenState extends State<GameScreen> {
                 height: 20,
               ),
               ElevatedButton(
+                // 플래시카드 게임 버튼을 누르면
                 onPressed: () async {
-                  // 단어장 선택 팝업 표시
+                  // 단어장 선택 다이얼로그 표시
                   showVocabularyBookSelectionDialog(
                       (vocabularyId, studyEnglish) async {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
+                        // 플래시카드 게임 화면으로 이동
                         builder: (context) => FlashcardsGame(
                             studyEnglish: studyEnglish,
                             vocabularyId: vocabularyId),
@@ -423,13 +444,15 @@ class _GameScreenState extends State<GameScreen> {
                 height: 20,
               ),
               ElevatedButton(
+                // 4지선다 게임 버튼을 누르면
                 onPressed: () async {
-                  // 단어장 선택 팝업 표시
+                  // 단어장 선택 다이얼로그 표시
                   showVocabularyBookSelectionDialogInMultipleChoiceGame(
                       (vocabularyId, studyEnglish) async {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
+                        // 4지선다 게임 화면으로 이동
                         builder: (context) => MultipleChoiceGame(
                             studyEnglish: studyEnglish,
                             vocabularyId: vocabularyId),
@@ -444,13 +467,15 @@ class _GameScreenState extends State<GameScreen> {
                 height: 20,
               ),
               ElevatedButton(
+                // 학습 게임 버튼을 누르면
                 onPressed: () async {
-                  // 단어장 선택 팝업 표시
+                  // 단어장 선택 다이얼로그 표시
                   showVocabularyBookSelectionDialog(
                       (vocabularyId, studyEnglish) async {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
+                        // 학습 게임 화면으로 이동
                         builder: (context) => LearningGame(
                             studyEnglish: studyEnglish,
                             vocabularyId: vocabularyId),

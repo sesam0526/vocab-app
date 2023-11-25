@@ -135,6 +135,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
           ),
           actions: [
             TextButton(
+              // 닫기 버튼을 누르면
               onPressed: () {
                 _updateUserMoneyInFirebase(); // 파이어베이스에 유저 돈 업데이트
                 Navigator.of(context).pop(); // 다이얼로그 닫힘
