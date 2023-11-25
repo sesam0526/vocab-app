@@ -68,6 +68,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("${user.displayName}님 로그인에 성공했습니다."),
+            duration: const Duration(seconds: 1), // 표시 시간 조절
           ),
         );
 

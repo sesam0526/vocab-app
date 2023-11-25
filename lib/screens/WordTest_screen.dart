@@ -70,7 +70,7 @@ class _WordTest extends State<WordTest> {
                 ),
               ),
               
-              Divider(height: 1),
+              const Divider(height: 1),
 
               /// 버킷 리스트
               Expanded(
@@ -79,7 +79,7 @@ class _WordTest extends State<WordTest> {
                     builder: (context, snapshot) {
                       final documents = snapshot.data?.docs ?? []; // 문서들 가져오기
                       if (documents.isEmpty) {
-                        return Center(child: Text("단어가 없습니다."));
+                        return const Center(child: Text("단어가 없습니다."));
                       }
                       return ListView.builder(
                         itemCount: documents.length,
@@ -97,7 +97,7 @@ class _WordTest extends State<WordTest> {
                             ),
                             // 삭제 아이콘 버튼
                             trailing: IconButton(
-                              icon: Icon(CupertinoIcons.delete),
+                              icon: const Icon(CupertinoIcons.delete),
                               onPressed: () {
                                 // 삭제 버튼 클릭시
                                 wordService.delete(doc.id);

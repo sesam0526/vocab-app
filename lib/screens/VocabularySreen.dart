@@ -121,11 +121,11 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('데이터 로드 중 오류가 발생했습니다.'));
+            return const Center(child: Text('데이터 로드 중 오류가 발생했습니다.'));
           }
 
           if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('단어장이 없습니다. 새로운 단어장을 추가해보세요!'));
+            return const Center(child: Text('단어장이 없습니다. 새로운 단어장을 추가해보세요!'));
           }
 
           var vocabularies = snapshot.data!.docs;

@@ -24,7 +24,7 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('단어 설정'),
+          title: const Text('단어 설정'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -95,7 +95,7 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
           if (isDuplicate) {
             // 중복되는 단어가 존재한다는 메시지를 표시
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('이미 존재하는 단어입니다. 다른 단어를 입력해주세요.'))
+              const SnackBar(content: Text('이미 존재하는 단어입니다. 다른 단어를 입력해주세요.'))
             );
             return;
           }

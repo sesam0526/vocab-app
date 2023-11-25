@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -16,7 +15,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    final _imageSize = MediaQuery.of(context).size.width / 4;
+    final imageSize = MediaQuery.of(context).size.width / 4;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,8 +30,8 @@ class _ProfileState extends State<Profile> {
           if (_pickedFile == null)
             Container(
               constraints: BoxConstraints(
-                minHeight: _imageSize,
-                minWidth: _imageSize,
+                minHeight: imageSize,
+                minWidth: imageSize,
               ),
               child: GestureDetector(
                 onTap: () {
@@ -41,15 +40,15 @@ class _ProfileState extends State<Profile> {
                 child: Center(
                   child: Icon(
                     Icons.account_circle,
-                    size: _imageSize,
+                    size: imageSize,
                   ),
                 ),
               ),
             )
           else
             Container(
-                width: _imageSize,
-                height: _imageSize,
+                width: imageSize,
+                height: imageSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
