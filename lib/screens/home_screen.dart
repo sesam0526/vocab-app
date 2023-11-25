@@ -110,11 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: const Icon(Icons.person),
             title: const Text('친구 목록'),
             iconColor: Colors.purple,
-            onTap: () {
+            onTap: () async{
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const FriendScreen()));
+              
             },
           ),
           ListTile(
@@ -456,4 +457,5 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+
 }
