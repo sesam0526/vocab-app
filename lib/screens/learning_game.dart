@@ -22,7 +22,6 @@ class LearningGame extends StatefulWidget {
 class _LearningGameState extends State<LearningGame> {
   final TextEditingController _inputController =
       TextEditingController(); // 텍스트 입력 필드
-  List<Map<String, String>> wordsList = []; // 단어 리스트
 
   @override
   void initState() {
@@ -37,6 +36,8 @@ class _LearningGameState extends State<LearningGame> {
     _inputController.dispose(); // 메모리 누수 방지
     super.dispose();
   }
+
+  List<Map<String, String>> wordsList = []; // 단어 리스트
 
 // 단어 가져오는 함수
   Future<void> fetchWords() async {
@@ -60,10 +61,7 @@ class _LearningGameState extends State<LearningGame> {
   String _currentAnswer = ''; // 현재 단어의 의미
 
   bool? _isCorrect; // 정답여부
-  int correctWords = 0; // 맞은 단어 수
-  int incorrectWords = 0; // 틀린 단어 수
   int _lives = 3; // 목숨 수
-  int _moneyEarned = 0; // 획득한 돈
 
   // 다음 문제 가져옴
   void _loadNextQuestion() {
@@ -86,6 +84,11 @@ class _LearningGameState extends State<LearningGame> {
     });
   }
 
+  int correctWords = 0; // 맞은 단어 수
+  int incorrectWords = 0; // 틀린 단어 수
+  int _scoreReceived = 0; // 받은 점수
+  int _moneyEarned = 0; // 획득한 돈
+
   // 정답 확인 함수
   void _checkAnswer() {
     setState(() {
@@ -95,13 +98,15 @@ class _LearningGameState extends State<LearningGame> {
           (userInput == _currentAnswer); // 사용자 입력과 현재 정답 비교해서 _isCorrect 변수에 할당
 
       if (_isCorrect == true) {
-        // 사용자가 입력한 정답이 맞으면 돈 획득
+        // 사용자가 입력한 정답이 맞으면 돈과 점수 획득
         correctWords++;
         _moneyEarned += 10;
+        _scoreReceived += 10;
         _showSnackBar('정답입니다!');
       } else {
-        // 틀리면 목숨 줄임
+        // 틀리면 목숨과 점수 잃음
         incorrectWords++;
+        _scoreReceived -= 10;
         _lives--;
         _showSnackBar('틀렸습니다.');
 
@@ -128,6 +133,7 @@ class _LearningGameState extends State<LearningGame> {
   void _showGameOverDialog() {
     int totalWords = wordsList.length; // 전체 단어 수
     double accuracyRate = correctWords / totalWords * 100; // 정답률
+    _scoreReceived += _lives * wordsList.length * 5; // 받은 점수
     _moneyEarned += _lives * wordsList.length * 5; // 획득한 돈
 
     const textStyle = TextStyle(fontSize: 18); // 글자 스타일
@@ -146,6 +152,7 @@ class _LearningGameState extends State<LearningGame> {
                 Text('정답률: ${accuracyRate.toStringAsFixed(2)}%',
                     style: textStyle), // 반올림해서 소수점 둘째자리까지 표현
                 Text('남은 목숨 수: $_lives', style: textStyle),
+                Text('받은 점수: $_scoreReceived', style: textStyle),
                 Text('획득한 돈: $_moneyEarned', style: textStyle),
               ],
             ),
@@ -154,6 +161,7 @@ class _LearningGameState extends State<LearningGame> {
             TextButton(
               // 닫기 버튼을 누르면
               onPressed: () {
+                _updateUserScoreInFirebase(); // 파이어베이스에 유저 점수 업데이트
                 _updateUserMoneyInFirebase(); // 파이어베이스에 유저 돈 업데이트
                 Navigator.of(context).pop(); // 다이얼로그 닫힘
               },
@@ -163,6 +171,35 @@ class _LearningGameState extends State<LearningGame> {
         );
       },
     );
+  }
+
+// 파이버베이스에 유저 점수 업데이트하는 함수
+  void _updateUserScoreInFirebase() async {
+    FirebaseAuth auth = FirebaseAuth.instance; // 사용자 인증관련 작업 수행
+    String uid = 'abc'; // 사용자 uid
+
+    if (auth.currentUser != null) {
+      // 현재 사용자가 인증되어 있으면
+      uid = auth.currentUser!.email.toString(); // 사용자의 이메일을 UID로 사용
+    }
+
+    DocumentReference<Map<String, dynamic>> documentReference =
+        FirebaseFirestore.instance
+            .collection("users")
+            .doc(uid); // 특정 사용자의 문서에 접근
+
+    // Firestore에서 해당 문서를 가져와 DocumentSnapshot 객체로 저장
+    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await documentReference.get();
+
+    // 현재 사용자의 점수 정보를 DocumentSnapshot에서 가져와 변수 s에 저장
+    int s = documentSnapshot.get('score');
+
+    // 현재 점수에 _scoreReceived를 더하여 새로운 점수 값으로 사용자 점수를 업데이트
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .update({"score": s + _scoreReceived});
   }
 
 // 파이버베이스에 유저 돈 업데이트하는 함수
