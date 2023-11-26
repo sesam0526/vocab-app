@@ -18,6 +18,20 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
+  @override
+  void initState() {
+    super.initState();
+    // 화면 로드 시 안내 메시지 표시
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('단어를 길게 눌러 편집 또는 삭제할 수 있습니다.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    });
+  }
+
     Future<void> _showWordOptionsDialog(DocumentSnapshot word) async {
     return showDialog<void>(
       context: context,
@@ -121,7 +135,7 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.vocabularyName),
-        actions: <Widget>[
+        /*actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
@@ -131,7 +145,7 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
               });
             },
           ),
-        ],
+        ],*/
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48.0),
           child: TextField(
@@ -165,6 +179,10 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
             words = words.where((doc) {
               return doc['word'].toString().toLowerCase().contains(_searchTerm.toLowerCase());
             }).toList();
+          }
+          // 단어 목록이 비어 있을 때 메시지 표시
+          if (words.isEmpty) {
+            return const Center(child: Text('추가된 단어가 없습니다. 새로운 단어를 추가해보세요!'));
           }
 
           return ListView.builder(
