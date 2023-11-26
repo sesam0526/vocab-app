@@ -13,6 +13,7 @@ import 'friends_screen.dart';
 import 'ranking.dart';
 import 'signin_screen.dart';
 import 'store_screen.dart';
+import 'wrongVocabulary_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -76,9 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             accountName: Text(uname),
             accountEmail: Text(uid),
-            onDetailsPressed: () {
-              
-            }, // 디테일
+            onDetailsPressed: () {}, // 디테일
             decoration: BoxDecoration(
                 color: Colors.purple[200],
                 borderRadius: const BorderRadius.only(
@@ -98,7 +97,17 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
-            //게임으로 이동
+            leading: const Icon(Icons.error),
+            title: const Text('오답노트'),
+            iconColor: Colors.purple,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const WrongVocabularyScreen()));
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.sports_esports),
             title: const Text('게임'),
             iconColor: Colors.purple,
@@ -109,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           ListTile(
             //유저들의 랭킹창으로 이동
-            leading: const Icon(Icons.sports_esports),
+            leading: const Icon(Icons.format_list_numbered),
             title: const Text('랭킹'),
             iconColor: Colors.purple,
             onTap: () {
@@ -145,14 +154,14 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('공지사항'),
             iconColor: Colors.purple,
             onTap: () {
-                Navigator.push(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const AnnouncementScreen()));
             },
           ),
           ListTile(
-            //로그아웃
+              //로그아웃
               leading: const Icon(Icons.logout),
               title: const Text('로그아웃'),
               iconColor: Colors.purple,
@@ -167,178 +176,176 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       )),
       body: Center(
-          child: Column(
-              
-              children: [
-                //달력 구현
-            TableCalendar(
-              locale: 'ko_KR',
-              firstDay: DateTime.utc(2021, 10, 16),
-              lastDay: DateTime.utc(2030, 3, 14),
-              focusedDay: _focusedDay,
-              //날짜 클릭 시 클릭한 날짜로 selectedDay 설정
-              onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-                setState(() {
-                  this.selectedDay = selectedDay;
-                  // this.focusedDay = focusedDay;
-                });
-              },
-              selectedDayPredicate: (DateTime day) {
-                return isSameDay(selectedDay, day);
-              },
-               onPageChanged: (focusedDay) {
-          // No need to call `setState()` here
-          _focusedDay = focusedDay;
-        },
-            //달력 디자인 설정      
-              headerStyle: const HeaderStyle(
-                titleCentered: true,
-                formatButtonVisible: false,
-                titleTextStyle: TextStyle(
-                  fontSize: 20.0,
-                ),
-                leftChevronIcon: Icon(
-                  Icons.arrow_left,
-                  size: 40.0,
-                ),
-                rightChevronIcon: Icon(
-                  Icons.arrow_right,
-                  size: 40.0,
-                ),
+          child: Column(children: [
+        //달력 구현
+        TableCalendar(
+          locale: 'ko_KR',
+          firstDay: DateTime.utc(2021, 10, 16),
+          lastDay: DateTime.utc(2030, 3, 14),
+          focusedDay: _focusedDay,
+          //날짜 클릭 시 클릭한 날짜로 selectedDay 설정
+          onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
+            setState(() {
+              this.selectedDay = selectedDay;
+              // this.focusedDay = focusedDay;
+            });
+          },
+          selectedDayPredicate: (DateTime day) {
+            return isSameDay(selectedDay, day);
+          },
+          onPageChanged: (focusedDay) {
+            // No need to call `setState()` here
+            _focusedDay = focusedDay;
+          },
+          //달력 디자인 설정
+          headerStyle: const HeaderStyle(
+            titleCentered: true,
+            formatButtonVisible: false,
+            titleTextStyle: TextStyle(
+              fontSize: 20.0,
+            ),
+            leftChevronIcon: Icon(
+              Icons.arrow_left,
+              size: 40.0,
+            ),
+            rightChevronIcon: Icon(
+              Icons.arrow_right,
+              size: 40.0,
+            ),
+          ),
+          calendarStyle: CalendarStyle(
+              isTodayHighlighted: true,
+              selectedDecoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.deepPurple, width: 1.0),
               ),
-              calendarStyle: CalendarStyle(
-                  isTodayHighlighted: true,
-                  selectedDecoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.deepPurple, width: 1.0),
-                  ),
-                  selectedTextStyle: const TextStyle(
-                    fontSize: 16.0,
-                  ),
-                  todayDecoration: BoxDecoration(
-                      //color: Colors.transparent,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.purple, width: 1.5)),
-                  todayTextStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  markerSize: 10,
-                  markerDecoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 144, 40, 162),
-                    shape: BoxShape.circle,
-                  )),
-                  //출석된 날짜들을 이벤트로 표시
-              eventLoader: (day) {
-                if (dayMap.containsKey(
-                    DateFormat('yyyy-MM-dd', 'ko').format(day).toString())) {
-                  return ["출석"];
-                } else {
-                  return [];
-                }
-              },
-            ),
-            Padding(
-              //선택한 날짜 표시
-              padding: const EdgeInsets.all(0.0),
-              child: Column(children: [
-                Container(
-                    color: Colors.purple[50],
-                    padding: const EdgeInsets.fromLTRB(20, 10, 16, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          DateFormat('yyyy.MM.dd', 'ko')
-                              .format(selectedDay)
-                              .toString(),
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              height: 2.0),
-                        ),
-                      ],
-                    )),
-              ]),
-            ),
-            Padding(
-              //to-do 입력할 텍스트박스
-              padding: const EdgeInsets.all(8.0),
-
-              child: Row(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: TextField(
-                      controller: _textController,
+              selectedTextStyle: const TextStyle(
+                fontSize: 16.0,
+              ),
+              todayDecoration: BoxDecoration(
+                  //color: Colors.transparent,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.purple, width: 1.5)),
+              todayTextStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+              markerSize: 10,
+              markerDecoration: const BoxDecoration(
+                color: Color.fromARGB(255, 144, 40, 162),
+                shape: BoxShape.circle,
+              )),
+          //출석된 날짜들을 이벤트로 표시
+          eventLoader: (day) {
+            if (dayMap.containsKey(
+                DateFormat('yyyy-MM-dd', 'ko').format(day).toString())) {
+              return ["출석"];
+            } else {
+              return [];
+            }
+          },
+        ),
+        Padding(
+          //선택한 날짜 표시
+          padding: const EdgeInsets.all(0.0),
+          child: Column(children: [
+            Container(
+                color: Colors.purple[50],
+                padding: const EdgeInsets.fromLTRB(20, 10, 16, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      DateFormat('yyyy.MM.dd', 'ko')
+                          .format(selectedDay)
+                          .toString(),
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          height: 2.0),
                     ),
-                  ),
-                  //추가 버튼
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_textController.text == '') {
-                        return;
-                      } else {
-                        setState(() {
-                          _taskAdder(uid, _textController.text, selectedDay);
-                          _textController.clear();
-                        });
-                      }
-                    },
-                    child: const Text("추가"),
-                  )
-                ],
+                  ],
+                )),
+          ]),
+        ),
+        Padding(
+          //to-do 입력할 텍스트박스
+          padding: const EdgeInsets.all(8.0),
+
+          child: Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: TextField(
+                  controller: _textController,
+                ),
               ),
-            ),
-            //해당 날짜의 to-do list
-            Expanded(
-              child: FutureBuilder<QuerySnapshot>(
-                  future: readList(uid, selectedDay),
-                  builder: (context, snapshot) {
-                    final documents = snapshot.data?.docs ?? [];
-                    if (documents.isEmpty) {
-                      return const Center(child: Text("할 일이 없습니다."));
-                    }
-                    return ListView.builder(
-                      itemCount: documents.length,
-                      itemBuilder: (context, index) {
-                        final doc = documents[index];
-                        String work = doc.get('work');
-                        bool isComplete = doc.get('isComplete');
-                        String id = doc.id;
-                        return ListTile(
-                            onTap: () {
-                              setState(() {
-                                _taskUpdate(uid, id, isComplete);
-                              });
-                            },
-                            trailing: IconButton(
-                              icon: const Icon(CupertinoIcons.delete),
-                              onPressed: () {
-                                _taskDelete(uid, id);
-                              },
-                            ),
-                            title: Text(
-                              work,
-                              style: isComplete
-                                  ? const TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                      fontStyle: FontStyle.italic,
-                                    )
-                                  : null,
-                            ));
-                      },
-                    );
-                  }),
-            ),
-          ])),
-          //출석 버튼
-           floatingActionButton: FloatingActionButton(
+              //추가 버튼
+              ElevatedButton(
+                onPressed: () {
+                  if (_textController.text == '') {
+                    return;
+                  } else {
+                    setState(() {
+                      _taskAdder(uid, _textController.text, selectedDay);
+                      _textController.clear();
+                    });
+                  }
+                },
+                child: const Text("추가"),
+              )
+            ],
+          ),
+        ),
+        //해당 날짜의 to-do list
+        Expanded(
+          child: FutureBuilder<QuerySnapshot>(
+              future: readList(uid, selectedDay),
+              builder: (context, snapshot) {
+                final documents = snapshot.data?.docs ?? [];
+                if (documents.isEmpty) {
+                  return const Center(child: Text("할 일이 없습니다."));
+                }
+                return ListView.builder(
+                  itemCount: documents.length,
+                  itemBuilder: (context, index) {
+                    final doc = documents[index];
+                    String work = doc.get('work');
+                    bool isComplete = doc.get('isComplete');
+                    String id = doc.id;
+                    return ListTile(
+                        onTap: () {
+                          setState(() {
+                            _taskUpdate(uid, id, isComplete);
+                          });
+                        },
+                        trailing: IconButton(
+                          icon: const Icon(CupertinoIcons.delete),
+                          onPressed: () {
+                            _taskDelete(uid, id);
+                          },
+                        ),
+                        title: Text(
+                          work,
+                          style: isComplete
+                              ? const TextStyle(
+                                  decoration: TextDecoration.lineThrough,
+                                  fontStyle: FontStyle.italic,
+                                )
+                              : null,
+                        ));
+                  },
+                );
+              }),
+        ),
+      ])),
+      //출석 버튼
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           //출석하기 함수 호출
-                  setState(() {
-                    attenCheck(uid);
-                  });
-                },
+          setState(() {
+            attenCheck(uid);
+          });
+        },
         child: const Text(
           '출석',
           style: TextStyle(fontSize: 20),
@@ -346,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
- 
+
   void _taskAdder(String uid, String work, DateTime date) {
     //to-do를 데이터베이스에 추가하는 함수
     final taskAdd = FirebaseFirestore.instance
@@ -506,5 +513,4 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
 }

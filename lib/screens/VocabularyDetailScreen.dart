@@ -6,7 +6,9 @@ class VocabularyDetailScreen extends StatefulWidget {
   final String vocabularyId;
   final String vocabularyName;
 
-  const VocabularyDetailScreen({Key? key, required this.vocabularyId, required this.vocabularyName}) : super(key: key);
+  const VocabularyDetailScreen(
+      {Key? key, required this.vocabularyId, required this.vocabularyName})
+      : super(key: key);
 
   @override
   _VocabularyDetailScreenState createState() => _VocabularyDetailScreenState();
@@ -32,7 +34,7 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
     });
   }
 
-    Future<void> _showWordOptionsDialog(DocumentSnapshot word) async {
+  Future<void> _showWordOptionsDialog(DocumentSnapshot word) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -46,14 +48,18 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
                   title: const Text('편집'),
                   onTap: () {
                     Navigator.of(context).pop();
-                    _addEditWordDialog(wordId: word.id, word: word['word'], meaning: word['meaning']);
+                    _addEditWordDialog(
+                        wordId: word.id,
+                        word: word['word'],
+                        meaning: word['meaning']);
                   },
                 ),
                 ListTile(
                   title: const Text('삭제'),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    await _vocabService.deleteWord(widget.vocabularyId, word.id);
+                    await _vocabService.deleteWord(
+                        widget.vocabularyId, word.id);
                   },
                 ),
               ],
@@ -64,10 +70,12 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
     );
   }
 
-
-  Future<void> _addEditWordDialog({String? wordId, String? word, String? meaning}) async {
-    final TextEditingController wordController = TextEditingController(text: word);
-    final TextEditingController meaningController = TextEditingController(text: meaning);
+  Future<void> _addEditWordDialog(
+      {String? wordId, String? word, String? meaning}) async {
+    final TextEditingController wordController =
+        TextEditingController(text: word);
+    final TextEditingController meaningController =
+        TextEditingController(text: meaning);
 
     return showDialog<void>(
       context: context,
@@ -104,26 +112,28 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
                 String inputMeaning = meaningController.text.trim();
 
                 if (inputWord.isNotEmpty && inputMeaning.isNotEmpty) {
-          // 중복 체크
-          bool isDuplicate = await _vocabService.checkWordExistence(widget.vocabularyId, inputWord, wordId);
-          if (isDuplicate) {
-            // 중복되는 단어가 존재한다는 메시지를 표시
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('이미 존재하는 단어입니다. 다른 단어를 입력해주세요.'))
-            );
-            return;
-          }
+                  // 중복 체크
+                  bool isDuplicate = await _vocabService.checkWordExistence(
+                      widget.vocabularyId, inputWord, wordId);
+                  if (isDuplicate) {
+                    // 중복되는 단어가 존재한다는 메시지를 표시
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('이미 존재하는 단어입니다. 다른 단어를 입력해주세요.')));
+                    return;
+                  }
 
-          // 단어 저장 로직
-          if (wordId == null) {
-            await _vocabService.addWord(widget.vocabularyId, inputWord, inputMeaning);
-          } else {
-            await _vocabService.updateWord(widget.vocabularyId, wordId, inputWord, inputMeaning);
-          }
-          Navigator.of(context).pop();
-        }
-      },
-    ),
+                  // 단어 저장 로직
+                  if (wordId == null) {
+                    await _vocabService.addWord(
+                        widget.vocabularyId, inputWord, inputMeaning);
+                  } else {
+                    await _vocabService.updateWord(
+                        widget.vocabularyId, wordId, inputWord, inputMeaning);
+                  }
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
           ],
         );
       },
@@ -162,9 +172,6 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
           ),
         ),
       ),
-      
-
-
       body: StreamBuilder<QuerySnapshot>(
         // Firestore에서 해당 단어장의 단어 목록을 가져오는 스트림
         stream: _vocabService.getWords(widget.vocabularyId).snapshots(),
@@ -177,7 +184,10 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
 
           if (_searchTerm.isNotEmpty) {
             words = words.where((doc) {
-              return doc['word'].toString().toLowerCase().contains(_searchTerm.toLowerCase());
+              return doc['word']
+                  .toString()
+                  .toLowerCase()
+                  .contains(_searchTerm.toLowerCase());
             }).toList();
           }
           // 단어 목록이 비어 있을 때 메시지 표시
@@ -192,9 +202,9 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
               return ListTile(
                 title: Text(word['word']),
                 subtitle: Text(word['meaning']),
-
                 onLongPress: () {
-                  _showWordOptionsDialog(word);                },
+                  _showWordOptionsDialog(word);
+                },
               );
             },
           );
