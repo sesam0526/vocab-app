@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'friend_vocab.dart';
 
 class FriendInfo extends StatefulWidget {
+  //친구의 이메일을 받아와서 구성
   String email = '';
   FriendInfo({super.key, required this.email});
 
@@ -20,6 +21,7 @@ class _FriendInfo extends State<FriendInfo> {
 
   @override
   Widget build(BuildContext context) {
+    //이메일 값을 통해 해당 유저의 정보를 저장(닉네임과 게임점수)
     _getUserInpomation(email);
     return Scaffold(
       appBar: AppBar(
@@ -32,6 +34,7 @@ class _FriendInfo extends State<FriendInfo> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                //닉네임
                 padding: const EdgeInsets.all(5.0),
                 decoration: const BoxDecoration(
                     border: Border(
@@ -50,6 +53,7 @@ class _FriendInfo extends State<FriendInfo> {
                 ),
               ),
               Container(
+                //이메일
                 padding: const EdgeInsets.all(5.0),
                 decoration: const BoxDecoration(
                     border: Border(
@@ -68,6 +72,7 @@ class _FriendInfo extends State<FriendInfo> {
                 ),
               ),
               Container(
+                //게임점수
                 padding: const EdgeInsets.all(5.0),
                 decoration: const BoxDecoration(
                     border: Border(
@@ -86,7 +91,7 @@ class _FriendInfo extends State<FriendInfo> {
                 ),
               ),
               ElevatedButton(
-                
+                //단어장 버튼-> 누르면 해당 친구의 단어장을 볼 수 있는 창으로 이동한다.      
                   onPressed: () async{
                      final result=await
                      Navigator.push(
@@ -106,7 +111,7 @@ class _FriendInfo extends State<FriendInfo> {
     );
   }
 
-  //합수 구현
+  //해당 친구의 이메일을 통해 DB의 정보를 받아서 값을 저장하는 함수
   Future<void> _getUserInpomation(String em) async {
     DocumentSnapshot<Map<String, dynamic>> query =
         await FirebaseFirestore.instance.collection('users').doc(em).get();
