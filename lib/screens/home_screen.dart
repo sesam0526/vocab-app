@@ -97,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            // 오답노트로 이동
             leading: const Icon(Icons.error),
             title: const Text('오답노트'),
             iconColor: Colors.purple,
@@ -108,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            // 게임으로 이동
             leading: const Icon(Icons.sports_esports),
             title: const Text('게임'),
             iconColor: Colors.purple,
