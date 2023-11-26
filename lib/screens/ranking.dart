@@ -50,7 +50,7 @@ class _RankingState extends State<Ranking> {
               if (data?.containsKey('money') == true &&
                   data?.containsKey('score') == true) {
                 // 순위를 나타내는 문자열 구성
-                String rank = (index + 1).toString() + '위';
+                String rank = '${index + 1}위';
 
                 return ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -60,9 +60,9 @@ class _RankingState extends State<Ranking> {
                   ),
                 );
               } else {
-                return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  title: const Text(
+                return const ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                  title: Text(
                     'Money가 존재하지 않습니다.',
                     style: TextStyle(fontSize: 15),
                   ),

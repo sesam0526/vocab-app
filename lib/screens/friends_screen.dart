@@ -26,6 +26,7 @@ class _FriendScreenState extends State<FriendScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('친구 목록'),
+        backgroundColor: Colors.purple[400],
       ),
       body: Column(
         children: <Widget>[
@@ -247,6 +248,7 @@ class _FriendScreenState extends State<FriendScreen> {
                         _sendFriendRequest(_emailController.text);
                         _emailController.clear();
                         Navigator.of(context).pop();
+              
                       });
                     },
                     child: const Row(
@@ -272,6 +274,7 @@ class _FriendScreenState extends State<FriendScreen> {
           .where('friend_name', isEqualTo: 'null')
           .get();
       if (query.docs.isNotEmpty) {
+        //query가 비어있지 않다면 그 값들을 list에 저장
         for (var doc in query.docs) {
           list.add(doc['user_id']);
         }
@@ -285,6 +288,7 @@ class _FriendScreenState extends State<FriendScreen> {
   }
 
   Future<void> _rFriendList() async {
+    //받은 친구요청리스트를 팝업창으로 띄우는 함수
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       // ignore: use_build_context_synchronously
@@ -301,15 +305,18 @@ class _FriendScreenState extends State<FriendScreen> {
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
+                    //list의 길이만큼 돌면서 row로 리스트를 표시
                     for (int i = 0; i < list.length; i++)
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            //보낸 이의 이메일 표시
                             Text(list[i], style: const TextStyle(fontSize: 18)),
                             Container(
                               child: Row(
                                 children: [
                                   IconButton(
+                                    //x 아이콘-> 누르면 친구요청을 거절함, DB에서 정보 삭제 후 팝업 닫기
                                       onPressed: () {
                                         //삭제
                                         _CancleFriend(list[i]);
@@ -318,6 +325,7 @@ class _FriendScreenState extends State<FriendScreen> {
                                       },
                                       icon: const Icon(Icons.cancel)),
                                   IconButton(
+                                    // o 아이콘-> 누르면 친구요청 수락함, DB에 저장 후 팝업 닫기
                                       onPressed: () {
                                         setState(() {
                                           //친구추가
@@ -337,6 +345,7 @@ class _FriendScreenState extends State<FriendScreen> {
               elevation: 10,
             );
           } else {
+            //받은 친구요청이 존재하지 않을 때 없음을 출력함
             return const AlertDialog(
               title: Text(
                 '친구 요청 리스트',
@@ -353,6 +362,7 @@ class _FriendScreenState extends State<FriendScreen> {
   }
 
   Future<void> _CancleFriend(String st) async {
+    //친구요청을 거절하면 호출되는 함수로 DB에서 삭제하는 기능
     FirebaseFirestore.instance
         .collection('friends')
         .doc(st + _auth.currentUser!.email.toString())
@@ -364,6 +374,7 @@ class _FriendScreenState extends State<FriendScreen> {
   }
 
   Future<void> _AddFriend(String st) async {
+    //친구요청을 수락하면 호출되는 함수로 DB의 정보를 수정하는 기능
     User? user = _auth.currentUser;
     FirebaseFirestore.instance
         .collection('friends')

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_project/screens/Announcement.dart';
 import 'package:flutter_project/screens/VocabularySreen.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         //앱바 구성
-        title: const Text('영단어 사전(test)'),
+        title: const Text('영단어 사전'),
         centerTitle: true, //타이틀 중앙 위치
         elevation: 0.0, //입체감 없애기
         backgroundColor: Colors.purple[400],
@@ -74,7 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             accountName: Text(uname),
             accountEmail: Text(uid),
-            onDetailsPressed: () {}, // 디테일
+            onDetailsPressed: () {
+              
+            }, // 디테일
             decoration: BoxDecoration(
                 color: Colors.purple[200],
                 borderRadius: const BorderRadius.only(
@@ -104,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            //유저들의 랭킹창으로 이동
             leading: const Icon(Icons.sports_esports),
             title: const Text('랭킹'),
             iconColor: Colors.purple,
@@ -118,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('상점'),
             iconColor: Colors.purple,
             onTap: () {
+              print('상점');
             },
           ),
           ListTile(
@@ -134,11 +139,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           ListTile(
             //공지사항으로 이동
-            leading: const Icon(Icons.person),
+            leading: const Icon(Icons.announcement),
             title: const Text('공지사항'),
             iconColor: Colors.purple,
             onTap: () {
-              print('공지사항');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AnnouncementScreen()));
             },
           ),
           ListTile(
