@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'friend_vocab.dart';
+
 class FriendInfo extends StatefulWidget {
   String email = '';
   FriendInfo({super.key, required this.email});
@@ -30,44 +32,73 @@ class _FriendInfo extends State<FriendInfo> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                  padding: const EdgeInsets.all(5.0),
-                  decoration: const BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 1))),
-                  width: double.infinity,
-                  height: 80,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [const Text('이름',style: TextStyle(fontSize: 25)),Text(nickname,style: const TextStyle(fontSize: 25),)],
-                  ),),
-              Container(
-                  padding: const EdgeInsets.all(5.0),
-                  decoration: const BoxDecoration(
+                padding: const EdgeInsets.all(5.0),
+                decoration: const BoxDecoration(
                     border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 1))),
-                  width: double.infinity,
-                  height: 80,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [const Text('이메일',style: TextStyle(fontSize: 25)),Text(email,style: const TextStyle(fontSize: 25),)],
-                  ),),
+                        bottom: BorderSide(color: Colors.black, width: 1))),
+                width: double.infinity,
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('이름', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
+                    Text(
+                      nickname,
+                      style: const TextStyle(fontSize: 25),
+                    )
+                  ],
+                ),
+              ),
               Container(
-                  padding: const EdgeInsets.all(5.0),
-                  decoration: const BoxDecoration(
-                     border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 1))),
-                  width: double.infinity,
-                  height: 80,
-                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [const Text('게임 점수',style: TextStyle(fontSize: 25)),Text(score.toString(),style: const TextStyle(fontSize: 25),)],
-                  ),),
+                padding: const EdgeInsets.all(5.0),
+                decoration: const BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(color: Colors.black, width: 1))),
+                width: double.infinity,
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('이메일', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
+                    Text(
+                      email,
+                      style: const TextStyle(fontSize: 25),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                decoration: const BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(color: Colors.black, width: 1))),
+                width: double.infinity,
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('게임 점수', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
+                    Text(
+                      score.toString(),
+                      style: const TextStyle(fontSize: 25),
+                    )
+                  ],
+                ),
+              ),
               ElevatedButton(
-                onPressed: (){
-                  _getVocabulary();
-                }, 
-                 child: const Text('단어장',style: TextStyle(fontSize: 20),))
-               
+                
+                  onPressed: () async{
+                     final result=await
+                     Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FriendVocab(email:email)));
+                   
+                  },
+                  child: const Text(
+                    '단어장',
+                    style: TextStyle(fontSize: 20),
+                  ))
             ],
           ),
         ),
@@ -87,35 +118,7 @@ class _FriendInfo extends State<FriendInfo> {
       });
     }
   }
-
-  void _getVocabulary() async{
-     return showDialog<void>(
-      context: context,
-      barrierDismissible: true, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
-      builder: (BuildContext context) {
-
-        return const AlertDialog(
-          title: Text(
-            '단어장',
-            style: TextStyle(fontSize: 20),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              //List Body를 기준으로 Text 설정
-              
-            ),
-          ),
-         
-        );
-      },
-    );
-  }
-  Stream<QuerySnapshot> getVocabularies() {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(email)
-        .collection('Vocabularies')
-        .snapshots();
-       
-  }
+  
 }
+
+

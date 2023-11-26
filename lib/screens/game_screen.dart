@@ -126,7 +126,7 @@ class _GameScreenState extends State<GameScreen> {
 
   int currentPage = 0;
   // 게임 설명서 함수
-  void _showGameManualDialog(int index) {
+  void showGameManualDialog(int index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -145,7 +145,7 @@ class _GameScreenState extends State<GameScreen> {
                     currentPage--;
                   });
                   Navigator.of(context).pop();
-                  _showGameManualDialog(currentPage);
+                  showGameManualDialog(currentPage);
                 },
                 child: const Icon(Icons.arrow_back), // 이전 아이콘
               ),
@@ -157,7 +157,7 @@ class _GameScreenState extends State<GameScreen> {
                     currentPage++;
                   });
                   Navigator.of(context).pop();
-                  _showGameManualDialog(currentPage);
+                  showGameManualDialog(currentPage);
                 },
                 child: const Icon(Icons.arrow_forward), // 다음 아이콘
               ),
@@ -405,7 +405,7 @@ class _GameScreenState extends State<GameScreen> {
           IconButton(
             onPressed: () async {
               // 게임 설명서 다이얼로그 표시
-              _showGameManualDialog(currentPage);
+              showGameManualDialog(currentPage);
             },
             icon: const Icon(Icons.book),
           )

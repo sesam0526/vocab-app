@@ -25,9 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final _textController = TextEditingController();
 
   DateTime selectedDay = DateTime.now();
-  DateTime focusedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  final DateTime _today= DateTime.now();
   Map<String, dynamic> dayMap = {};
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
 
   @override
   Widget build(BuildContext context) {
@@ -151,16 +152,18 @@ class _HomeScreenState extends State<HomeScreen> {
               locale: 'ko_KR',
               firstDay: DateTime.utc(2021, 10, 16),
               lastDay: DateTime.utc(2030, 3, 14),
-              focusedDay: DateTime.now(),
+              focusedDay: _focusedDay,
               onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
                 setState(() {
                   this.selectedDay = selectedDay;
-                  //this.focusedDay = focusedDay;
+                 // this.focusedDay = focusedDay;
                 });
               },
               selectedDayPredicate: (DateTime day) {
                 return isSameDay(selectedDay, day);
               },
+
+              /*
               onFormatChanged: (format) {
                 if (_calendarFormat != format) {
                   // Call `setState()` when updating calendar format
@@ -169,6 +172,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 }
               },
+              */
+               onPageChanged: (focusedDay) {
+          // No need to call `setState()` here
+          _focusedDay = focusedDay;
+        },
+          
               headerStyle: const HeaderStyle(
                 titleCentered: true,
                 formatButtonVisible: false,
@@ -364,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return AlertDialog(
           title: const Text(
             '삭제 확인창',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
           ),
           content: const SingleChildScrollView(
             child: ListBody(
@@ -425,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
       barrierDismissible: true,
       builder: (BuildContext context) {
         String date =
-            DateFormat('yyyy-MM-dd', 'ko').format(focusedDay).toString();
+            DateFormat('yyyy-MM-dd', 'ko').format(_today).toString();
         if (dayMap.containsKey(date)) {
           return const AlertDialog(
             title: Text(
