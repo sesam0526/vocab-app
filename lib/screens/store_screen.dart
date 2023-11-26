@@ -12,12 +12,14 @@ class _StoreScreenState extends State<StoreScreen> {
   final StoreService _storeService = StoreService();
   int userMoney = 0;
   int userLives = 0;
+  int userPass = 0;
 
   @override
   void initState() {
     super.initState();
     getUserMoney();
     getUserLives();
+    getUserPass();
   }
 
   void getUserMoney() async {
@@ -31,6 +33,13 @@ class _StoreScreenState extends State<StoreScreen> {
     int lives = await _storeService.getUserLives();
     setState(() {
       userLives = lives;
+    });
+  }
+
+  void getUserPass() async {
+    int passes = await _storeService.getUserPass();
+    setState(() {
+      userPass = passes;
     });
   }
 
@@ -96,9 +105,9 @@ class _StoreScreenState extends State<StoreScreen> {
         await _storeService.subtractMoney(itemPrice);
         if (itemName == 'LIFE') {
           await _storeService.addLives(1);
-        } else if (itemName == 'HINT') {
-        } else if (itemName == 'ADD TIME') {
-        } else if (itemName == 'PASS') {}
+        } else if (itemName == 'PASS') {
+          await _storeService.addPass(1);
+        }
         getUserMoney();
         showDeductionDialog(itemPrice);
       } else {
@@ -232,6 +241,32 @@ class _StoreScreenState extends State<StoreScreen> {
                           },
                         ),
                         const SizedBox(height: 5),
+                        FutureBuilder<int>(
+                          future: _storeService.getUserPass(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                "${snapshot.data!} Passes",
+                                style: const TextStyle(
+                                  fontSize: 40.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text(
+                                "Error: ${snapshot.error}",
+                                style: const TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.white,
+                                ),
+                              );
+                            } else {
+                              return const CircularProgressIndicator();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 5),
                         const Text(
                           "해당 아이템은 게임 플레이중 사용할 수 있습니다.",
                           style: TextStyle(fontSize: 10.0, color: Colors.white),
@@ -256,18 +291,6 @@ class _StoreScreenState extends State<StoreScreen> {
                 itemInfo: '게임 플레이시 필요한 목숨 개수를 추가할 수 있다.',
                 itemPrice: 10,
                 onItemPressed: () => purchaseItem('LIFE', 10),
-              ),
-              StoreItem(
-                itemName: 'HINT',
-                itemInfo: '게임 플레이시 단어 힌트를 얻을 수 있다.',
-                itemPrice: 10,
-                onItemPressed: () => purchaseItem('HINT', 10),
-              ),
-              StoreItem(
-                itemName: 'ADD TIME',
-                itemInfo: '게임 플레이 시간을 추가할 수 있다.',
-                itemPrice: 10,
-                onItemPressed: () => purchaseItem('ADD TIME', 10),
               ),
               StoreItem(
                 itemName: 'PASS',

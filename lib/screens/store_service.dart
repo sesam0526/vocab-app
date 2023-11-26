@@ -88,4 +88,44 @@ class StoreService {
       print('Error subtracting lives: $e');
     }
   }
+
+  Future<int> getUserPass() async {
+    try {
+      String email = getCurrentUserEmail();
+      var userDocument = await _firestore.collection('users').doc(email).get();
+      var passes = userDocument['pass'];
+      return passes ?? 0;
+    } catch (e) {
+      print('Error retrieving user lives: $e');
+      return 3; //오류발생시 기본값 3패스
+    }
+  }
+
+  Future<void> addPass(int amount) async {
+    try {
+      String email = getCurrentUserEmail();
+      var currentPass = await getUserPass();
+      await _firestore.collection('users').doc(email).update({
+        'pass': currentPass + amount,
+      });
+    } catch (e) {
+      print('Error adding passes: $e');
+    }
+  }
+
+  Future<void> subtractPass(int amount) async {
+    try {
+      String email = getCurrentUserEmail();
+      var currentPass = await getUserPass();
+      if (currentPass >= amount) {
+        await _firestore.collection('users').doc(email).update({
+          'pass': currentPass - amount,
+        });
+      } else {
+        print('Insufficient passes.');
+      }
+    } catch (e) {
+      print('Error subtracting passes: $e');
+    }
+  }
 }

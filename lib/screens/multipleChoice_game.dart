@@ -38,7 +38,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
   List<Map<String, String>> wordsList = []; // 단어 리스트
 
   int currentWordIndex = 0; // 현재 문제 인덱스
-  int lives = 1; // 목숨 수
+  int lives = 0; // 목숨 수
 
   // 단어 가져오기
   Future<void> initializeGame() async {
@@ -46,7 +46,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
     int fetchedLives =
         await _storeService.getUserLives(); // Firestore에서 Lives 개수 가져오기
     setState(() {
-      lives = lives + fetchedLives; // Lives 개수 업데이트
+      lives = fetchedLives; // Lives 개수 업데이트
     });
   }
 
