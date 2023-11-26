@@ -1,11 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'friend_information.dart';
 
 class FriendScreen extends StatefulWidget {
-  const FriendScreen( {Key? key}) : super(key: key);
+  const FriendScreen({Key? key}) : super(key: key);
 
   @override
   _FriendScreenState createState() => _FriendScreenState();
@@ -15,7 +14,7 @@ class _FriendScreenState extends State<FriendScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   List<String> list = [];
-  int req_ck=0;
+  int req_ck = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +57,7 @@ class _FriendScreenState extends State<FriendScreen> {
                   child: const Row(
                     children: [
                       Text('요청 리스트  '),
-                    Icon(Icons.list),
+                      Icon(Icons.list),
                     ],
                   )),
             ]),
@@ -74,19 +73,18 @@ class _FriendScreenState extends State<FriendScreen> {
                     return ListView.builder(
                         itemCount: documents.length,
                         itemBuilder: (BuildContext context, int index) {
-                          String email=documents[index].get('friend_id');
+                          String email = documents[index].get('friend_id');
                           return ListTile(
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 20),
-                            onTap: ()async{
-                                final result=await
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>FriendInfo(email:email),
-                                  ),
-                                );
-                              
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FriendInfo(email: email),
+                                ),
+                              );
                             },
                             leading: Text(
                               documents[index].get('friend_name'),
@@ -121,15 +119,20 @@ class _FriendScreenState extends State<FriendScreen> {
           .collection('users')
           .where('id', isEqualTo: friendEmail)
           .get();
-      DocumentSnapshot<Map<String, dynamic>> query2 = await FirebaseFirestore.instance
-          .collection('friends').doc(currentUser.email.toString()+friendEmail).get();
-      if(friendEmail==currentUser.email){
+      DocumentSnapshot<Map<String, dynamic>> query2 = await FirebaseFirestore
+          .instance
+          .collection('friends')
+          .doc(currentUser.email.toString() + friendEmail)
+          .get();
+      if (friendEmail == currentUser.email) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('자기 자신에게 친구신청은 보낼 수 없습니다.'),
           ),
         );
-      }else if (query.docs.isNotEmpty && !query2.exists&&friendEmail!=currentUser.email) {
+      } else if (query.docs.isNotEmpty &&
+          !query2.exists &&
+          friendEmail != currentUser.email) {
         String friendUid = query.docs.first.id;
         await FirebaseFirestore.instance
             .collection('friends')
@@ -156,27 +159,26 @@ class _FriendScreenState extends State<FriendScreen> {
             content: Text('친구요청을 보냈습니다.'),
           ),
         );
-      }else if(query2.exists&&query2.data()!['status']=='accepted'){
-          ScaffoldMessenger.of(context).showSnackBar(
+      } else if (query2.exists && query2.data()!['status'] == 'accepted') {
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('이미 친구입니다.'),
           ),
         );
-      }else if(query2.exists&&query2.data()!['status']=='pending'){
-             ScaffoldMessenger.of(context).showSnackBar(
+      } else if (query2.exists && query2.data()!['status'] == 'pending') {
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('이미 친구 신청을 받거나 보낸 상태입니다.'),
           ),
         );
-      } else if(query.docs.isEmpty) {
+      } else if (query.docs.isEmpty) {
         // 사용자를 찾을 수 없음을 알림
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('입력한 이메일을 가진 사용자를 찾을 수 없습니다.'),
           ),
         );
-      }
-      else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('알 수 없는 오류'),
@@ -219,17 +221,15 @@ class _FriendScreenState extends State<FriendScreen> {
                     setState(() {
                       Navigator.of(context).pop();
                     });
-                    
                   },
                 ),
                 ElevatedButton(
                     onPressed: () {
                       setState(() {
                         _sendFriendRequest(_emailController.text);
-                      _emailController.clear();
-                      Navigator.of(context).pop();
+                        _emailController.clear();
+                        Navigator.of(context).pop();
                       });
-                      
                     },
                     child: const Row(
                       children: [Text('요청 보내기  '), Icon(Icons.person_add_alt)],
@@ -248,21 +248,21 @@ class _FriendScreenState extends State<FriendScreen> {
       QuerySnapshot query = await FirebaseFirestore.instance
           .collection('friends')
           .where('friend_id', isEqualTo: currentUser.email.toString())
-          .where('status', isEqualTo: 'pending').where('friend_name',isEqualTo: 'null')
+          .where('status', isEqualTo: 'pending')
+          .where('friend_name', isEqualTo: 'null')
           .get();
       if (query.docs.isNotEmpty) {
         for (var doc in query.docs) {
           list.add(doc['user_id']);
         }
-        req_ck=list.length;
-       return query;
+        req_ck = list.length;
+        return query;
       } else {
         return null;
       }
     }
     return null;
   }
-  
 
   Future<void> _rFriendList() async {
     User? currentUser = _auth.currentUser;
@@ -292,18 +292,18 @@ class _FriendScreenState extends State<FriendScreen> {
                                   IconButton(
                                       onPressed: () {
                                         //삭제
-                                       _CancleFriend(list[i]);
-                                       req_ck=list.length;
-                                          Navigator.of(context).pop();
+                                        _CancleFriend(list[i]);
+                                        req_ck = list.length;
+                                        Navigator.of(context).pop();
                                       },
                                       icon: const Icon(Icons.cancel)),
                                   IconButton(
                                       onPressed: () {
                                         setState(() {
                                           //친구추가
-                                         _AddFriend(list[i]);
-                                        _getFriendList();
-                                         Navigator.of(context).pop();
+                                          _AddFriend(list[i]);
+                                          _getFriendList();
+                                          Navigator.of(context).pop();
                                         });
                                       },
                                       icon: const Icon(Icons.check_circle))

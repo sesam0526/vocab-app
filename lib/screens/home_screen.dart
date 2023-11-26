@@ -10,6 +10,7 @@ import 'game_screen.dart';
 import 'profile.dart';
 import 'friends_screen.dart';
 import 'signin_screen.dart';
+import 'ranking.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -100,6 +101,15 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.sports_esports),
+            title: const Text('랭킹'),
+            iconColor: Colors.purple,
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Ranking()));
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.shopping_cart),
             title: const Text('상점'),
             iconColor: Colors.purple,
@@ -111,12 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: const Icon(Icons.person),
             title: const Text('친구 목록'),
             iconColor: Colors.purple,
-            onTap: () async{
+            onTap: () async {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const FriendScreen()));
-              
             },
           ),
           ListTile(
@@ -297,16 +306,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
             ),
           ])),
-           floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-                  setState(() {
-                    attenCheck(uid);
-                  });
-                },
+          setState(() {
+            attenCheck(uid);
+          });
+        },
         child: const Text(
-                  '출석',
-                  style: TextStyle(fontSize: 20),
-                ),
+          '출석',
+          style: TextStyle(fontSize: 20),
+        ),
       ),
     );
   } //build
@@ -458,5 +467,4 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
 }
