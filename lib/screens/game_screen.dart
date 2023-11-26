@@ -400,7 +400,7 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('게임'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
         actions: [
           IconButton(
             onPressed: () async {

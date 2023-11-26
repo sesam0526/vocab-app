@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_project/screens/VocabularySreen.dart';
+import 'package:flutter_project/screens/VocabularyScreen.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -11,6 +11,7 @@ import 'profile.dart';
 import 'friends_screen.dart';
 import 'signin_screen.dart';
 import 'ranking.dart';
+import 'wrongWords_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   DateTime selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
-  final DateTime _today= DateTime.now();
+  final DateTime _today = DateTime.now();
   Map<String, dynamic> dayMap = {};
   final CalendarFormat _calendarFormat = CalendarFormat.month;
 
@@ -93,6 +94,17 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.error),
+            title: const Text('오답노트'),
+            iconColor: Colors.purple,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const WrongWordsScreen()));
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.sports_esports),
             title: const Text('게임'),
             iconColor: Colors.purple,
@@ -102,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.sports_esports),
+            leading: const Icon(Icons.format_list_numbered),
             title: const Text('랭킹'),
             iconColor: Colors.purple,
             onTap: () {
@@ -156,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
                 setState(() {
                   this.selectedDay = selectedDay;
-                 // this.focusedDay = focusedDay;
+                  // this.focusedDay = focusedDay;
                 });
               },
               selectedDayPredicate: (DateTime day) {
@@ -173,11 +185,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
               */
-               onPageChanged: (focusedDay) {
-          // No need to call `setState()` here
-          _focusedDay = focusedDay;
-        },
-          
+              onPageChanged: (focusedDay) {
+                // No need to call `setState()` here
+                _focusedDay = focusedDay;
+              },
               headerStyle: const HeaderStyle(
                 titleCentered: true,
                 formatButtonVisible: false,
@@ -373,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return AlertDialog(
           title: const Text(
             '삭제 확인창',
-            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: const SingleChildScrollView(
             child: ListBody(
@@ -433,8 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        String date =
-            DateFormat('yyyy-MM-dd', 'ko').format(_today).toString();
+        String date = DateFormat('yyyy-MM-dd', 'ko').format(_today).toString();
         if (dayMap.containsKey(date)) {
           return const AlertDialog(
             title: Text(

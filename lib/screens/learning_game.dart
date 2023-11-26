@@ -137,7 +137,7 @@ class _LearningGameState extends State<LearningGame> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('학습 모드'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
       ),
       body: Stack(
         children: [
