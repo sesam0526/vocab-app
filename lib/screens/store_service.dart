@@ -93,8 +93,8 @@ class StoreService {
     try {
       String email = getCurrentUserEmail();
       var userDocument = await _firestore.collection('users').doc(email).get();
-      var passes = userDocument['pass'];
-      return passes ?? 0;
+      var pass = userDocument['pass'];
+      return pass ?? 0;
     } catch (e) {
       print('Error retrieving user lives: $e');
       return 3; //오류발생시 기본값 3패스

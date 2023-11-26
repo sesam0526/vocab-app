@@ -159,7 +159,7 @@ class _StoreScreenState extends State<StoreScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Text(
-                                "${snapshot.data!}P",
+                                "${snapshot.data!} P",
                                 style: const TextStyle(
                                   fontSize: 40.0,
                                   color: Colors.white,
@@ -219,13 +219,22 @@ class _StoreScreenState extends State<StoreScreen> {
                           future: _storeService.getUserLives(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                "${snapshot.data!} Lives",
-                                style: const TextStyle(
-                                  fontSize: 40.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              return Row(
+                                children: [
+                                  const Icon(
+                                    Icons.favorite,
+                                    color: Colors.white,
+                                    size: 40.0,
+                                  ),
+                                  Text(
+                                    " ${snapshot.data!} Lives",
+                                    style: const TextStyle(
+                                      fontSize: 40.0,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               );
                             } else if (snapshot.hasError) {
                               return Text(
@@ -245,13 +254,22 @@ class _StoreScreenState extends State<StoreScreen> {
                           future: _storeService.getUserPass(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                "${snapshot.data!} Passes",
-                                style: const TextStyle(
-                                  fontSize: 40.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              return Row(
+                                children: [
+                                  const Icon(
+                                    Icons.arrow_forward,
+                                    color: Colors.white,
+                                    size: 40.0,
+                                  ),
+                                  Text(
+                                    " ${snapshot.data!} Passes",
+                                    style: const TextStyle(
+                                      fontSize: 40.0,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               );
                             } else if (snapshot.hasError) {
                               return Text(
