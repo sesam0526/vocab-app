@@ -9,6 +9,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'game_screen.dart';
 import 'profile.dart';
 import 'friends_screen.dart';
+import 'ranking.dart';
 import 'signin_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -107,7 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('랭킹'),
             iconColor: Colors.purple,
             onTap: () {
-              
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Ranking()));
             },
           ),
           ListTile(
@@ -123,12 +125,11 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: const Icon(Icons.person),
             title: const Text('친구 목록'),
             iconColor: Colors.purple,
-            onTap: () async{
+            onTap: () async {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const FriendScreen()));
-              
             },
           ),
           ListTile(
@@ -157,14 +158,15 @@ class _HomeScreenState extends State<HomeScreen> {
       )),
       body: Center(
           child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
+              
               children: [
-            //flex:5,
+                //달력 구현
             TableCalendar(
               locale: 'ko_KR',
               firstDay: DateTime.utc(2021, 10, 16),
               lastDay: DateTime.utc(2030, 3, 14),
               focusedDay: _focusedDay,
+              //날짜 클릭 시 클릭한 날짜로 selectedDay 설정
               onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
                 setState(() {
                   this.selectedDay = selectedDay;
@@ -174,22 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
               selectedDayPredicate: (DateTime day) {
                 return isSameDay(selectedDay, day);
               },
-
-              /*
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  // Call `setState()` when updating calendar format
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              */
                onPageChanged: (focusedDay) {
           // No need to call `setState()` here
           _focusedDay = focusedDay;
         },
-          
+            //달력 디자인 설정      
               headerStyle: const HeaderStyle(
                 titleCentered: true,
                 formatButtonVisible: false,
@@ -226,6 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Color.fromARGB(255, 144, 40, 162),
                     shape: BoxShape.circle,
                   )),
+                  //출석된 날짜들을 이벤트로 표시
               eventLoader: (day) {
                 if (dayMap.containsKey(
                     DateFormat('yyyy-MM-dd', 'ko').format(day).toString())) {
@@ -259,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ]),
             ),
             Padding(
-              //텍스트박스
+              //to-do 입력할 텍스트박스
               padding: const EdgeInsets.all(8.0),
 
               child: Row(
@@ -270,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       controller: _textController,
                     ),
                   ),
+                  //추가 버튼
                   ElevatedButton(
                     onPressed: () {
                       if (_textController.text == '') {
@@ -286,6 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+            //해당 날짜의 to-do list
             Expanded(
               child: FutureBuilder<QuerySnapshot>(
                   future: readList(uid, selectedDay),
@@ -327,21 +321,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
             ),
           ])),
+          //출석 버튼
            floatingActionButton: FloatingActionButton(
         onPressed: () {
+          //출석하기 함수 호출
                   setState(() {
                     attenCheck(uid);
                   });
                 },
         child: const Text(
-                  '출석',
-                  style: TextStyle(fontSize: 20),
-                ),
+          '출석',
+          style: TextStyle(fontSize: 20),
+        ),
       ),
     );
-  } //build
-
+  }
+ 
   void _taskAdder(String uid, String work, DateTime date) {
+    //to-do를 데이터베이스에 추가하는 함수
     final taskAdd = FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
@@ -355,6 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<QuerySnapshot> readList(String uid, DateTime date) async {
+    //to-do list를 가져오는 합수
     return FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
@@ -365,6 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void moneyUp(String uid) async {
+    //출석 때 사용자의 돈을 추가하여 데이터베이스에 저장하는 함수
     DocumentReference<Map<String, dynamic>> documentReference =
         FirebaseFirestore.instance.collection("users").doc(uid);
 
@@ -378,6 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _taskDelete(String uid, String id) async {
+    //to-do 삭제하는 함수
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // 다이얼로그 이외의 바탕 눌러도 안꺼지도록 설정
@@ -454,6 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
         String date =
             DateFormat('yyyy-MM-dd', 'ko').format(_today).toString();
         if (dayMap.containsKey(date)) {
+          //이미 해당날짜로 출석정보가 있을 경우, 이미 출석한 상태
           return const AlertDialog(
             title: Text(
               '이미 출석하였습니다.',
@@ -461,6 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         } else {
+          //출석정보를 데이터베이스에 저장
           FirebaseFirestore.instance
               .collection("users")
               .doc(uid)
@@ -487,6 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _makeMap(var list) async {
+    //리스트를 맵으로 변환하는 함수
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await list?.get();
     setState(() {
       for (var doc in querySnapshot.docs) {
