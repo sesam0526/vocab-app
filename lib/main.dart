@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, //리본 없애기
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.

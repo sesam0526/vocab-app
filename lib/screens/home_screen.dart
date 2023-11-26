@@ -44,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
           .collection("Attendance");
       _makeMap(attemL);
     }
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -55,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.purple[400],
         actions: [
           IconButton(
+            //프로필 버튼 누르면 프로필 창으로 이동
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Profile()));
@@ -81,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     bottomRight: Radius.circular(15))),
           ),
           ListTile(
+            //단어장으로 이동
             leading: const Icon(Icons.view_list),
             title: const Text('단어장'),
             iconColor: Colors.purple,
@@ -92,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            //게임으로 이동
             leading: const Icon(Icons.sports_esports),
             title: const Text('게임'),
             iconColor: Colors.purple,
@@ -101,14 +103,23 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.sports_esports),
+            title: const Text('랭킹'),
+            iconColor: Colors.purple,
+            onTap: () {
+              
+            },
+          ),
+          ListTile(
+            //상점으로 이동
             leading: const Icon(Icons.shopping_cart),
             title: const Text('상점'),
             iconColor: Colors.purple,
             onTap: () {
-              print('상점');
             },
           ),
           ListTile(
+            //친구 목록으로 이동
             leading: const Icon(Icons.person),
             title: const Text('친구 목록'),
             iconColor: Colors.purple,
@@ -121,6 +132,16 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
+            //공지사항으로 이동
+            leading: const Icon(Icons.person),
+            title: const Text('공지사항'),
+            iconColor: Colors.purple,
+            onTap: () {
+              print('공지사항');
+            },
+          ),
+          ListTile(
+            //로그아웃
               leading: const Icon(Icons.logout),
               title: const Text('로그아웃'),
               iconColor: Colors.purple,
@@ -370,12 +391,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListBody(
               //List Body를 기준으로 Text 설정
               children: <Widget>[
+                //삭제 확인창으로 사용자에게 정말 삭제할 것인지 확인
                 Text('정말 삭제하시겠습니까?'),
               ],
             ),
           ),
           actions: [
             TextButton(
+              //삭제를 누르면 데이터베이스에서 삭제후 팝업창을 나감
               child: const Text('삭제'),
               onPressed: () {
                 setState(() {
@@ -390,6 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             TextButton(
+              //사용자가 취소를 누르면 아무 작업 없이 팝업창을 나감
               child: const Text('취소'),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -402,6 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _taskUpdate(String uid, String id, bool state) async {
+    //to-do의 isComplete를 토글하여 업데이트하는 함수
     if (state == true) {
       FirebaseFirestore.instance
           .collection("users")
@@ -420,6 +445,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> attenCheck(String uid) async {
+    //출석체크를 확인시키는 팝업창을 출력하는 함수
+    //-> 출석에 성공함 or 이미 출석하였음을 출력
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
