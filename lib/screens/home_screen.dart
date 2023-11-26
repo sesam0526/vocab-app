@@ -3,15 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/screens/Announcement.dart';
-import 'package:flutter_project/screens/VocabularySreen.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import 'VocabularyScreen.dart';
 import 'game_screen.dart';
 import 'profile.dart';
 import 'friends_screen.dart';
 import 'ranking.dart';
 import 'signin_screen.dart';
+import 'store_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   DateTime selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
-  final DateTime _today= DateTime.now();
+  final DateTime _today = DateTime.now();
   Map<String, dynamic> dayMap = {};
   final CalendarFormat _calendarFormat = CalendarFormat.month;
 
@@ -122,7 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('상점'),
             iconColor: Colors.purple,
             onTap: () {
-              print('상점');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const StoreScreen()));
             },
           ),
           ListTile(
@@ -178,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
                 setState(() {
                   this.selectedDay = selectedDay;
-                 // this.focusedDay = focusedDay;
+                  // this.focusedDay = focusedDay;
                 });
               },
               selectedDayPredicate: (DateTime day) {
@@ -393,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return AlertDialog(
           title: const Text(
             '삭제 확인창',
-            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: const SingleChildScrollView(
             child: ListBody(
@@ -459,8 +461,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        String date =
-            DateFormat('yyyy-MM-dd', 'ko').format(_today).toString();
+        String date = DateFormat('yyyy-MM-dd', 'ko').format(_today).toString();
         if (dayMap.containsKey(date)) {
           //이미 해당날짜로 출석정보가 있을 경우, 이미 출석한 상태
           return const AlertDialog(
