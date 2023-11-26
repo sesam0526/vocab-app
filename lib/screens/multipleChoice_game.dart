@@ -38,7 +38,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
   List<Map<String, String>> wordsList = []; // 단어 리스트
 
   int currentWordIndex = 0; // 현재 문제 인덱스
-  int lives = 0; // 목숨 수
+  int lives = 3; // 목숨 수
 
   // 단어 가져오기
   Future<void> initializeGame() async {

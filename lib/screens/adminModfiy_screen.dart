@@ -1,5 +1,3 @@
-// admin_modify_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -47,60 +45,72 @@ class _AdminModifyScreenState extends State<AdminModifyScreen> {
         title: const Text('사용자 정보 수정'),
         backgroundColor: Colors.purple,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Modify Nickname
-            TextField(
-              controller: _nicknameController,
-              decoration: const InputDecoration(labelText: 'Nickname'),
-            ),
-            const SizedBox(height: 16.0),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Display User ID
+              Text(
+                '사용자 ID: ${widget.userId}',
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16.0),
+              // Modify Nickname
+              TextField(
+                controller: _nicknameController,
+                decoration: const InputDecoration(labelText: '이름'),
+              ),
+              const SizedBox(height: 16.0),
 
-            // Modify Money
-            TextField(
-              controller: _moneyController,
-              decoration: const InputDecoration(labelText: 'Money'),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16.0),
+              // Modify Score
+              TextField(
+                controller: _scoreController,
+                decoration: const InputDecoration(labelText: '게임 점수'),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16.0),
 
-            // Modify Score
-            TextField(
-              controller: _scoreController,
-              decoration: const InputDecoration(labelText: 'Score'),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16.0),
+              // Modify Money
+              TextField(
+                controller: _moneyController,
+                decoration: const InputDecoration(labelText: '보유 포인트'),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16.0),
 
-            // Modify Lives
-            TextField(
-              controller: _livesController,
-              decoration: const InputDecoration(labelText: 'Lives'),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16.0),
+              // Modify Lives
+              TextField(
+                controller: _livesController,
+                decoration: const InputDecoration(labelText: '보유 목숨 개수'),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16.0),
 
-            // Modify Pass
-            TextField(
-              controller: _passController,
-              decoration: const InputDecoration(labelText: 'Pass'),
-            ),
-            const SizedBox(height: 16.0),
+              // Modify Pass
+              TextField(
+                controller: _passController,
+                decoration: const InputDecoration(labelText: '보유 패스 개수'),
+              ),
+              const SizedBox(height: 16.0),
 
-            // Save Button
-            ElevatedButton(
-              onPressed: () async {
-                // Call a method to update the user information in Firestore
-                await _updateUserInfo();
-                // Pop the screen to go back to the previous screen (AdminScreen)
-                Navigator.pop(context);
-              },
-              child: const Text('Save'),
-            ),
-          ],
+              // Save Button
+              SizedBox(
+                width: double.infinity, // Make the button take the full width
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // Call a method to update the user information in Firestore
+                    await _updateUserInfo();
+                    // Pop the screen to go back to the previous screen (AdminScreen)
+                    Navigator.pop(context);
+                  },
+                  child: const Text('저장'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

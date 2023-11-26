@@ -44,7 +44,7 @@ class _LearningGameState extends State<LearningGame> {
   String currentAnswer = ''; // 현재 단어의 의미
 
   bool? isCorrect; // 정답여부
-  int lives = 0; // 목숨 수
+  int lives = 3; // 목숨 수
 
 // 단어 가져오기
   Future<void> initializeGame() async {

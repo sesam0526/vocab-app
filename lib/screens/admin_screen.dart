@@ -58,23 +58,24 @@ class _AdminScreenState extends State<AdminScreen> {
                       final score = userData['score'] ?? '없음';
 
                       return Container(
-                        margin: const EdgeInsets.all(8.0), // 각 사용자 사이의 간격 조절
+                        margin: const EdgeInsets.all(10.0), // 각 사용자 사이의 간격 조절
                         decoration: BoxDecoration(
                           borderRadius:
                               BorderRadius.circular(15.0), // 네모의 모서리를 둥글게
                           border: Border.all(color: Colors.grey), // 테두리 색상 설정
+                          color: const Color.fromARGB(255, 235, 235, 235),
                         ),
                         child: ListTile(
                           title: Text('ID: $id'),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Nickname: $nickname'),
-                              Text('Email: ${user.id}'),
-                              Text('Lives: $lives'),
-                              Text('Money: $money'),
-                              Text('Pass: $pass'),
-                              Text('Score: $score'),
+                              Text('이름: $nickname'),
+                              Text('이메일: ${user.id}'),
+                              Text('게임 점수: $score'),
+                              Text('보유 포인트: $money'),
+                              Text('보유 목숨 개수: $lives'),
+                              Text('보유 패스 개수: $pass'),
                             ],
                           ),
                           trailing: Row(
