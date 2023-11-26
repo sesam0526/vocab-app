@@ -221,6 +221,7 @@ class _GameScreenState extends State<GameScreen> {
               children: vocabularyBooks.map((vocabulary) {
                 return ListTile(
                   title: Text(vocabulary['name'] ?? ''),
+                  subtitle: Text(vocabulary['description'] ?? ''),
                   onTap: () async {
                     final List<Map<String, dynamic>> words = await vocabService
                         .getWordsFromVocabulary(vocabulary.id);
@@ -314,6 +315,7 @@ class _GameScreenState extends State<GameScreen> {
               children: vocabularyBooks.map((vocabulary) {
                 return ListTile(
                   title: Text(vocabulary['name'] ?? ''),
+                  subtitle: Text(vocabulary['description'] ?? ''),
                   onTap: () async {
                     final List<Map<String, dynamic>> words = await vocabService
                         .getWordsFromVocabulary(vocabulary.id);

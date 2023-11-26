@@ -11,7 +11,7 @@ import 'profile.dart';
 import 'friends_screen.dart';
 import 'signin_screen.dart';
 import 'ranking.dart';
-import 'wrongWords_screen.dart';
+import 'wrongVocabulary_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const WrongWordsScreen()));
+                      builder: (context) => const WrongVocabularyScreen()));
             },
           ),
           ListTile(

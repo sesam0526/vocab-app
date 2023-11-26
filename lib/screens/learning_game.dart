@@ -68,6 +68,12 @@ class _LearningGameState extends State<LearningGame> {
         // 목숨이 없거나, 문제를 다 풀면
         showGameOverDialog(); // 게임 결과 화면 표시
       }
+
+      if (isCorrect == false) {
+        // 문제를 틀렸을 때만 오답 노트 업데이트
+        GameUtils.addToWrongWordsList(
+            widget.vocabularyId, wordsList[currentWordIndex - 1]);
+      }
     });
   }
 

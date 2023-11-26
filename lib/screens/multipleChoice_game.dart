@@ -1,6 +1,4 @@
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/utils/game_utils.dart';
 
@@ -82,7 +80,8 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         incorrectWords++;
         scoreReceived -= 10;
         lives--;
-        addToWrongWordsList(); // 오답 노트에 추가
+        GameUtils.addToWrongWordsList(
+            widget.vocabularyId, wordsList[currentWordIndex]); // 오답 노트에 추가
         showSnackBar('틀렸습니다.');
 
         if (lives == 0) {
@@ -91,52 +90,6 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         }
       }
       loadNextQuestion(); // 다음 문제로 넘어감
-    });
-  }
-
-  // 오답 노트 관련 코드 추가
-  void addToWrongWordsList() async {
-    String uid = 'abc'; // 사용자의 UID 또는 이메일로 변경
-    FirebaseAuth auth = FirebaseAuth.instance;
-
-    if (auth.currentUser != null) {
-      uid = auth.currentUser!.email.toString();
-    }
-
-    String vocabularyId = widget.vocabularyId;
-    String word = wordsList[currentWordIndex]['word']!;
-    String meaning = wordsList[currentWordIndex]['meaning']!;
-
-    // 오답 노트에 추가
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection("Vocabularies")
-        .doc(vocabularyId)
-        .collection("WrongWords")
-        .doc(word) // 단어를 문서 ID로 사용하여 중복된 단어를 덮어쓰지 않도록 함
-        .get()
-        .then((docSnapshot) {
-      if (docSnapshot.exists) {
-        // 이미 해당 단어가 오답 노트에 존재할 경우, incorrectCount를 1 증가시키기
-        int currentIncorrectCount = docSnapshot['incorrectCount'] ?? 0;
-        docSnapshot.reference
-            .update({'incorrectCount': currentIncorrectCount + 1});
-      } else {
-        // 해당 단어가 오답 노트에 존재하지 않을 경우, 새로운 문서로 추가
-        FirebaseFirestore.instance
-            .collection("users")
-            .doc(uid)
-            .collection("Vocabularies")
-            .doc(vocabularyId)
-            .collection("WrongWords")
-            .doc(word)
-            .set({
-          'word': word,
-          'meaning': meaning,
-          'incorrectCount': 1, // 처음 틀렸으니 1로 설정
-        });
-      }
     });
   }
 
