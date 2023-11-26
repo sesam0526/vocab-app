@@ -11,6 +11,7 @@ import 'profile.dart';
 import 'friends_screen.dart';
 import 'signin_screen.dart';
 import 'ranking.dart';
+import 'store_screen.dart';
 import 'wrongWords_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -127,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('상점'),
             iconColor: Colors.purple,
             onTap: () {
-              print('상점');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const StoreScreen()));
             },
           ),
           ListTile(

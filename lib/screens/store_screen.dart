@@ -46,10 +46,29 @@ class _StoreScreenState extends State<StoreScreen> {
       },
     );
 
+    void showDeductionDialog(int deductionAmount) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('포인트 차감 알림'),
+            content: Text('$deductionAmount 포인트가 차감되었습니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('확인'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     if (confirmPurchase == true) {
       if (userMoney >= itemPrice) {
         await _storeService.subtractMoney(itemPrice);
         getUserMoney();
+        showDeductionDialog(itemPrice);
         // 아이템처리로직추가
         // 아이템을 유저의 인벤토리에 추가하기
       } else {
