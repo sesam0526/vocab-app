@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/utils/game_utils.dart';
+import 'store_service.dart';
 
 class LearningGame extends StatefulWidget {
   final bool studyEnglish; // 영단어 공부 모드 여부
@@ -17,6 +18,8 @@ class LearningGame extends StatefulWidget {
 }
 
 class _LearningGameState extends State<LearningGame> {
+  final StoreService _storeService = StoreService();
+
   final TextEditingController inputController =
       TextEditingController(); // 텍스트 입력 필드
 
@@ -36,19 +39,23 @@ class _LearningGameState extends State<LearningGame> {
 
   List<Map<String, String>> wordsList = []; // 단어 리스트
 
-// 단어 가져오기
-  Future<void> initializeGame() async {
-    wordsList = await GameUtils.fetchWords(widget.vocabularyId);
-    loadNextQuestion();
-    setState(() {});
-  }
-
   int currentWordIndex = 0; // 현재 단어 인덱스
   String currentQuestion = ''; // 현재 단어
   String currentAnswer = ''; // 현재 단어의 의미
 
   bool? isCorrect; // 정답여부
-  int lives = 3; // 목숨 수
+  int lives = 1; // 목숨 수
+
+// 단어 가져오기
+  Future<void> initializeGame() async {
+    wordsList = await GameUtils.fetchWords(widget.vocabularyId);
+    int fetchedLives =
+        await _storeService.getUserLives(); // Firestore에서 Lives 개수 가져오기
+    loadNextQuestion();
+    setState(() {
+      lives = lives + fetchedLives; // Lives 개수 업데이트
+    });
+  }
 
   // 다음 문제 가져옴
   void loadNextQuestion() {
@@ -94,6 +101,7 @@ class _LearningGameState extends State<LearningGame> {
         // 틀리면 목숨과 점수 잃음
         incorrectWords++;
         scoreReceived -= 10;
+        _storeService.subtractLives(1); // DB에서 목숨 차감
         lives--;
         showSnackBar('틀렸습니다.');
 

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/utils/game_utils.dart';
+import 'store_service.dart';
 
 class MultipleChoiceGame extends StatefulWidget {
   final bool studyEnglish; // 영단어 공부 모드 여부
@@ -19,6 +20,7 @@ class MultipleChoiceGame extends StatefulWidget {
 }
 
 class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
+  final StoreService _storeService = StoreService();
   // 버튼 스타일 지정
   final buttonStyle = ElevatedButton.styleFrom(
     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 32),
@@ -37,14 +39,18 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
 
   List<Map<String, String>> wordsList = []; // 단어 리스트
 
-// 단어 가져오기
+  int currentWordIndex = 0; // 현재 문제 인덱스
+  int lives = 1; // 목숨 수
+
+  // 단어 가져오기
   Future<void> initializeGame() async {
     wordsList = await GameUtils.fetchWords(widget.vocabularyId);
-    setState(() {});
+    int fetchedLives =
+        await _storeService.getUserLives(); // Firestore에서 Lives 개수 가져오기
+    setState(() {
+      lives = lives + fetchedLives; // Lives 개수 업데이트
+    });
   }
-
-  int currentWordIndex = 0; // 현재 문제 인덱스
-  int lives = 3; // 목숨 수
 
 // 다음 문제 가져옴
   void loadNextQuestion() {
@@ -81,6 +87,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         // 틀리면 목숨과 점수 잃음
         incorrectWords++;
         scoreReceived -= 10;
+        _storeService.subtractLives(1); // DB에서 목숨 차감
         lives--;
         addToWrongWordsList(); // 오답 노트에 추가
         showSnackBar('틀렸습니다.');

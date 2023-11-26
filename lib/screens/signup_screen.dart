@@ -147,6 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       "nickname": userName,
                       "money": 0,
                       "score": 0,
+                      "lives": 3,
                     });
 
                     await FirebaseAuth.instance.currentUser?.updateDisplayName(

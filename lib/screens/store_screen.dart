@@ -11,17 +11,26 @@ class StoreScreen extends StatefulWidget {
 class _StoreScreenState extends State<StoreScreen> {
   final StoreService _storeService = StoreService();
   int userMoney = 0;
+  int userLives = 0;
 
   @override
   void initState() {
     super.initState();
     getUserMoney();
+    getUserLives();
   }
 
   void getUserMoney() async {
     int money = await _storeService.getUserMoney();
     setState(() {
       userMoney = money;
+    });
+  }
+
+  void getUserLives() async {
+    int lives = await _storeService.getUserLives();
+    setState(() {
+      userLives = lives;
     });
   }
 
@@ -64,16 +73,36 @@ class _StoreScreenState extends State<StoreScreen> {
       );
     }
 
+    void showInsufficientPointDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('알림'),
+            content: const Text('보유 포인트가 부족합니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('확인'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     if (confirmPurchase == true) {
       if (userMoney >= itemPrice) {
         await _storeService.subtractMoney(itemPrice);
+        if (itemName == 'LIFE') {
+          await _storeService.addLives(1);
+        } else if (itemName == 'HINT') {
+        } else if (itemName == 'ADD TIME') {
+        } else if (itemName == 'PASS') {}
         getUserMoney();
         showDeductionDialog(itemPrice);
-        // 아이템처리로직추가
-        // 아이템을 유저의 인벤토리에 추가하기
       } else {
-        // 충분한 머니가 없는 경우에 대한 처리추가하기
-        print('머니가 부족합니다!');
+        showInsufficientPointDialog();
       }
     }
   }
@@ -151,6 +180,68 @@ class _StoreScreenState extends State<StoreScreen> {
                   ],
                 ),
               ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.pinkAccent,
+                      Colors.deepPurpleAccent,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text(
+                          "현재 보유 아이템",
+                          style: TextStyle(fontSize: 15.0, color: Colors.white),
+                        ),
+                        const SizedBox(height: 5),
+                        FutureBuilder<int>(
+                          future: _storeService.getUserLives(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                "${snapshot.data!} Lives",
+                                style: const TextStyle(
+                                  fontSize: 40.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text(
+                                "Error: ${snapshot.error}",
+                                style: const TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.white,
+                                ),
+                              );
+                            } else {
+                              return const CircularProgressIndicator();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 5),
+                        const Text(
+                          "해당 아이템은 게임 플레이중 사용할 수 있습니다.",
+                          style: TextStyle(fontSize: 10.0, color: Colors.white),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 5),
               const SizedBox(height: 20),
               const Text(
                 "상품 목록",
@@ -162,7 +253,7 @@ class _StoreScreenState extends State<StoreScreen> {
               const SizedBox(height: 10),
               StoreItem(
                 itemName: 'LIFE',
-                itemInfo: '게임 플레이시 목숨을 추가할 수 있다.',
+                itemInfo: '게임 플레이시 필요한 목숨 개수를 추가할 수 있다.',
                 itemPrice: 10,
                 onItemPressed: () => purchaseItem('LIFE', 10),
               ),
