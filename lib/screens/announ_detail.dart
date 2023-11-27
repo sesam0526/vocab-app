@@ -91,7 +91,14 @@ Future<void> getAnnounDetail(String id) async{
             // 스크롤 화면
             child: Text('정말 삭제하시겠습니까?'),
           ),
-           actions: [
+           actions: [ 
+            TextButton(
+              //관리자가 취소를 누르면 아무 작업 없이 팝업창을 나감
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
             TextButton(
               //삭제를 누르면 데이터베이스에서 삭제후 팝업창을 나감
               child: const Text('삭제'),
@@ -108,13 +115,7 @@ Future<void> getAnnounDetail(String id) async{
                 });
               },
             ),
-            TextButton(
-              //관리자가 취소를 누르면 아무 작업 없이 팝업창을 나감
-              child: const Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+           
           ],
         );
       },

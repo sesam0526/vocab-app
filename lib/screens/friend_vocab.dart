@@ -20,6 +20,7 @@ class _FriendVocab extends State<FriendVocab> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('친구의 단어장'),
+        backgroundColor: Colors.purple[400],
         // backgroundColor: Colors.purple[300],
       ),
       body: StreamBuilder<QuerySnapshot>(

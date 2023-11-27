@@ -81,8 +81,8 @@ class _FriendVocabDetail extends State<FriendVocabDetail> {
  //나의 단어장에 친구의 단어장을 추가하는 함수
   Future<void> addVocabulary(
       String vocalId, String name, String description) async {
-    //받아올 단어장은 DB에 '단어장이름'+'친구이메일의 단어장'의 형식으로 저장 
-    String docName = name + description;
+    //받아올 단어장은 DB에 '단어장이름'+'친구단어장 아이디'의 형식으로 저장 
+    String docName = name + vocalId;
     User? user = auth.currentUser;
     if (user != null) {
       //i는 단어장을 다운했는지 확인을 위한 변수

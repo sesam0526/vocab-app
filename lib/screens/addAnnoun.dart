@@ -63,15 +63,24 @@ class _AddAnnounScreen extends State<AddAnnounScreen> {
         floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           //공지사항 저장하고 창 나가기
-         uploadAnnoun( _titleController.text,  _textController.text);
+        if (_textController.text != ''&& _titleController.text!=''){
+            uploadAnnoun( _titleController.text,  _textController.text);
           _titleController.clear();
           _textController.clear();
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('공지사항을 업로드 하였습니다.'),
+            content: Text('공지사항을 업로드하였습니다.'),
           ),
         );
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('빈 칸으로 업로드할 수 없습니다.'),
+          ),
+        );
+        }
+         
         },
         label: const Text(
           '업로드',
@@ -86,6 +95,7 @@ class _AddAnnounScreen extends State<AddAnnounScreen> {
     //텍스트필드에 적은 내용을 DB에 저장
     await FirebaseFirestore.instance
         .collection('Announcement').doc(DateTime.now().toString()).set({'title':name,'main text':text});
+    
   } 
 
   

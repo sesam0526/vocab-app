@@ -311,8 +311,9 @@ class _FriendScreenState extends State<FriendScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             //보낸 이의 이메일 표시
-                            Text(list[i], style: const TextStyle(fontSize: 18)),
+                            Flexible(child: Text(list[i], style: const TextStyle(fontSize: 18)),),
                             Container(
+                              
                               child: Row(
                                 children: [
                                   IconButton(

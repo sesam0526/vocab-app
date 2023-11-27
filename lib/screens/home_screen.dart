@@ -432,7 +432,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          actions: [
+          actions: [ 
+            TextButton(
+              //사용자가 취소를 누르면 아무 작업 없이 팝업창을 나감
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
             TextButton(
               //삭제를 누르면 데이터베이스에서 삭제후 팝업창을 나감
               child: const Text('삭제'),
@@ -448,13 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-            TextButton(
-              //사용자가 취소를 누르면 아무 작업 없이 팝업창을 나감
-              child: const Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+           
           ],
         );
       },
