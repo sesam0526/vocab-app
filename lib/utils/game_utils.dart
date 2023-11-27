@@ -83,31 +83,34 @@ class GameUtils {
 
   // 게임 결과 화면 함수
   static void showGameOverDialog(
-      BuildContext context,
-      int totalWords,
-      int correctWords,
-      int incorrectWords,
-      double accuracyRate,
-      int lives,
-      int scoreReceived,
-      int moneyEarned) {
-    const textStyle = TextStyle(fontSize: 18); // 글자 스타일
+    BuildContext context,
+    int totalWords,
+    int correctWords,
+    int incorrectWords,
+    double accuracyRate,
+    int lives,
+    int pass,
+    int scoreReceived,
+    int moneyEarned,
+  ) {
+    const textStyle = TextStyle(fontSize: 18);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('게임 종료'),
-          content: SizedBox(
-            height: 200,
+          content: SingleChildScrollView(
             child: Column(
+              //crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('총 단어 수: $totalWords', style: textStyle),
                 Text('맞은 단어 수: $correctWords', style: textStyle),
                 Text('틀린 단어 수: $incorrectWords', style: textStyle),
                 Text('정답률: ${accuracyRate.toStringAsFixed(2)}%',
-                    style: textStyle), // 반올림해서 소수점 둘째자리까지 표현
+                    style: textStyle),
                 Text('남은 목숨 수: $lives', style: textStyle),
+                Text('남은 패스 수: $pass', style: textStyle),
                 Text('받은 점수: $scoreReceived', style: textStyle),
                 Text('획득한 돈: $moneyEarned', style: textStyle),
               ],
@@ -115,9 +118,9 @@ class GameUtils {
           ),
           actions: [
             TextButton(
-              // 닫기 버튼을 누르면
               onPressed: () {
                 Navigator.of(context).pop(); // 다이얼로그 닫힘
+                Navigator.of(context).pop(); // gamescreen으로
               },
               child: const Text('닫기'),
             ),

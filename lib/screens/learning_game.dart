@@ -45,15 +45,20 @@ class _LearningGameState extends State<LearningGame> {
 
   bool? isCorrect; // 정답여부
   int lives = 3; // 목숨 수
+  int pass = 3;
 
 // 단어 가져오기
   Future<void> initializeGame() async {
     wordsList = await GameUtils.fetchWords(widget.vocabularyId);
     int fetchedLives =
         await _storeService.getUserLives(); // Firestore에서 Lives 개수 가져오기
+    int fetchedPass =
+        await _storeService.getUserPass(); // Firestore에서 Pass 개수 가져오기
+
     loadNextQuestion();
     setState(() {
       lives = fetchedLives; // Lives 개수 업데이트
+      pass = fetchedPass; // Pass 개수 업데이트
     });
   }
 
@@ -141,6 +146,7 @@ class _LearningGameState extends State<LearningGame> {
         incorrectWords,
         accuracyRate,
         lives,
+        pass,
         scoreReceived,
         moneyEarned); // 게임 결과 화면 표시
   }
@@ -159,7 +165,7 @@ class _LearningGameState extends State<LearningGame> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 80),
                   Text(
                     currentQuestion,
                     style: const TextStyle(fontSize: 40),
@@ -189,6 +195,26 @@ class _LearningGameState extends State<LearningGame> {
                     onPressed: checkAnswer, // 정답 확인
                     child: const Text('확인'),
                   ),
+                  const SizedBox(height: 10),
+                  // "Pass" 버튼 추가
+                  ElevatedButton.icon(
+                    onPressed: pass > 0
+                        ? () {
+                            // "Pass" 버튼을 누를 경우 처리
+                            setState(() {
+                              pass--; // 패스 개수 감소.
+                              //정답처리
+                              correctWords++;
+                              moneyEarned += 10;
+                              scoreReceived += 10;
+                              showSnackBar('패스 아이템 사용으로 정답처리 되었습니다!');
+                              loadNextQuestion(); // 다음 문제로 넘어감
+                            });
+                          }
+                        : null, // 패스 개수가 0이면 버튼 비활성화
+                    icon: const Icon(Icons.arrow_forward),
+                    label: const Text('Pass'),
+                  ),
                 ],
               ),
             ),
@@ -197,14 +223,30 @@ class _LearningGameState extends State<LearningGame> {
           Positioned(
             top: 0,
             right: 0,
-            child: Row(
-              children: List.generate(
-                lives,
-                (index) => const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.favorite, color: Colors.red),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: List.generate(
+                    lives,
+                    (index) => const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.favorite, color: Colors.red),
+                    ),
+                  ),
                 ),
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: List.generate(
+                    pass,
+                    (index) => const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.arrow_forward, color: Colors.blue),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

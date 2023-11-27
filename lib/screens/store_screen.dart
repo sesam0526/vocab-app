@@ -312,7 +312,7 @@ class _StoreScreenState extends State<StoreScreen> {
               ),
               StoreItem(
                 itemName: 'PASS',
-                itemInfo: '게임 플레이시 모르는 단어를 패스할 수 있다.',
+                itemInfo: '게임 플레이시 모르는 단어를 패스하고 정답 처리할 수 있다.',
                 itemPrice: 1000,
                 onItemPressed: () => purchaseItem('PASS', 1000),
               ),
