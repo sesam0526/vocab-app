@@ -82,8 +82,6 @@ class _RankingState extends State<Ranking> {
 
                 // 순위를 나타내는 문자열 구성
                 String rank = '$currentRank위';
-                // 순위를 나타내는 문자열 구성
-                //String rank = '${index + 1}위';
 
                 // 현재 순위의 사용자 목록
                 List<String> currentRankUsers = [];
@@ -101,21 +99,32 @@ class _RankingState extends State<Ranking> {
                 // currentRankUsers 리스트를 'id' 기준으로 정렬
                 currentRankUsers.sort();
 
+                // 사용자 정보와 선을 출력
                 return Column(
-                  children: currentRankUsers
-                      .map((id) => ListTile(
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 20),
-                            title: Text(
-                              '$rank ID: $id, Score: ${data['score']}',
-                              style: _auth.currentUser?.email == id
-                                  ? TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.red) // 로그인한 사용자의 ID인 경우
-                                  : TextStyle(fontSize: 20), // 다른 사용자의 경우
+                  children: [
+                    ...currentRankUsers.map((id) => Column(
+                          children: [
+                            ListTile(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              title: Text(
+                                '$rank ID: $id, Score: ${data['score']}',
+                                style: _auth.currentUser?.email == id
+                                    ? TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.red) // 로그인한 사용자의 ID인 경우
+                                    : TextStyle(fontSize: 20), // 다른 사용자의 경우
+                              ),
                             ),
-                          ))
-                      .toList(),
+                            Container(
+                              height: 1,
+                              color: Colors.purple[400],
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                          ],
+                        )),
+                  ],
                 );
               } else {
                 return const ListTile(
