@@ -12,6 +12,19 @@ class VocabularyScreen extends StatefulWidget {
 
 class _VocabularyScreenState extends State<VocabularyScreen> {
   final VocabularyService _vocabService = VocabularyService();
+  @override
+  void initState() {
+    super.initState();
+    // 화면 로드 시 안내 메시지 표시
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('단어장를 길게 눌러 편집 또는 삭제할 수 있습니다.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    });
+  }
 
   Future<void> _addVocabularyDialog() async {
     final TextEditingController nameController = TextEditingController();
@@ -112,6 +125,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('단어장'),
+        backgroundColor: Colors.purple[400],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _vocabService.getVocabularies(),

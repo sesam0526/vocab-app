@@ -145,24 +145,16 @@ class _VocabularyDetailScreenState extends State<VocabularyDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.vocabularyName),
-        /*actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // 검색 버튼을 눌렀을 때 동작
-              setState(() {
-                _searchTerm = _searchController.text;
-              });
-            },
-          ),
-        ],*/
+        backgroundColor: Colors.purple[400],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
+          preferredSize: const Size.fromHeight(68.0),
           child: TextField(
             controller: _searchController,
             decoration: const InputDecoration(
               labelText: '단어 검색',
               prefixIcon: Icon(Icons.search),
+              fillColor: Color.fromARGB(255, 200, 156, 207),
+              filled: true,
             ),
             onSubmitted: (value) {
               setState(() {
