@@ -63,6 +63,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
       } else {
         // 목숨이 없거나, 문제를 다 풀면
         showGameOverDialog(); // 게임 결과 화면 표시
+       
       }
     });
   }
@@ -97,6 +98,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         if (lives == 0) {
           // 목숨이 더 이상 없으면 게임 끝냄
           showGameOverDialog();
+          
         }
       }
       loadNextQuestion(); // 다음 문제로 넘어감
@@ -128,6 +130,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         pass,
         scoreReceived,
         moneyEarned); // 게임 결과 화면 표시
+    
   }
 
   @override

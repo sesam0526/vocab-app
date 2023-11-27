@@ -120,7 +120,7 @@ class GameUtils {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 다이얼로그 닫힘
-                Navigator.of(context).pop(); // gamescreen으로
+                Navigator.of(context).pop(); //해당 게임 창을 나감
               },
               child: const Text('닫기'),
             ),
