@@ -163,39 +163,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => const AnnouncementScreen()));
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.supervisor_account),
-            title: const Text('사용자 관리'),
-            iconColor: Colors.purple,
-            onTap: () async {
-              final currentUserEmail = FirebaseAuth.instance.currentUser?.email;
-
-              if (currentUserEmail == 'master@gmail.com') {
+          Visibility(
+            //master@gmail.com일 경우에만 해당 메뉴 보임
+            visible:
+                FirebaseAuth.instance.currentUser?.email == 'master@gmail.com',
+            child: ListTile(
+              leading: const Icon(Icons.supervisor_account),
+              title: const Text('사용자 관리'),
+              iconColor: Colors.purple,
+              onTap: () async {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AdminScreen()),
                 );
-              } else {
-                // 사용할 수 없는 메뉴 팝업 창 표시
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('알림'),
-                      content: const Text('관리자 계정만 사용 가능한 메뉴입니다.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // 닫기 버튼
-                          },
-                          child: const Text('확인'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-            },
+              },
+            ),
           ),
           ListTile(
               //로그아웃
