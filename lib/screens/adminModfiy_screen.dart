@@ -93,6 +93,7 @@ class _AdminModifyScreenState extends State<AdminModifyScreen> {
               TextField(
                 controller: _passController,
                 decoration: const InputDecoration(labelText: '보유 패스 개수'),
+                keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16.0),
 
@@ -118,16 +119,36 @@ class _AdminModifyScreenState extends State<AdminModifyScreen> {
 
   Future<void> _updateUserInfo() async {
     try {
+      // Parse input values
+      final int lives = int.tryParse(_livesController.text) ?? -1;
+      final int pass = int.tryParse(_passController.text) ?? -1;
+      final int money = int.tryParse(_moneyController.text) ?? -1;
+      final int score = int.tryParse(_scoreController.text) ?? -1;
+
+      // Validate input values
+      if (lives < 0 ||
+          pass < 0 ||
+          money < 0 ||
+          score < 0 ||
+          _livesController.text.contains('.') ||
+          _passController.text.contains('.') ||
+          _moneyController.text.contains('.') ||
+          _scoreController.text.contains('.')) {
+        // Display an error message if any of the values is not a non-negative integer
+        throw const FormatException(
+            '게임 점수, 보유 포인트, 보유 목숨 및 패스 개수 값은 0 이상의 정수여야 합니다.');
+      }
+
       // Update the user information in Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.userId)
           .update({
         'nickname': _nicknameController.text,
-        'lives': int.parse(_livesController.text),
-        'pass': int.parse(_passController.text),
-        'money': int.parse(_moneyController.text),
-        'score': int.parse(_scoreController.text),
+        'lives': lives,
+        'pass': pass,
+        'money': money,
+        'score': score,
         // Add more fields to update as needed
       });
 
@@ -138,19 +159,8 @@ class _AdminModifyScreenState extends State<AdminModifyScreen> {
     } catch (e) {
       // Handle errors and show an error message
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('사용자 정보 수정 중 오류가 발생하였습니다.')),
+        SnackBar(content: Text('사용자 정보 수정 중 오류가 발생하였습니다: $e')),
       );
     }
-  }
-
-  @override
-  void dispose() {
-    // Dispose of the controllers
-    _nicknameController.dispose();
-    _livesController.dispose();
-    _passController.dispose();
-    _moneyController.dispose();
-    _scoreController.dispose();
-    super.dispose();
   }
 }
