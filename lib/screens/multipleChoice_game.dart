@@ -132,7 +132,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('4지선다 모드'),
-          backgroundColor: Colors.purple,
+          backgroundColor: Colors.purple[400],
         ),
         body: const Center(
           child: CircularProgressIndicator(),

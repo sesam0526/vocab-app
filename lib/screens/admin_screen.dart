@@ -19,7 +19,7 @@ class _AdminScreenState extends State<AdminScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('사용자 관리'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
       ),
       body: SingleChildScrollView(
         child: Center(

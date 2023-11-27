@@ -20,7 +20,7 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('프로필'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
       ),
       body: Column(
         children: [

@@ -43,7 +43,7 @@ class _AdminModifyScreenState extends State<AdminModifyScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('사용자 정보 수정'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
       ),
       body: SingleChildScrollView(
         child: Padding(

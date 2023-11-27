@@ -5,22 +5,22 @@ import 'friend_vocab_detail.dart';
 class FriendVocab extends StatefulWidget {
   //친구 단어장을 불러올때 친구 이메일 값을 받아서 구성
   String email = '';
-   FriendVocab( {super.key, required this.email});
+  FriendVocab({super.key, required this.email});
 
   @override
-  _FriendVocab createState() =>  _FriendVocab(email: email);
+  _FriendVocab createState() => _FriendVocab(email: email);
 }
 
 class _FriendVocab extends State<FriendVocab> {
-   String email = '';
+  String email = '';
   _FriendVocab({required this.email});
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('친구의 단어장'),
-       // backgroundColor: Colors.purple[300],
+        // backgroundColor: Colors.purple[300],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: getVocabularies(),
@@ -46,31 +46,33 @@ class _FriendVocab extends State<FriendVocab> {
               var vocabulary = vocabularies[index];
               return ListTile(
                 //단어장 이름, 세부설명(존재하지 않을 수 있음)
-                title: Text(vocabulary['name'],style: const TextStyle(fontSize: 25),),
+                title: Text(
+                  vocabulary['name'],
+                  style: const TextStyle(fontSize: 25),
+                ),
                 subtitle: Text(vocabulary['description'] ?? ''),
                 onTap: () {
-                //단어장을 누르면 그 단어장 안의 단어를 볼 수 있는 창으로 이동, 이 때 단어장의 id를 가지고 창 구성
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => FriendVocabDetail(
-                      vocabularyId: vocabulary.id,
-                      vocabularyName: vocabulary['name'],
-                      email: email,
+                  //단어장을 누르면 그 단어장 안의 단어를 볼 수 있는 창으로 이동, 이 때 단어장의 id를 가지고 창 구성
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => FriendVocabDetail(
+                        vocabularyId: vocabulary.id,
+                        vocabularyName: vocabulary['name'],
+                        email: email,
+                      ),
                     ),
-                  ),
-                );
-                
-              },
-               
+                  );
+                },
               );
             },
           );
         },
       ),
-     );
+    );
   }
+
 //해당 이메일의 단어장을 불러올 함수
-    Stream<QuerySnapshot> getVocabularies() {
+  Stream<QuerySnapshot> getVocabularies() {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(email)
