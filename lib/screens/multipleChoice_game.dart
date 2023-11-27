@@ -85,7 +85,6 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         // 틀리면 목숨과 점수 잃음
         incorrectWords++;
         scoreReceived -= 10;
-        _storeService.subtractLives(1); // DB에서 목숨 차감
         lives--;
         GameUtils.addToWrongWordsList(
             widget.vocabularyId, wordsList[currentWordIndex]); // 오답 노트에 추가

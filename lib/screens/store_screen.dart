@@ -307,14 +307,14 @@ class _StoreScreenState extends State<StoreScreen> {
               StoreItem(
                 itemName: 'LIFE',
                 itemInfo: '게임 플레이시 필요한 목숨 개수를 추가할 수 있다.',
-                itemPrice: 10,
-                onItemPressed: () => purchaseItem('LIFE', 10),
+                itemPrice: 1000,
+                onItemPressed: () => purchaseItem('LIFE', 1000),
               ),
               StoreItem(
                 itemName: 'PASS',
                 itemInfo: '게임 플레이시 모르는 단어를 패스할 수 있다.',
-                itemPrice: 10,
-                onItemPressed: () => purchaseItem('PASS', 10),
+                itemPrice: 1000,
+                onItemPressed: () => purchaseItem('PASS', 1000),
               ),
             ],
           ),
@@ -359,34 +359,38 @@ class StoreItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  itemName,
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    itemName,
+                    style: const TextStyle(
+                      fontSize: 25.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  '설명: $itemInfo',
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
+                  const SizedBox(height: 5),
+                  Text(
+                    '설명: $itemInfo',
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.white,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  '가격: $itemPrice P',
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
+                  const SizedBox(height: 5),
+                  Text(
+                    '가격: $itemPrice P',
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Icon(
               Icons.attach_money,
