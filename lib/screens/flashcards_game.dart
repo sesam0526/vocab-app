@@ -74,7 +74,7 @@ class _FlashcardsGameState extends State<FlashcardsGame> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('플래시카드 모드'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
       ),
       body: SingleChildScrollView(
         child: Center(

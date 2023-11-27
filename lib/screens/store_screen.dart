@@ -121,7 +121,7 @@ class _StoreScreenState extends State<StoreScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('상점'),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.purple[400],
       ),
       body: SingleChildScrollView(
         child: Center(

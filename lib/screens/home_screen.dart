@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           ListTile(
             // 오답노트로 이동
-            leading: const Icon(Icons.error),
+            leading: const Icon(Icons.book),
             title: const Text('오답노트'),
             iconColor: Colors.purple,
             onTap: () {
