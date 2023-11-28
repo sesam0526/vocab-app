@@ -28,21 +28,41 @@ class _WrongVocabularyScreenState extends State<WrongVocabularyScreen> {
       uid = auth.currentUser!.email.toString(); // 사용자의 이메일을 UID로 사용
     }
 
-    final snapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection("Vocabularies")
-        .get();
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("Vocabularies")
+          .get();
 
-    setState(() {
-      vocabularyList = snapshot.docs
-          .map((doc) => {
-                'id': doc.id,
-                'name': doc['name'].toString(),
-                'description': doc['description'].toString(),
-              })
-          .toList();
-    });
+      setState(() {
+        vocabularyList = snapshot.docs
+            .map((doc) => {
+                  'id': doc.id,
+                  'name': doc['name'].toString(),
+                  'description': doc['description'].toString(),
+                })
+            .toList();
+      });
+    } catch (error) {
+      print('Error fetching vocabulary data: $error');
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('오류'),
+          content: const Text('데이터 로드 중 오류가 발생했습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('닫기'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -52,32 +72,38 @@ class _WrongVocabularyScreenState extends State<WrongVocabularyScreen> {
         title: const Text('오답 노트'),
         backgroundColor: Colors.purple[400],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: vocabularyList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(vocabularyList[index]['name']),
-                  subtitle: Text(vocabularyList[index]['description']),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WrongVocabularyDetail(
-                          vocabularyId: vocabularyList[index]['id'],
-                          vocabularyName: vocabularyList[index]['name'],
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (vocabularyList.isEmpty)
+            const Center(
+              child: Text('단어장이 없습니다. 단어장을 먼저 추가해주세요!'),
+            )
+          else
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: vocabularyList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(vocabularyList[index]['name']),
+                    subtitle: Text(vocabularyList[index]['description']),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WrongVocabularyDetail(
+                            vocabularyId: vocabularyList[index]['id'],
+                            vocabularyName: vocabularyList[index]['name'],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
