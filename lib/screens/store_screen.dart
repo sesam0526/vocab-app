@@ -288,7 +288,7 @@ class _StoreScreenState extends State<StoreScreen> {
                         const Text(
                           "해당 아이템은 게임 플레이중 사용할 수 있습니다.",
                           style: TextStyle(fontSize: 10.0, color: Colors.white),
-                        )
+                        ),
                       ],
                     ),
                   ],
@@ -306,7 +306,7 @@ class _StoreScreenState extends State<StoreScreen> {
               const SizedBox(height: 10),
               StoreItem(
                 itemName: 'LIFE',
-                itemInfo: '게임 플레이시 필요한 목숨 개수를 추가할 수 있다.',
+                itemInfo: '게임 플레이시 필요한 목숨 개수를 기본 3개 이상으로 추가할 수 있다.',
                 itemPrice: 1000,
                 onItemPressed: () => purchaseItem('LIFE', 1000),
               ),
