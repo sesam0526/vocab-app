@@ -63,6 +63,7 @@ class _ProfileState extends State<Profile> {
                             return Column(
                               children: [
                                 Text(
+                                  'id: ${snapshot.data!['id'] ?? 'Defaultid'}\n'
                                   'nickname: ${snapshot.data!['nickname'] ?? 'DefaultNickname'}\n'
                                   'score: ${snapshot.data!['score']}\n'
                                   'money: ${snapshot.data!['money']}\n'
@@ -111,6 +112,7 @@ class _ProfileState extends State<Profile> {
 
       // 사용자 정보를 Map으로 반환
       return {
+        'id': userSnapshot['id'],
         'nickname': userSnapshot['nickname'],
         'score': userSnapshot['score'],
         'money': userSnapshot['money'],
@@ -120,6 +122,7 @@ class _ProfileState extends State<Profile> {
     } catch (e) {
       print('Eror getting user info: &e');
       return {
+        'id': 'default',
         'nicknmae': 'default', // 에러 시 기본값 설정
         'score': 0,
         'money': 0,
