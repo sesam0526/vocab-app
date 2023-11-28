@@ -63,7 +63,6 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
       } else {
         // 목숨이 없거나, 문제를 다 풀면
         showGameOverDialog(); // 게임 결과 화면 표시
-       
       }
     });
   }
@@ -71,7 +70,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
   int correctWords = 0; // 맞은 단어 수
   int incorrectWords = 0; // 틀린 단어 수
   int scoreReceived = 0; // 받은 점수
-  int moneyEarned = 0; // 획득한 돈
+  int pointEarned = 0; // 획득한 포인트
 
 // 사용자가 선택한 선택지에 대해 정답 확인하는 함수
   void checkAnswer(String selectedOption) {
@@ -81,9 +80,9 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
           : wordsList[currentWordIndex]['meaning']!;
 
       if (selectedOption == correctOption) {
-        // 사용자가 선택한 선택지가 맞으면 돈과 점수 획득
+        // 사용자가 선택한 선택지가 맞으면 포인트과 점수 획득
         correctWords++;
-        moneyEarned += 10;
+        pointEarned += 10;
         scoreReceived += 10;
         showSnackBar('정답입니다!');
       } else {
@@ -98,7 +97,6 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         if (lives == 0) {
           // 목숨이 더 이상 없으면 게임 끝냄
           showGameOverDialog();
-          
         }
       }
       loadNextQuestion(); // 다음 문제로 넘어감
@@ -115,10 +113,10 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
     int totalWords = wordsList.length; // 전체 단어 수
     double accuracyRate = correctWords / totalWords * 100; // 정답률
     scoreReceived += lives * wordsList.length * 5; // 받은 점수
-    moneyEarned += lives * wordsList.length * 5; // 획득한 돈
+    pointEarned += lives * wordsList.length * 5; // 획득한 포인트
 
-    GameUtils.updateScoreAndMoneyInFirebase(
-        scoreReceived, moneyEarned); // 파이어베이스에 유저 점수와 돈 업데이트
+    GameUtils.updateScoreAndPointInFirebase(
+        scoreReceived, pointEarned); // 파이어베이스에 유저 점수와 포인트 업데이트
 
     GameUtils.showGameOverDialog(
         context,
@@ -129,8 +127,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         lives,
         pass,
         scoreReceived,
-        moneyEarned); // 게임 결과 화면 표시
-    
+        pointEarned); // 게임 결과 화면 표시
   }
 
   @override
@@ -212,7 +209,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
                               pass--; // 패스 개수 감소.
                               //정답처리
                               correctWords++;
-                              moneyEarned += 10;
+                              pointEarned += 10;
                               scoreReceived += 10;
                               showSnackBar('패스 아이템 사용으로 정답처리 되었습니다!');
                               loadNextQuestion(); // 다음 문제로 넘어감
