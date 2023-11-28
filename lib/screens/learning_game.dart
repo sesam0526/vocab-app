@@ -112,6 +112,10 @@ class _LearningGameState extends State<LearningGame> {
         // 틀리면 목숨과 점수 잃음
         incorrectWords++;
         scoreReceived -= 10;
+        if (lives > 3) {
+          // 목숨 3개 초과면 파이어베이스에서도 차감
+          _storeService.subtractLives(1);
+        }
         lives--;
         showSnackBar('틀렸습니다.');
 
@@ -203,6 +207,7 @@ class _LearningGameState extends State<LearningGame> {
                             // "Pass" 버튼을 누를 경우 처리
                             setState(() {
                               pass--; // 패스 개수 감소.
+                              _storeService.subtractPass(1); //파이어베이스에서 패스개수 차감
                               //정답처리
                               correctWords++;
                               moneyEarned += 10;
