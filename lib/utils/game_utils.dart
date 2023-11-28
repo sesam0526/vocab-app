@@ -91,7 +91,7 @@ class GameUtils {
     int lives,
     int pass,
     int scoreReceived,
-    int pointEarned,
+    int moneyEarned,
   ) {
     const textStyle = TextStyle(fontSize: 18);
 
@@ -112,7 +112,7 @@ class GameUtils {
                 Text('남은 목숨 수: $lives', style: textStyle),
                 Text('남은 패스 수: $pass', style: textStyle),
                 Text('받은 점수: $scoreReceived', style: textStyle),
-                Text('획득한 포인트: $pointEarned', style: textStyle),
+                Text('획득한 포인트: $moneyEarned', style: textStyle),
               ],
             ),
           ),
@@ -133,8 +133,8 @@ class GameUtils {
   }
 
 // 파이어베이스에 유저 점수와 포인트 업데이트하는 함수
-  static void updateScoreAndPointInFirebase(
-      int scoreReceived, int pointEarned) async {
+  static void updateScoreAndMoneyInFirebase(
+      int scoreReceived, int moneyEarned) async {
     String uid = getCurrentUserId();
 
     // 점수 업데이트
@@ -154,18 +154,18 @@ class GameUtils {
     scoreReference.update({"score": newScore}); // 새로운 점수로 업데이트
 
     // 포인트 업데이트
-    DocumentReference<Map<String, dynamic>> pointReference = FirebaseFirestore
+    DocumentReference<Map<String, dynamic>> moneyReference = FirebaseFirestore
         .instance
         .collection("users")
         .doc(uid); // 특정 사용자의 문서에 접근
 
-    final DocumentSnapshot<Map<String, dynamic>> pointSnapshot =
-        await pointReference
+    final DocumentSnapshot<Map<String, dynamic>> moneySnapshot =
+        await moneyReference
             .get(); // Firestore에서 해당 문서를 가져와 DocumentSnapshot 객체로 저장
 
-    int currentPoint = pointSnapshot.get('point'); // 현재 사용자의 포인트 정보
-    pointReference.update({
-      "point": currentPoint + pointEarned
+    int currentMoney = moneySnapshot.get('money'); // 현재 사용자의 포인트 정보
+    moneyReference.update({
+      "money": currentMoney + moneyEarned
     }); // 현재 포인트에 획득한 포인트를 더하여 새로운 포인트으로 업데이트
   }
 }
