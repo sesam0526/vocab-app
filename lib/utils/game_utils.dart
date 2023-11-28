@@ -121,7 +121,9 @@ class GameUtils {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 다이얼로그 닫힘
-                Navigator.of(context).pop(); // 해당 게임 창을 나감
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  Navigator.of(context).pop(); // 해당 게임 창을 나감
+                });
               },
               child: const Text('닫기'),
             ),
@@ -165,6 +167,6 @@ class GameUtils {
     int currentMoney = moneySnapshot.get('money'); // 현재 사용자의 포인트 정보
     moneyReference.update({
       "money": currentMoney + moneyEarned
-    }); // 현재 포인트에 획득한 포인트를 더하여 새로운 포인트으로 업데이트
+    }); // 현재 포인트에 획득한 포인트를 더하여 새로운 포인트로 업데이트
   }
 }

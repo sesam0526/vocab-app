@@ -62,6 +62,8 @@ class _LearningGameState extends State<LearningGame> {
     });
   }
 
+  bool gameOver = false; // 게임 결과 화면이 이미 표시되었는지 나타내는 플래그
+
   // 다음 문제 가져옴
   void loadNextQuestion() {
     setState(() {
@@ -78,7 +80,11 @@ class _LearningGameState extends State<LearningGame> {
         currentWordIndex++; // 현재 단어 인덱스 올림
       } else {
         // 목숨이 없거나, 문제를 다 풀면
-        showGameOverDialog(); // 게임 결과 화면 표시
+        if (!gameOver) {
+          // 게임 오버 다이얼로그가 이미 표시되지 않았다면
+          gameOver = true;
+          showGameOverDialog(); // 게임 결과 화면 표시
+        }
       }
 
       if (isCorrect == false) {
@@ -96,6 +102,11 @@ class _LearningGameState extends State<LearningGame> {
 
   // 정답 확인 함수
   void checkAnswer() {
+    if (gameOver) {
+      // 게임 오버 다이얼로그가 이미 표시된 경우, 빠르게 종료
+      return;
+    }
+
     setState(() {
       String userInput =
           inputController.text.trim(); // 사용자가 입력한 텍스트 문자열 앞뒤의 공백을 제거
@@ -103,7 +114,7 @@ class _LearningGameState extends State<LearningGame> {
           (userInput == currentAnswer); // 사용자 입력과 현재 정답 비교해서 _isCorrect 변수에 할당
 
       if (isCorrect == true) {
-        // 사용자가 입력한 정답이 맞으면 포인트과 점수 획득
+        // 사용자가 입력한 정답이 맞으면 포인트와 점수 획득
         correctWords++;
         moneyEarned += 10;
         scoreReceived += 10;
@@ -135,6 +146,10 @@ class _LearningGameState extends State<LearningGame> {
 
 // 게임 결과 화면 함수
   void showGameOverDialog() {
+    if (gameOver) {
+      return; // 이미 게임 오버 다이얼로그가 표시된 경우 빠르게 종료
+    }
+
     int totalWords = wordsList.length; // 전체 단어 수
     double accuracyRate = correctWords / totalWords * 100; // 정답률
     scoreReceived += lives * wordsList.length * 5; // 받은 점수
@@ -153,6 +168,10 @@ class _LearningGameState extends State<LearningGame> {
         pass,
         scoreReceived,
         moneyEarned); // 게임 결과 화면 표시
+
+    setState(() {
+      gameOver = true; // 게임 오버 플래그 업데이트
+    });
   }
 
   @override

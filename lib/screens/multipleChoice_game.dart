@@ -54,6 +54,8 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
     });
   }
 
+  bool gameOver = false; // 게임 결과 화면이 이미 표시되었는지 나타내는 플래그
+
 // 다음 문제 가져옴
   void loadNextQuestion() {
     setState(() {
@@ -62,7 +64,11 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         currentWordIndex++; // 현재 단어 인덱스 올림
       } else {
         // 목숨이 없거나, 문제를 다 풀면
-        showGameOverDialog(); // 게임 결과 화면 표시
+        if (!gameOver) {
+          // 게임 오버 다이얼로그가 이미 표시되지 않았다면
+          gameOver = true;
+          showGameOverDialog(); // 게임 결과 화면 표시
+        }
       }
     });
   }
@@ -75,12 +81,17 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
 // 사용자가 선택한 선택지에 대해 정답 확인하는 함수
   void checkAnswer(String selectedOption) {
     setState(() {
+      if (gameOver) {
+        // 게임 오버 다이얼로그가 이미 표시된 경우, 빠르게 종료
+        return;
+      }
+
       String correctOption = widget.studyEnglish // 공부 모드에 따른 답
           ? wordsList[currentWordIndex]['word']!
           : wordsList[currentWordIndex]['meaning']!;
 
       if (selectedOption == correctOption) {
-        // 사용자가 선택한 선택지가 맞으면 포인트과 점수 획득
+        // 사용자가 선택한 선택지가 맞으면 포인트와 점수 획득
         correctWords++;
         moneyEarned += 10;
         scoreReceived += 10;
@@ -114,6 +125,10 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
 
 // 게임 결과 화면 함수
   void showGameOverDialog() {
+    if (gameOver) {
+      return; // 이미 게임 오버 다이얼로그가 표시된 경우 빠르게 종료
+    }
+
     int totalWords = wordsList.length; // 전체 단어 수
     double accuracyRate = correctWords / totalWords * 100; // 정답률
     scoreReceived += lives * wordsList.length * 5; // 받은 점수
@@ -132,6 +147,10 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         pass,
         scoreReceived,
         moneyEarned); // 게임 결과 화면 표시
+
+    setState(() {
+      gameOver = true; // 게임 오버 플래그 업데이트
+    });
   }
 
   @override
