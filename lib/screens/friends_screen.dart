@@ -52,10 +52,10 @@ class _FriendScreenState extends State<FriendScreen> {
                     ],
                   )),
               const SizedBox(width: 20), //띄우기
-             //친구 요청 리스트
+              //친구 요청 리스트
               ElevatedButton(
                   onPressed: () {
-                     //받은 친구 요청리스트를 출력하는 팝업창을 불러오는 함수
+                    //받은 친구 요청리스트를 출력하는 팝업창을 불러오는 함수
                     setState(() {
                       _rFriendList();
                     });
@@ -74,7 +74,8 @@ class _FriendScreenState extends State<FriendScreen> {
                   future: myFuture, //친구 리스트를 데이터베이터에서 받아옴
                   builder: (context, snapshot) {
                     final documents = snapshot.data?.docs ?? [];
-                    if (documents.isEmpty) {//받아온 데이터가 비어있을 때-> 친구가 없다.
+                    if (documents.isEmpty) {
+                      //받아온 데이터가 비어있을 때-> 친구가 없다.
                       return const Center(child: Text("친구가 없습니다."));
                     }
                     return ListView.builder(
@@ -94,11 +95,13 @@ class _FriendScreenState extends State<FriendScreen> {
                                 ),
                               );
                             },
-                            leading: Text( //친구 닉네임 출력
+                            leading: Text(
+                              //친구 닉네임 출력
                               documents[index].get('friend_name'),
                               style: const TextStyle(fontSize: 20),
                             ),
-                            trailing: Text( //친구 이메일 출력
+                            trailing: Text(
+                              //친구 이메일 출력
                               email,
                               style: const TextStyle(fontSize: 15),
                             ),
@@ -143,7 +146,7 @@ class _FriendScreenState extends State<FriendScreen> {
       } else if (query.docs.isNotEmpty &&
           !query2.exists &&
           friendEmail != currentUser.email) {
-            //입력받은 이메일 유저가 존재하고, 아직 사용자의 친구정보와 관련없고, 자기자신의 이메일이 아닌 경우 친구신청을 보냄
+        //입력받은 이메일 유저가 존재하고, 아직 사용자의 친구정보와 관련없고, 자기자신의 이메일이 아닌 경우 친구신청을 보냄
         String friendUid = query.docs.first.id;
         await FirebaseFirestore.instance
             .collection('friends')
@@ -248,7 +251,6 @@ class _FriendScreenState extends State<FriendScreen> {
                         _sendFriendRequest(_emailController.text);
                         _emailController.clear();
                         Navigator.of(context).pop();
-              
                       });
                     },
                     child: const Row(
@@ -311,27 +313,33 @@ class _FriendScreenState extends State<FriendScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             //보낸 이의 이메일 표시
-                            Flexible(child: Text(list[i], style: const TextStyle(fontSize: 18)),),
+                            Flexible(
+                              child: Text(list[i],
+                                  style: const TextStyle(fontSize: 18)),
+                            ),
                             Container(
-                              
                               child: Row(
                                 children: [
                                   IconButton(
-                                    //x 아이콘-> 누르면 친구요청을 거절함, DB에서 정보 삭제 후 팝업 닫기
+                                      //x 아이콘-> 누르면 친구요청을 거절함, DB에서 정보 삭제 후 팝업 닫기
                                       onPressed: () {
                                         //삭제
-                                        _CancleFriend(list[i]);
-                                        req_ck = list.length;
-                                        Navigator.of(context).pop();
+                                        setState(() {
+                                          _CancleFriend(list[i]);
+                                          req_ck = list.length;
+
+                                          Navigator.of(context).pop();
+                                        });
                                       },
                                       icon: const Icon(Icons.cancel)),
                                   IconButton(
-                                    // o 아이콘-> 누르면 친구요청 수락함, DB에 저장 후 팝업 닫기
+                                      // o 아이콘-> 누르면 친구요청 수락함, DB에 저장 후 팝업 닫기
                                       onPressed: () {
                                         setState(() {
                                           //친구추가
                                           _AddFriend(list[i]);
                                           _getFriendList();
+
                                           Navigator.of(context).pop();
                                         });
                                       },

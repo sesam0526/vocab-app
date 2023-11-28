@@ -37,9 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String uid = 'nul';
+    String uid = 'null';
     String uname = 'null';
-
+    
     if (auth.currentUser != null) {
       uid = auth.currentUser!.email.toString();
       uname = auth.currentUser!.displayName.toString();
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .doc(uid)
           .collection("Attendance");
       _makeMap(attemL);
-    }
+   
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -373,6 +373,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }else{
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(''),
+        backgroundColor: Colors.purple[400],
+      ),
+      body: const Column(
+        children: <Widget>[
+        ],
+      ),
+    );
+  }
   }
 
   void _taskAdder(String uid, String work, DateTime date) {
