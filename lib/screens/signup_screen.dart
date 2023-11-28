@@ -155,6 +155,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       userName,
                     );
 
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("$userName님 회원가입을 축하합니다."),
+                        duration: const Duration(seconds: 2), // 표시 시간 조절
+                      ),
+                    );
+
                     // ignore: use_build_context_synchronously
                     Navigator.push(
                       context,
