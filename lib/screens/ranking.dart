@@ -102,28 +102,36 @@ class _RankingState extends State<Ranking> {
                 // 사용자 정보와 선을 출력
                 return Column(
                   children: [
-                    ...currentRankUsers.map((id) => Column(
-                          children: [
-                            ListTile(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              title: Text(
-                                '$rank ID: $id, Score: ${data['score']}',
-                                style: _auth.currentUser?.email == id
-                                    ? TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.red) // 로그인한 사용자의 ID인 경우
-                                    : TextStyle(fontSize: 20), // 다른 사용자의 경우
-                              ),
+                    ...currentRankUsers.map((id) {
+                      // Save rank to Firebase
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(
+                              id) // Assuming 'id' is the document ID of the user
+                          .update({'rank': currentRank});
+
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                            title: Text(
+                              '$rank ID: $id, Score: ${data['score']}',
+                              style: _auth.currentUser?.email == id
+                                  ? const TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.red) // 로그인한 사용자의 ID인 경우
+                                  : const TextStyle(fontSize: 20), // 다른 사용자의 경우
                             ),
-                            Container(
-                              height: 1,
-                              color: Colors.purple[400],
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                            ),
-                          ],
-                        )),
+                          ),
+                          Container(
+                            height: 1,
+                            color: Colors.purple[400],
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                          ),
+                        ],
+                      );
+                    }),
                   ],
                 );
               } else {

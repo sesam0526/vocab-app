@@ -227,7 +227,7 @@ class _ProfileState extends State<Profile> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -273,22 +273,31 @@ class _ProfileState extends State<Profile> {
     // 현재 사용자의 이메일 가져오기
     String? currentUserEmail = _auth.currentUser?.email;
 
-    // Firestore에서 해당 사용자의 데이터 가져오기
-    DocumentSnapshot userSnapshot =
-        await _firestore.collection('users').doc(currentUserEmail).get();
+    try {
+      // Firestore에서 해당 사용자의 데이터 가져오기
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('users').doc(currentUserEmail).get();
 
-    // 사용자 정보를 Map으로 반환
-    return {
-      'score': userSnapshot['score'],
-      'money': userSnapshot['money'],
-      'rank': userSnapshot['rank'],
-      // 여기에 추가적인 필드가 있다면 추가하세요.
-    };
+      // 사용자 정보를 Map으로 반환
+      return {
+        'score': userSnapshot['score'],
+        'money': userSnapshot['money'],
+        'rank': userSnapshot['rank'],
+        // 여기에 추가적인 필드가 있다면 추가하세요.
+      };
+    } catch (e) {
+      print('Eror getting user info: &e');
+      return {
+        'score': 0,
+        'money': 0,
+        'rank': 0,
+      };
+    }
   }
 
   Widget nameTextField() {
     return TextFormField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           border: OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.black,
