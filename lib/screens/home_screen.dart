@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         //앱바 구성
-        title: const Text('영단어 사전'),
+        title: const Text('VTS'),
         centerTitle: true, //타이틀 중앙 위치
         elevation: 0.0, //입체감 없애기
         backgroundColor: Colors.purple[400],
