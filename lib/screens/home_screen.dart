@@ -10,6 +10,7 @@ import 'VocabularyScreen.dart';
 import 'admin_screen.dart';
 import 'game_screen.dart';
 import 'profile.dart';
+//import 'mypage.dart';
 import 'friends_screen.dart';
 import 'ranking.dart';
 import 'signin_screen.dart';
@@ -121,7 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           ListTile(
             //유저들의 랭킹창으로 이동
-            leading: const Icon(Icons.format_list_numbered),
+            //leading: const Icon(Icons.format_list_numbered),
+            leading: const Icon(Icons.equalizer),
             title: const Text('랭킹'),
             iconColor: Colors.purple,
             onTap: () {
@@ -432,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          actions: [ 
+          actions: [
             TextButton(
               //사용자가 취소를 누르면 아무 작업 없이 팝업창을 나감
               child: const Text('취소'),
@@ -455,7 +457,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-           
           ],
         );
       },
