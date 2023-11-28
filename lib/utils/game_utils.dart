@@ -97,6 +97,7 @@ class GameUtils {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('게임 종료'),
@@ -119,12 +120,8 @@ class GameUtils {
           actions: [
             TextButton(
               onPressed: () {
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  Navigator.of(context).pop(); // 해당 게임 창을 나감
-                });
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  Navigator.of(context).pop(); // 해당 게임 창을 나감
-                });
+                Navigator.of(context).pop(); // 다이얼로그 닫힘
+                Navigator.of(context).pop(); // 해당 게임 창을 나감
               },
               child: const Text('닫기'),
             ),
