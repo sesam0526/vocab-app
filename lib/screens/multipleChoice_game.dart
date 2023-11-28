@@ -89,6 +89,10 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
         // 틀리면 목숨과 점수 잃음
         incorrectWords++;
         scoreReceived -= 10;
+        if (lives > 3) {
+          // 목숨 3개 초과면 파이어베이스에서도 차감
+          _storeService.subtractLives(1);
+        }
         lives--;
         GameUtils.addToWrongWordsList(
             widget.vocabularyId, wordsList[currentWordIndex]); // 오답 노트에 추가
@@ -207,6 +211,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
                             // "Pass" 버튼을 누를 경우 처리
                             setState(() {
                               pass--; // 패스 개수 감소.
+                              _storeService.subtractPass(1);
                               //정답처리
                               correctWords++;
                               moneyEarned += 10;
