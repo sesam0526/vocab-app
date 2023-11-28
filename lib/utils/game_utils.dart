@@ -118,11 +118,10 @@ class GameUtils {
           ),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop(); // 다이얼로그 닫힘
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  Navigator.of(context).pop(); // 해당 게임 창을 나감
-                });
+                await Future.delayed(const Duration(milliseconds: 100));
+                Navigator.of(context).pop(); // 해당 게임 창을 나감
               },
               child: const Text('닫기'),
             ),
