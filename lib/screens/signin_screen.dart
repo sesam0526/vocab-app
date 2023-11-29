@@ -82,25 +82,39 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       }
     } catch (error) {
-      // FirebaseAuthException이 발생할 때
+      // Firebase Authentication 또는 Firestore에서 발생한 예외 처리
       if (error is FirebaseAuthException) {
-        // 사용자가 존재하지 않는 경우 또는 비밀번호가 올바르지 않은 경우
-        if (error.message?.contains('INVALID_LOGIN_CREDENTIALS') == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("이메일 또는 비밀번호가 올바르지 않습니다."),
-            ),
-          );
+        switch (error.code) {
+          case 'invalid-credential':
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("이메일 또는 비밀번호가 올바르지 않습니다."),
+              ),
+            );
+            break;
+          case 'invalid-email':
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("잘못된 이메일 형식입니다."),
+              ),
+            );
+            break;
+          default:
+            print("Error ${error.toString()}");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Error: ${error.toString()}"),
+              ),
+            );
         }
-        // 그 외의 에러 처리
-        else {
-          print("Error ${error.toString()}");
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Error: ${error.toString()}"),
-            ),
-          );
-        }
+      } else {
+        // FirebaseAuthException이 아닌 경우에 대한 처리
+        print("Error ${error.toString()}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error: ${error.toString()}"),
+          ),
+        );
       }
     }
   }
