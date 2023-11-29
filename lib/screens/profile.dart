@@ -38,133 +38,136 @@ class _ProfileState extends State<Profile> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          //사진을 선택하지 않았을때
-          if (_pickedFile == null)
-            Container(
-              constraints: BoxConstraints(
-                minHeight: imageSize,
-                minWidth: imageSize,
-              ),
-              child: GestureDetector(
-                //onTap: () {
-                //  _showBottomeSheet();
-                //},
-                child: Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: imageSize,
-                        height: imageSize,
-                        margin: const EdgeInsets.only(top: 40), // 이미지를 아래로 20 포인트 이동
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/mufin1.jpg'),
-                            fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            //사진을 선택하지 않았을때
+            if (_pickedFile == null)
+              Container(
+                constraints: BoxConstraints(
+                  minHeight: imageSize,
+                  minWidth: imageSize,
+                ),
+                child: GestureDetector(
+                  //onTap: () {
+                  //  _showBottomeSheet();
+                  //},
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: imageSize,
+                          height: imageSize,
+                          margin: const EdgeInsets.only(
+                              top: 40), // 이미지를 아래로 20 포인트 이동
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/mufin1.jpg'),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // 수정: 사용자 정보 출력
-                      FutureBuilder<Map<String, dynamic>>(
-                        future: _getUserInfo(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            // 사용자 정보 출력
-                            return Column(
-                              children: [
-                                const Text(
-                                  'id ',
-                                  style: TextStyle(
-                                    color: Colors.grey, // 회색
-                                    fontSize: 17,
+                        // 수정: 사용자 정보 출력
+                        FutureBuilder<Map<String, dynamic>>(
+                          future: _getUserInfo(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              // 사용자 정보 출력
+                              return Column(
+                                children: [
+                                  const Text(
+                                    'id ',
+                                    style: TextStyle(
+                                      color: Colors.grey, // 회색
+                                      fontSize: 17,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '${snapshot.data!['id'] ?? 'DefaultNickid'}\n',
-                                  style: const TextStyle(
-                                    color: Colors.black, // 검정
-                                    fontSize: 20,
+                                  Text(
+                                    '${snapshot.data!['id'] ?? 'DefaultNickid'}\n',
+                                    style: const TextStyle(
+                                      color: Colors.black, // 검정
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                ),
-                                const Text(
-                                  'nickname ',
-                                  style: TextStyle(
-                                    color: Colors.grey, // 회색
-                                    fontSize: 17,
+                                  const Text(
+                                    'nickname ',
+                                    style: TextStyle(
+                                      color: Colors.grey, // 회색
+                                      fontSize: 17,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '${snapshot.data!['nickname'] ?? 'DefaultNickname'}\n',
-                                  style: const TextStyle(
-                                    color: Colors.black, // 검정
-                                    fontSize: 20,
+                                  Text(
+                                    '${snapshot.data!['nickname'] ?? 'DefaultNickname'}\n',
+                                    style: const TextStyle(
+                                      color: Colors.black, // 검정
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                ),
-                                const Text(
-                                  'score ',
-                                  style: TextStyle(
-                                    color: Colors.grey, // 회색
-                                    fontSize: 17,
+                                  const Text(
+                                    'score ',
+                                    style: TextStyle(
+                                      color: Colors.grey, // 회색
+                                      fontSize: 17,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '${snapshot.data!['score']}\n',
-                                  style: const TextStyle(
-                                    color: Colors.black, // 검정
-                                    fontSize: 20,
+                                  Text(
+                                    '${snapshot.data!['score']}\n',
+                                    style: const TextStyle(
+                                      color: Colors.black, // 검정
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                ),
-                                const Text(
-                                  'rank ',
-                                  style: TextStyle(
-                                    color: Colors.grey, // 회색
-                                    fontSize: 17,
+                                  const Text(
+                                    'rank ',
+                                    style: TextStyle(
+                                      color: Colors.grey, // 회색
+                                      fontSize: 17,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '${snapshot.data!['rank']}위\n',
-                                  style: const TextStyle(
-                                    color: Colors.black, // 검정
-                                    fontSize: 20,
+                                  Text(
+                                    '${snapshot.data!['rank']}위\n',
+                                    style: const TextStyle(
+                                      color: Colors.black, // 검정
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                ),
 
-                                // 여기에 추가적인 정보를 출력할 수 있습니다.
-                              ],
-                            );
-                          }
-                        },
-                      ),
-                    ],
+                                  // 여기에 추가적인 정보를 출력할 수 있습니다.
+                                ],
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: imageSize,
+                height: imageSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      width: 2, color: Theme.of(context).colorScheme.primary),
+                  image: DecorationImage(
+                    image: FileImage(File(_pickedFile!.path)),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-            )
-          else
-            Container(
-              width: imageSize,
-              height: imageSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                    width: 2, color: Theme.of(context).colorScheme.primary),
-                image: DecorationImage(
-                  image: FileImage(File(_pickedFile!.path)),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
