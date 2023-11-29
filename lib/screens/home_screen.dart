@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             UserAccountsDrawerHeader(
               //유저 헤더
-              currentAccountPicture: CircleAvatar(
+              currentAccountPicture: const CircleAvatar(
                 backgroundImage: AssetImage('assets/images/mufin1.jpg'),
               ),
               accountName: Text(uname),
@@ -193,12 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: const Text('로그아웃'),
                 iconColor: Colors.purple,
                 onTap: () {
-                  FirebaseAuth.instance.signOut().then((value) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignInScreen()));
-                  });
+                  showSignoutDialog(context);
                 }),
           ],
         )),
@@ -390,6 +385,46 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
+  }
+
+// 로그아웃 확인 다이얼로그
+  void showSignoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('알림'),
+          content: const Text('로그아웃 하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // 사용자가 "확인"을 선택한 경우
+                Navigator.of(context).pop(); // 닫기
+                performSignout(); // 로그아웃 함수 호출
+              },
+              child: const Text('확인'),
+            ),
+            TextButton(
+              onPressed: () {
+                // 사용자가 "취소"를 선택한 경우
+                Navigator.of(context).pop(); // 닫기
+              },
+              child: const Text('취소'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+// 로그아웃 처리
+  void performSignout() {
+    FirebaseAuth.instance.signOut().then((value) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const SignInScreen())); // SignInScreen으로 이동
+    });
   }
 
   void _taskAdder(String uid, String work, DateTime date) {
