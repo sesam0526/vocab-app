@@ -59,7 +59,7 @@ class _ProfileState extends State<Profile> {
                           width: imageSize,
                           height: imageSize,
                           margin: const EdgeInsets.only(
-                              top: 40), // 이미지를 아래로 20 포인트 이동
+                              top: 40), // 이미지를 아래로 40 포인트 이동
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
