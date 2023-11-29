@@ -119,8 +119,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 20,
                 ),
                 signInSignUpButton(context, false, () async {
-                  final userName = _userNameTextController.text.trim();
-                  final email = _emailTextController.text.trim();
+                  final userName = _userNameTextController.text;
+                  final email = _emailTextController.text;
                   final password = _passwordTextController.text;
 
                   if (userName.isEmpty || email.isEmpty || password.isEmpty) {

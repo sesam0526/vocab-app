@@ -29,17 +29,17 @@ class _FlashcardsGameState extends State<FlashcardsGame> {
     setState(() {});
   }
 
-  int currentIndex = 0;
+  int currentWordIndex = 0;
   bool showAnswer = false;
 
-  bool get hasPrevFlashcard => currentIndex > 0;
-  bool get hasNextFlashcard => currentIndex < wordsList.length - 1;
+  bool get hasPrevFlashcard => currentWordIndex > 0;
+  bool get hasNextFlashcard => currentWordIndex < wordsList.length - 1;
 
 // 다음 단어 보여주는 함수
   void showNextFlashcard() {
     if (hasNextFlashcard) {
       setState(() {
-        currentIndex++;
+        currentWordIndex++;
         showAnswer = false;
       });
     }
@@ -49,7 +49,7 @@ class _FlashcardsGameState extends State<FlashcardsGame> {
   void showPrevFlashcard() {
     if (hasPrevFlashcard) {
       setState(() {
-        currentIndex--;
+        currentWordIndex--;
         showAnswer = false;
       });
     }
@@ -65,11 +65,11 @@ class _FlashcardsGameState extends State<FlashcardsGame> {
   @override
   Widget build(BuildContext context) {
     final flashcard = wordsList.isNotEmpty // wordsList 리스트가 비어있지 않으면
-        ? wordsList[currentIndex]
+        ? wordsList[currentWordIndex]
         : {
             'word': '',
             'meaning': ''
-          }; // currentIndex에 해당하는 위치의 플래시카드를 flashcard 변수에 할당
+          }; // currentWordIndex에 해당하는 위치의 플래시카드를 flashcard 변수에 할당
 
     return Scaffold(
       appBar: AppBar(

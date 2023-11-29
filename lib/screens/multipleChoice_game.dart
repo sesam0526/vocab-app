@@ -39,7 +39,7 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
 
   int currentWordIndex = 0; // 현재 문제 인덱스
   int lives = 3; // 목숨 수
-  int pass = 3; // 패스 수
+  int pass = 0; // 패스 수
 
   // 단어 가져오기
   Future<void> initializeGame() async {

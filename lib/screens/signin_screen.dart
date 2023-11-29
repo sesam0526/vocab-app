@@ -39,8 +39,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   // 로그인 함수
   void _signIn() async {
-    final email = _emailTextTextController.text.trim();
-    final password = _passwordTextController.text.trim();
+    final email = _emailTextTextController.text;
+    final password = _passwordTextController.text;
 
     if (email.isEmpty || password.isEmpty) {
       // 사용자에게 필수 입력값이 비어있음을 알리는 메시지 표시

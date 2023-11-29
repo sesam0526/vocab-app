@@ -40,12 +40,12 @@ class _LearningGameState extends State<LearningGame> {
   List<Map<String, String>> wordsList = []; // 단어 리스트
 
   int currentWordIndex = 0; // 현재 단어 인덱스
-  String currentQuestion = ''; // 현재 단어
-  String currentAnswer = ''; // 현재 단어의 의미
+  String currentQuestion = ''; // 현재 문제
+  String currentAnswer = ''; // 현재 문제의 정답
 
   bool? isCorrect; // 정답여부
   int lives = 3; // 목숨 수
-  int pass = 3;
+  int pass = 0; // 패스 수
 
 // 단어 가져오기
   Future<void> initializeGame() async {
@@ -109,7 +109,7 @@ class _LearningGameState extends State<LearningGame> {
           (userInput == currentAnswer); // 사용자 입력과 현재 정답 비교해서 _isCorrect 변수에 할당
 
       if (isCorrect == true) {
-        // 사용자가 입력한 정답이 맞으면 포인트와 점수 획득
+        // 사용자가 입력한 답이 맞으면 포인트와 점수 획득
         correctWords++;
         moneyEarned += 10;
         scoreReceived += 10;
