@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'announModify_screen.dart';
 
 class AnnounDetailScreen extends StatefulWidget {
   //공지사항 내용 창
@@ -34,14 +35,29 @@ class _AnnounDetailScreen extends State<AnnounDetailScreen> {
         backgroundColor: Colors.purple[400],
         actions: [
           if (email.compareTo('master@gmail.com') == 0)
-            IconButton(
-              onPressed: () {
-                showDeleteDialog(widget.announId);
-              },
-              icon: const Icon(
-                CupertinoIcons.delete,
-                color: Colors.white,
-              ),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    // 수정 버튼을 눌렀을 때의 동작
+                    showModifyDialog(widget.announId);
+                  },
+                  icon: const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    // 삭제 버튼을 눌렀을 때의 동작
+                    showDeleteDialog(widget.announId);
+                  },
+                  icon: const Icon(
+                    CupertinoIcons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             )
         ],
       ),
@@ -164,6 +180,47 @@ class _AnnounDetailScreen extends State<AnnounDetailScreen> {
                     ),
                   );
                 });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showModifyDialog(String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            '수정 확인창',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: const SingleChildScrollView(
+            child: Text('해당 공지사항을 수정하시겠습니까?'),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AnnounModifyScreen(
+                      announId: id,
+                      title: widget.announName,
+                      mainText: mainText,
+                    ),
+                  ),
+                );
               },
             ),
           ],
