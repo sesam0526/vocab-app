@@ -81,11 +81,6 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
 // 사용자가 선택한 선택지에 대해 정답 확인하는 함수
   void checkAnswer(String selectedOption) {
     setState(() {
-      if (gameOver) {
-        // 게임 오버 다이얼로그가 이미 표시된 경우, 빠르게 종료
-        return;
-      }
-
       String correctOption = widget.studyEnglish // 공부 모드에 따른 답
           ? wordsList[currentWordIndex]['word']!
           : wordsList[currentWordIndex]['meaning']!;
@@ -125,10 +120,6 @@ class _MultipleChoiceGameState extends State<MultipleChoiceGame> {
 
 // 게임 결과 화면 함수
   void showGameOverDialog() {
-    if (gameOver) {
-      return; // 이미 게임 오버 다이얼로그가 표시된 경우 빠르게 종료
-    }
-
     int totalWords = wordsList.length; // 전체 단어 수
     double accuracyRate = correctWords / totalWords * 100; // 정답률
     scoreReceived += lives * wordsList.length * 5; // 받은 점수

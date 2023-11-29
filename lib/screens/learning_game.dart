@@ -102,11 +102,6 @@ class _LearningGameState extends State<LearningGame> {
 
   // 정답 확인 함수
   void checkAnswer() {
-    if (gameOver) {
-      // 게임 오버 다이얼로그가 이미 표시된 경우, 빠르게 종료
-      return;
-    }
-
     setState(() {
       String userInput =
           inputController.text.trim(); // 사용자가 입력한 텍스트 문자열 앞뒤의 공백을 제거
@@ -146,10 +141,6 @@ class _LearningGameState extends State<LearningGame> {
 
 // 게임 결과 화면 함수
   void showGameOverDialog() {
-    if (gameOver) {
-      return; // 이미 게임 오버 다이얼로그가 표시된 경우 빠르게 종료
-    }
-
     int totalWords = wordsList.length; // 전체 단어 수
     double accuracyRate = correctWords / totalWords * 100; // 정답률
     scoreReceived += lives * wordsList.length * 5; // 받은 점수
