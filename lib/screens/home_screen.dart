@@ -377,11 +377,13 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: const Text(''),
+          title: const Text('오류 발생'),
           backgroundColor: Colors.purple[400],
         ),
         body: const Column(
-          children: <Widget>[],
+          children: <Widget>[
+            Text('알 수 없는 접속 오류입니다. 앱을 종료해주십시오.')
+          ],
         ),
       );
     }

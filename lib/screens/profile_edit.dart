@@ -10,7 +10,7 @@ class profile_edit extends StatefulWidget {
 
 class _profile_editState extends State<profile_edit> {
   //late TextEditingController _nicknameController;
-  TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
   String userId = FirebaseAuth.instance.currentUser!.email.toString();
 
   @override
@@ -33,7 +33,7 @@ class _profile_editState extends State<profile_edit> {
             children: [
               // User ID를 나타낸다.
               Text(
-                'ID: ${userId}',
+                'ID: $userId',
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -48,13 +48,16 @@ class _profile_editState extends State<profile_edit> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () async {
-                    //  Firestore에 사용자 정보를 업데이트하는 메서드 호출
-                    await _updateUserInfo();
+                    setState(() {
+                      //  Firestore에 사용자 정보를 업데이트하는 메서드 호출
+                     _updateUserInfo();
                     // 이전 화면인 profile로 돌아간다.
                     Navigator.pop(context);
+                    });
+                    
                   },
-                  icon: Icon(Icons.done), // 아이콘 설정
-                  label: Text(''), // 빈 텍스트 설정 또는 label을 제거
+                  icon: const Icon(Icons.done), // 아이콘 설정
+                  label: const Text(''), // 빈 텍스트 설정 또는 label을 제거
                 ),
               ),
             ],
