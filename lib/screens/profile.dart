@@ -44,9 +44,19 @@ class _ProfileState extends State<Profile> {
                 child: Center(
                   child: Column(
                     children: [
-                      //기본 이미지 지정
-                      Image.asset('assets/images/mufin1.jpg',
-                          width: imageSize, height: imageSize),
+                      Container(
+                        width: imageSize,
+                        height: imageSize,
+                        margin: EdgeInsets.only(top: 40), // 이미지를 아래로 20 포인트 이동
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/mufin1.jpg'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(height: 20),
 
                       // 수정: 사용자 정보 출력
@@ -63,13 +73,62 @@ class _ProfileState extends State<Profile> {
                             return Column(
                               children: [
                                 Text(
-                                  'id: ${snapshot.data!['id'] ?? 'Defaultid'}\n'
-                                  'nickname: ${snapshot.data!['nickname'] ?? 'DefaultNickname'}\n'
-                                  'score: ${snapshot.data!['score']}\n'
-                                  'money: ${snapshot.data!['money']}\n'
-                                  '순위: ${snapshot.data!['rank']}등',
-                                  style: TextStyle(fontSize: 20),
+                                  'id ',
+                                  style: TextStyle(
+                                    color: Colors.grey, // 회색
+                                    fontSize: 17,
+                                  ),
                                 ),
+                                Text(
+                                  '${snapshot.data!['id'] ?? 'DefaultNickid'}\n',
+                                  style: TextStyle(
+                                    color: Colors.black, // 검정
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Text(
+                                  'nickname ',
+                                  style: TextStyle(
+                                    color: Colors.grey, // 회색
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                Text(
+                                  '${snapshot.data!['nickname'] ?? 'DefaultNickname'}\n',
+                                  style: TextStyle(
+                                    color: Colors.black, // 검정
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Text(
+                                  'score ',
+                                  style: TextStyle(
+                                    color: Colors.grey, // 회색
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                Text(
+                                  '${snapshot.data!['score']}\n',
+                                  style: TextStyle(
+                                    color: Colors.black, // 검정
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Text(
+                                  'rank ',
+                                  style: TextStyle(
+                                    color: Colors.grey, // 회색
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                Text(
+                                  '${snapshot.data!['rank']}위\n',
+                                  style: TextStyle(
+                                    color: Colors.black, // 검정
+                                    fontSize: 20,
+                                  ),
+                                ),
+
                                 // 여기에 추가적인 정보를 출력할 수 있습니다.
                               ],
                             );

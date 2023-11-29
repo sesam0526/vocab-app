@@ -10,7 +10,6 @@ import 'VocabularyScreen.dart';
 import 'admin_screen.dart';
 import 'game_screen.dart';
 import 'profile.dart';
-//import 'mypage.dart';
 import 'friends_screen.dart';
 import 'ranking.dart';
 import 'signin_screen.dart';
@@ -39,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     String uid = 'null';
     String uname = 'null';
-    
+
     if (auth.currentUser != null) {
       uid = auth.currentUser!.email.toString();
       uname = auth.currentUser!.displayName.toString();
@@ -49,342 +48,348 @@ class _HomeScreenState extends State<HomeScreen> {
           .doc(uid)
           .collection("Attendance");
       _makeMap(attemL);
-   
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        //앱바 구성
-        title: const Text('VTS'),
-        centerTitle: true, //타이틀 중앙 위치
-        elevation: 0.0, //입체감 없애기
-        backgroundColor: Colors.purple[400],
-        actions: [
-          IconButton(
-            //프로필 버튼 누르면 프로필 창으로 이동
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Profile()));
-            },
-            icon: const Icon(Icons.person),
-          )
-        ],
-      ),
-      drawer: Drawer(
-          child: ListView(
-        children: [
-          UserAccountsDrawerHeader(
-            //유저 헤더
-            currentAccountPicture: const CircleAvatar(
-              backgroundColor: Colors.white,
-            ),
-            accountName: Text(uname),
-            accountEmail: Text(uid),
-            onDetailsPressed: () {}, // 디테일
-            decoration: BoxDecoration(
+
+      return Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          //앱바 구성
+          title: const Text('VTS'),
+          centerTitle: true, //타이틀 중앙 위치
+          elevation: 0.0, //입체감 없애기
+          backgroundColor: Colors.purple[400],
+          actions: [
+            IconButton(
+              //프로필 버튼 누르면 프로필 창으로 이동
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Profile()));
+              },
+              icon: const Icon(Icons.person),
+            )
+          ],
+        ),
+        drawer: Drawer(
+            child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              //유저 헤더
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: AssetImage('assets/images/mufin1.jpg'),
+              ),
+              accountName: Text(uname),
+              accountEmail: Text(uid),
+              onDetailsPressed: () {}, // 디테일
+              decoration: BoxDecoration(
                 color: Colors.purple[200],
                 borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15))),
-          ),
-          ListTile(
-            //단어장으로 이동
-            leading: const Icon(Icons.view_list),
-            title: const Text('단어장'),
-            iconColor: Colors.purple,
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const VocabularyScreen()));
-            },
-          ),
-          ListTile(
-            // 오답노트로 이동
-            leading: const Icon(Icons.book),
-            title: const Text('오답노트'),
-            iconColor: Colors.purple,
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const WrongVocabularyScreen()));
-            },
-          ),
-          ListTile(
-            // 게임으로 이동
-            leading: const Icon(Icons.sports_esports),
-            title: const Text('게임'),
-            iconColor: Colors.purple,
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const GameScreen()));
-            },
-          ),
-          ListTile(
-            //유저들의 랭킹창으로 이동
-            //leading: const Icon(Icons.format_list_numbered),
-            leading: const Icon(Icons.equalizer),
-            title: const Text('랭킹'),
-            iconColor: Colors.purple,
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Ranking()));
-            },
-          ),
-          ListTile(
-            //상점으로 이동
-            leading: const Icon(Icons.shopping_cart),
-            title: const Text('상점'),
-            iconColor: Colors.purple,
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const StoreScreen()));
-            },
-          ),
-          ListTile(
-            //친구 목록으로 이동
-            leading: const Icon(Icons.person),
-            title: const Text('친구 목록'),
-            iconColor: Colors.purple,
-            onTap: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const FriendScreen()));
-            },
-          ),
-          ListTile(
-            //공지사항으로 이동
-            leading: const Icon(Icons.announcement),
-            title: const Text('공지사항'),
-            iconColor: Colors.purple,
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AnnouncementScreen()));
-            },
-          ),
-          Visibility(
-            //master@gmail.com일 경우에만 해당 메뉴 보임
-            visible:
-                FirebaseAuth.instance.currentUser?.email == 'master@gmail.com',
-            child: ListTile(
-              leading: const Icon(Icons.supervisor_account),
-              title: const Text('사용자 관리'),
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+              ),
+            ),
+            ListTile(
+              //단어장으로 이동
+              leading: const Icon(Icons.view_list),
+              title: const Text('단어장'),
+              iconColor: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const VocabularyScreen()));
+              },
+            ),
+            ListTile(
+              // 오답노트로 이동
+              leading: const Icon(Icons.book),
+              title: const Text('오답노트'),
+              iconColor: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const WrongVocabularyScreen()));
+              },
+            ),
+            ListTile(
+              // 게임으로 이동
+              leading: const Icon(Icons.sports_esports),
+              title: const Text('게임'),
+              iconColor: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const GameScreen()));
+              },
+            ),
+            ListTile(
+              //유저들의 랭킹창으로 이동
+              //leading: const Icon(Icons.format_list_numbered),
+              leading: const Icon(Icons.equalizer),
+              title: const Text('랭킹'),
+              iconColor: Colors.purple,
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Ranking()));
+              },
+            ),
+            ListTile(
+              //상점으로 이동
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text('상점'),
+              iconColor: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const StoreScreen()));
+              },
+            ),
+            ListTile(
+              //친구 목록으로 이동
+              leading: const Icon(Icons.person),
+              title: const Text('친구 목록'),
               iconColor: Colors.purple,
               onTap: () async {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AdminScreen()),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FriendScreen()));
               },
             ),
-          ),
-          ListTile(
-              //로그아웃
-              leading: const Icon(Icons.logout),
-              title: const Text('로그아웃'),
+            ListTile(
+              //공지사항으로 이동
+              leading: const Icon(Icons.announcement),
+              title: const Text('공지사항'),
               iconColor: Colors.purple,
               onTap: () {
-                FirebaseAuth.instance.signOut().then((value) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AnnouncementScreen()));
+              },
+            ),
+            Visibility(
+              //master@gmail.com일 경우에만 해당 메뉴 보임
+              visible: FirebaseAuth.instance.currentUser?.email ==
+                  'master@gmail.com',
+              child: ListTile(
+                leading: const Icon(Icons.supervisor_account),
+                title: const Text('사용자 관리'),
+                iconColor: Colors.purple,
+                onTap: () async {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignInScreen()));
-                });
-              }),
-        ],
-      )),
-      body: Center(
-          child: Column(children: [
-        //달력 구현
-        TableCalendar(
-          locale: 'ko_KR',
-          firstDay: DateTime.utc(2021, 10, 16),
-          lastDay: DateTime.utc(2030, 3, 14),
-          focusedDay: _focusedDay,
-          //날짜 클릭 시 클릭한 날짜로 selectedDay 설정
-          onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AdminScreen()),
+                  );
+                },
+              ),
+            ),
+            ListTile(
+                //로그아웃
+                leading: const Icon(Icons.logout),
+                title: const Text('로그아웃'),
+                iconColor: Colors.purple,
+                onTap: () {
+                  FirebaseAuth.instance.signOut().then((value) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignInScreen()));
+                  });
+                }),
+          ],
+        )),
+        body: Center(
+            child: Column(children: [
+          //달력 구현
+          TableCalendar(
+            locale: 'ko_KR',
+            firstDay: DateTime.utc(2021, 10, 16),
+            lastDay: DateTime.utc(2030, 3, 14),
+            focusedDay: _focusedDay,
+            //날짜 클릭 시 클릭한 날짜로 selectedDay 설정
+            onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
+              setState(() {
+                this.selectedDay = selectedDay;
+                // this.focusedDay = focusedDay;
+              });
+            },
+            selectedDayPredicate: (DateTime day) {
+              return isSameDay(selectedDay, day);
+            },
+            onPageChanged: (focusedDay) {
+              // No need to call `setState()` here
+              _focusedDay = focusedDay;
+            },
+            //달력 디자인 설정
+            headerStyle: const HeaderStyle(
+              titleCentered: true,
+              formatButtonVisible: false,
+              titleTextStyle: TextStyle(
+                fontSize: 20.0,
+              ),
+              leftChevronIcon: Icon(
+                Icons.arrow_left,
+                size: 40.0,
+              ),
+              rightChevronIcon: Icon(
+                Icons.arrow_right,
+                size: 40.0,
+              ),
+            ),
+            calendarStyle: CalendarStyle(
+                isTodayHighlighted: true,
+                selectedDecoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.deepPurple, width: 1.0),
+                ),
+                selectedTextStyle: const TextStyle(
+                  fontSize: 16.0,
+                ),
+                todayDecoration: BoxDecoration(
+                    //color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.purple, width: 1.5)),
+                todayTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                markerSize: 10,
+                markerDecoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 144, 40, 162),
+                  shape: BoxShape.circle,
+                )),
+            //출석된 날짜들을 이벤트로 표시
+            eventLoader: (day) {
+              if (dayMap.containsKey(
+                  DateFormat('yyyy-MM-dd', 'ko').format(day).toString())) {
+                return ["출석"];
+              } else {
+                return [];
+              }
+            },
+          ),
+          Padding(
+            //선택한 날짜 표시
+            padding: const EdgeInsets.all(0.0),
+            child: Column(children: [
+              Container(
+                  color: Colors.purple[50],
+                  padding: const EdgeInsets.fromLTRB(20, 10, 16, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        DateFormat('yyyy.MM.dd', 'ko')
+                            .format(selectedDay)
+                            .toString(),
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            height: 2.0),
+                      ),
+                    ],
+                  )),
+            ]),
+          ),
+          Padding(
+            //to-do 입력할 텍스트박스
+            padding: const EdgeInsets.all(8.0),
+
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: TextField(
+                    controller: _textController,
+                  ),
+                ),
+                //추가 버튼
+                ElevatedButton(
+                  onPressed: () {
+                    if (_textController.text == '') {
+                      return;
+                    } else {
+                      setState(() {
+                        _taskAdder(uid, _textController.text, selectedDay);
+                        _textController.clear();
+                      });
+                    }
+                  },
+                  child: const Text("추가"),
+                )
+              ],
+            ),
+          ),
+          //해당 날짜의 to-do list
+          Expanded(
+            child: FutureBuilder<QuerySnapshot>(
+                future: readList(uid, selectedDay),
+                builder: (context, snapshot) {
+                  final documents = snapshot.data?.docs ?? [];
+                  if (documents.isEmpty) {
+                    return const Center(child: Text("할 일이 없습니다."));
+                  }
+                  return ListView.builder(
+                    itemCount: documents.length,
+                    itemBuilder: (context, index) {
+                      final doc = documents[index];
+                      String work = doc.get('work');
+                      bool isComplete = doc.get('isComplete');
+                      String id = doc.id;
+                      return ListTile(
+                          onTap: () {
+                            setState(() {
+                              _taskUpdate(uid, id, isComplete);
+                            });
+                          },
+                          trailing: IconButton(
+                            icon: const Icon(CupertinoIcons.delete),
+                            onPressed: () {
+                              _taskDelete(uid, id);
+                            },
+                          ),
+                          title: Text(
+                            work,
+                            style: isComplete
+                                ? const TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                    fontStyle: FontStyle.italic,
+                                  )
+                                : null,
+                          ));
+                    },
+                  );
+                }),
+          ),
+        ])),
+        //출석 버튼
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            //출석하기 함수 호출
             setState(() {
-              this.selectedDay = selectedDay;
-              // this.focusedDay = focusedDay;
+              attenCheck(uid);
             });
           },
-          selectedDayPredicate: (DateTime day) {
-            return isSameDay(selectedDay, day);
-          },
-          onPageChanged: (focusedDay) {
-            // No need to call `setState()` here
-            _focusedDay = focusedDay;
-          },
-          //달력 디자인 설정
-          headerStyle: const HeaderStyle(
-            titleCentered: true,
-            formatButtonVisible: false,
-            titleTextStyle: TextStyle(
-              fontSize: 20.0,
-            ),
-            leftChevronIcon: Icon(
-              Icons.arrow_left,
-              size: 40.0,
-            ),
-            rightChevronIcon: Icon(
-              Icons.arrow_right,
-              size: 40.0,
-            ),
-          ),
-          calendarStyle: CalendarStyle(
-              isTodayHighlighted: true,
-              selectedDecoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.deepPurple, width: 1.0),
-              ),
-              selectedTextStyle: const TextStyle(
-                fontSize: 16.0,
-              ),
-              todayDecoration: BoxDecoration(
-                  //color: Colors.transparent,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.purple, width: 1.5)),
-              todayTextStyle: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-              markerSize: 10,
-              markerDecoration: const BoxDecoration(
-                color: Color.fromARGB(255, 144, 40, 162),
-                shape: BoxShape.circle,
-              )),
-          //출석된 날짜들을 이벤트로 표시
-          eventLoader: (day) {
-            if (dayMap.containsKey(
-                DateFormat('yyyy-MM-dd', 'ko').format(day).toString())) {
-              return ["출석"];
-            } else {
-              return [];
-            }
-          },
-        ),
-        Padding(
-          //선택한 날짜 표시
-          padding: const EdgeInsets.all(0.0),
-          child: Column(children: [
-            Container(
-                color: Colors.purple[50],
-                padding: const EdgeInsets.fromLTRB(20, 10, 16, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      DateFormat('yyyy.MM.dd', 'ko')
-                          .format(selectedDay)
-                          .toString(),
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          height: 2.0),
-                    ),
-                  ],
-                )),
-          ]),
-        ),
-        Padding(
-          //to-do 입력할 텍스트박스
-          padding: const EdgeInsets.all(8.0),
-
-          child: Row(
-            children: [
-              Flexible(
-                flex: 1,
-                child: TextField(
-                  controller: _textController,
-                ),
-              ),
-              //추가 버튼
-              ElevatedButton(
-                onPressed: () {
-                  if (_textController.text == '') {
-                    return;
-                  } else {
-                    setState(() {
-                      _taskAdder(uid, _textController.text, selectedDay);
-                      _textController.clear();
-                    });
-                  }
-                },
-                child: const Text("추가"),
-              )
-            ],
+          child: const Text(
+            '출석',
+            style: TextStyle(fontSize: 20),
           ),
         ),
-        //해당 날짜의 to-do list
-        Expanded(
-          child: FutureBuilder<QuerySnapshot>(
-              future: readList(uid, selectedDay),
-              builder: (context, snapshot) {
-                final documents = snapshot.data?.docs ?? [];
-                if (documents.isEmpty) {
-                  return const Center(child: Text("할 일이 없습니다."));
-                }
-                return ListView.builder(
-                  itemCount: documents.length,
-                  itemBuilder: (context, index) {
-                    final doc = documents[index];
-                    String work = doc.get('work');
-                    bool isComplete = doc.get('isComplete');
-                    String id = doc.id;
-                    return ListTile(
-                        onTap: () {
-                          setState(() {
-                            _taskUpdate(uid, id, isComplete);
-                          });
-                        },
-                        trailing: IconButton(
-                          icon: const Icon(CupertinoIcons.delete),
-                          onPressed: () {
-                            _taskDelete(uid, id);
-                          },
-                        ),
-                        title: Text(
-                          work,
-                          style: isComplete
-                              ? const TextStyle(
-                                  decoration: TextDecoration.lineThrough,
-                                  fontStyle: FontStyle.italic,
-                                )
-                              : null,
-                        ));
-                  },
-                );
-              }),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(''),
+          backgroundColor: Colors.purple[400],
         ),
-      ])),
-      //출석 버튼
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //출석하기 함수 호출
-          setState(() {
-            attenCheck(uid);
-          });
-        },
-        child: const Text(
-          '출석',
-          style: TextStyle(fontSize: 20),
+        body: const Column(
+          children: <Widget>[],
         ),
-      ),
-    );
-  }else{
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-        backgroundColor: Colors.purple[400],
-      ),
-      body: const Column(
-        children: <Widget>[
-        ],
-      ),
-    );
-  }
+      );
+    }
   }
 
   void _taskAdder(String uid, String work, DateTime date) {
