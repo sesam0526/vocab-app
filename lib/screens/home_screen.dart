@@ -397,18 +397,18 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
+                // 사용자가 "취소"를 선택한 경우
+                Navigator.of(context).pop(); // 닫기
+              },
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
                 // 사용자가 "확인"을 선택한 경우
                 Navigator.of(context).pop(); // 닫기
                 performSignout(); // 로그아웃 함수 호출
               },
               child: const Text('확인'),
-            ),
-            TextButton(
-              onPressed: () {
-                // 사용자가 "취소"를 선택한 경우
-                Navigator.of(context).pop(); // 닫기
-              },
-              child: const Text('취소'),
             ),
           ],
         );
@@ -590,6 +590,6 @@ class _HomeScreenState extends State<HomeScreen> {
     //현재 접속한 유저의 닉네임 정보를 DB에서 받아오는 함수
     DocumentSnapshot<Map<String, dynamic>> query =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    uname=query.data()!['nickname'];
+    uname = query.data()!['nickname'];
   }
 }
