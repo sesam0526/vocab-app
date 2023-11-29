@@ -55,7 +55,7 @@ class _RankingState extends State<Ranking> {
               final Map<String, dynamic>? data =
                   documents[index].data() as Map<String, dynamic>?;
 
-              // 'money' 필드가 있는지 확인
+              // 'money', 'score', 'id' 필드가 있는지 확인
               if (data?.containsKey('money') == true &&
                   data?.containsKey('score') == true &&
                   data?.containsKey('id') == true) {

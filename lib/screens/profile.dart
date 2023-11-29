@@ -1,9 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+import 'profile_edit.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -14,6 +14,8 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   XFile? _pickedFile;
+  //late String userId;
+  //late Map<String, dynamic> userData;
 
   // Firebase 인증 및 Firestore 인스턴스 생성
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -27,6 +29,14 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         title: const Text('프로필'),
         backgroundColor: Colors.purple[400],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              _showEditDialog();
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -38,9 +48,9 @@ class _ProfileState extends State<Profile> {
                 minWidth: imageSize,
               ),
               child: GestureDetector(
-                onTap: () {
-                  _showBottomeSheet();
-                },
+                //onTap: () {
+                //  _showBottomeSheet();
+                //},
                 child: Center(
                   child: Column(
                     children: [
@@ -159,7 +169,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  // 수정: 사용자 정보 가져오기
+  // 사용자 정보 가져오기
   Future<Map<String, dynamic>> _getUserInfo() async {
     // 현재 사용자의 이메일 가져오기
     String? currentUserEmail = _auth.currentUser?.email;
@@ -190,74 +200,14 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  _showBottomeSheet() {
-    return showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25),
-        ),
+  // 닉네임 수정 다이얼로그
+  Future<void> _showEditDialog() async {
+    // Navigate to AdminModifyScreen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => profile_edit(),
       ),
-      builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () => _getCameraimage(),
-              child: const Text('촬영'),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Divider(
-              thickness: 3,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              onPressed: () => _getPhotoLibraryImage(),
-              child: const Text('갤러리에서 불러오기'),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
-        );
-      },
     );
-  }
-
-  _getCameraimage() async {
-    //촬영
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        _pickedFile = pickedFile;
-      });
-    } else {
-      if (kDebugMode) {
-        print('이미지 선택 안 함');
-      }
-    }
-  }
-
-  _getPhotoLibraryImage() async {
-    //갤러리에서 사진 불러오기
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _pickedFile = pickedFile;
-      });
-    } else {
-      if (kDebugMode) {
-        print('이미지 선택 안 함');
-      }
-    }
   }
 }
