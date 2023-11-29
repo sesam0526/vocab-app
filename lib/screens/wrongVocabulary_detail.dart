@@ -34,24 +34,44 @@ class _WrongVocabularyDetailState extends State<WrongVocabularyDetail> {
       uid = auth.currentUser!.email.toString(); // 사용자의 이메일을 UID로 사용
     }
 
-    final snapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection("Vocabularies")
-        .doc(widget.vocabularyId)
-        .collection("WrongWords")
-        .orderBy('incorrectCount', descending: true) // 틀린 횟수 많은 순서대로 정렬
-        .get();
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("Vocabularies")
+          .doc(widget.vocabularyId)
+          .collection("WrongWords")
+          .orderBy('incorrectCount', descending: true) // 틀린 횟수 많은 순서대로 정렬
+          .get();
 
-    setState(() {
-      wrongWordsList = snapshot.docs
-          .map((doc) => {
-                'word': doc['word'].toString(),
-                'meaning': doc['meaning'].toString(),
-                'incorrectCount': doc['incorrectCount'],
-              })
-          .toList();
-    });
+      setState(() {
+        wrongWordsList = snapshot.docs
+            .map((doc) => {
+                  'word': doc['word'].toString(),
+                  'meaning': doc['meaning'].toString(),
+                  'incorrectCount': doc['incorrectCount'],
+                })
+            .toList();
+      });
+    } catch (error) {
+      print('Error fetching wrong words data: $error');
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('오류'),
+          content: const Text('틀린 단어 목록을 가져오는데 실패했습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('닫기'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override

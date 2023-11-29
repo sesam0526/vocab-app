@@ -45,13 +45,13 @@ class _WrongVocabularyScreenState extends State<WrongVocabularyScreen> {
             .toList();
       });
     } catch (error) {
-      print('Error fetching vocabulary data: $error');
+      print('Error fetching vocabularies data: $error');
       // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('오류'),
-          content: const Text('데이터 로드 중 오류가 발생했습니다.'),
+          content: const Text('단어장을 가져오는데 실패했습니다.'),
           actions: [
             TextButton(
               onPressed: () {
