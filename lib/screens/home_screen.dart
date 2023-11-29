@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               //친구 목록으로 이동
-              leading: const Icon(Icons.person),
+              leading: const Icon(Icons.supervisor_account),
               title: const Text('친구 목록'),
               iconColor: Colors.purple,
               onTap: () async {
@@ -175,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
               visible: FirebaseAuth.instance.currentUser?.email ==
                   'master@gmail.com',
               child: ListTile(
-                leading: const Icon(Icons.supervisor_account),
+                leading: const Icon(Icons.manage_accounts_rounded),
                 title: const Text('사용자 관리'),
                 iconColor: Colors.purple,
                 onTap: () async {
