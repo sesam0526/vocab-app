@@ -33,15 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final DateTime _today = DateTime.now();
   Map<String, dynamic> dayMap = {};
   final CalendarFormat _calendarFormat = CalendarFormat.month;
+  String uid = 'null';
+  String uname = 'null';
 
   @override
   Widget build(BuildContext context) {
-    String uid = 'null';
-    String uname = 'null';
-
     if (auth.currentUser != null) {
       uid = auth.currentUser!.email.toString();
-      uname = auth.currentUser!.displayName.toString();
+      _getUserNickname();
       CollectionReference<Map<String, dynamic>> attemL = FirebaseFirestore
           .instance
           .collection("users")
@@ -381,9 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.purple[400],
         ),
         body: const Column(
-          children: <Widget>[
-            Text('알 수 없는 접속 오류입니다. 앱을 종료해주십시오.')
-          ],
+          children: <Widget>[Text('알 수 없는 접속 오류입니다. 앱을 종료해주십시오.')],
         ),
       );
     }
@@ -587,5 +584,12 @@ class _HomeScreenState extends State<HomeScreen> {
         dayMap[doc.id] = doc.id;
       }
     });
+  }
+
+  Future<void> _getUserNickname() async {
+    //현재 접속한 유저의 닉네임 정보를 DB에서 받아오는 함수
+    DocumentSnapshot<Map<String, dynamic>> query =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    uname=query.data()!['nickname'];
   }
 }
