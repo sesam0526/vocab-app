@@ -69,6 +69,26 @@ class VocabularyService {
 
   Future<void> deleteVocabulary(String docId) async {
     String email = getCurrentUserEmail();
+
+    CollectionReference<Map<String, dynamic>> collectionReference =
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(email)
+                .collection('Vocabularies')
+                .doc(docId)
+                .collection('Words');
+    QuerySnapshot<Map<String, dynamic>> query =
+            await collectionReference.get();
+    for(var docs in query.docs){
+      _firestore
+        .collection('users')
+        .doc(email)
+        .collection('Vocabularies')
+        .doc(docId)
+        .collection('Words')
+        .doc(docs.id).delete();
+    }        
+    
     await _firestore
         .collection('users')
         .doc(email)
