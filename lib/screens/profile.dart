@@ -127,6 +127,20 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                   const Text(
+                                    'score ',
+                                    style: TextStyle(
+                                      color: Colors.grey, // 회색
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${snapshot.data!['money']}\n',
+                                    style: const TextStyle(
+                                      color: Colors.black, // 검정
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  const Text(
                                     'rank ',
                                     style: TextStyle(
                                       color: Colors.grey, // 회색
