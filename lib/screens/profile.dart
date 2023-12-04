@@ -127,7 +127,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                   const Text(
-                                    'money ',
+                                    'point ',
                                     style: TextStyle(
                                       color: Colors.grey, // 회색
                                       fontSize: 17,
