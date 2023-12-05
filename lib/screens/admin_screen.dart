@@ -157,6 +157,22 @@ class _AdminScreenState extends State<AdminScreen> {
     try {
       // userId를 사용하여 해당 문서를 삭제
       await usersCollection.doc(userId).delete();
+     //userId를 친구나 본인으로 가지는 친구문서를 삭제
+     QuerySnapshot<Map<String, dynamic>> query=await FirebaseFirestore.instance
+        .collection('friends')
+        .where('user_id', isEqualTo: userId).get();
+       QuerySnapshot<Map<String, dynamic>> query2=await FirebaseFirestore.instance
+        .collection('friends')
+         .where('friend_id', isEqualTo:  userId).get();
+       
+    for(var doc in query.docs){
+      FirebaseFirestore.instance
+        .collection('friends').doc(doc.id).delete();
+    }
+     for(var doc in query2.docs){
+      FirebaseFirestore.instance
+        .collection('friends').doc(doc.id).delete();
+    }
 
       // 사용자 삭제 성공 시 팝업 창 표시
       return showDialog(
