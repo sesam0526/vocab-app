@@ -14,8 +14,6 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   XFile? _pickedFile;
-  //late String userId;
-  //late Map<String, dynamic> userData;
 
   // Firebase 인증 및 Firestore 인스턴스 생성
   final FirebaseAuth _auth = FirebaseAuth.instance;
